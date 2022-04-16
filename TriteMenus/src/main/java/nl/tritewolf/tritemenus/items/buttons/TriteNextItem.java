@@ -1,7 +1,8 @@
-package nl.tritewolf.tritemenus.items;
+package nl.tritewolf.tritemenus.items.buttons;
 
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,14 +13,13 @@ import java.util.function.Consumer;
 
 @Setter
 @AllArgsConstructor
-public class TriteBackItem implements TriteMenuItem {
-
+public class TriteNextItem implements TriteMenuItem {
 
     private ItemStack itemStack;
     private Inventory inventory;
 
-    public TriteBackItem() {
-        this.itemStack = new ItemBuilder(Material.ARROW).setLore("&7Go back").build();
+    public TriteNextItem() {
+        this.itemStack = new ItemBuilder(Material.ARROW).setLore("&7Next.").build();
     }
 
     @Override
