@@ -6,18 +6,21 @@ import nl.tritewolf.tritejection.utils.AnnotationDetector;
 import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import nl.tritewolf.tritemenus.modules.TriteMenusModule;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 
 @Getter
 public class TriteMenus {
 
-    TriteJection triteMenus;
-    TriteMenuProcessor menuProcessor;
+    private final JavaPlugin javaPlugin;
+    private final TriteJection triteMenus;
+    private final TriteMenuProcessor menuProcessor;
 
-    public TriteMenus() {
-        triteMenus = TriteJection.createTriteJection(new TriteMenusModule());
-        menuProcessor = triteMenus.getTriteJection(TriteMenuProcessor.class);
+    public TriteMenus(JavaPlugin javaPlugin) {
+        this.javaPlugin = javaPlugin;
+        this.triteMenus = TriteJection.createTriteJection(new TriteMenusModule(javaPlugin));
+        this.menuProcessor = this.triteMenus.getTriteJection(TriteMenuProcessor.class);
 
         try {
             AnnotationDetector annotationDetector = new AnnotationDetector(triteMenus.getTriteJection(TriteMenuBinding.class));

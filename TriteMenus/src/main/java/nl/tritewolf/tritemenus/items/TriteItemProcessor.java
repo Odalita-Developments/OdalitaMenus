@@ -14,9 +14,11 @@ public class TriteItemProcessor {
 
         inventoryContents.forEach((slotPos, triteMenuItem) -> {
             int position = 9 * (slotPos.getRow() - 1) + slotPos.getColumn();
-            inventory.addItem(triteMenuItem.getItemStack());
+            inventory.setItem(position, triteMenuItem.getItemStack());
 
-            if()
+            if (!triteMenuObject.isHasUpdatableItems() && triteMenuItem.isUpdatable()) {
+                triteMenuObject.setHasUpdatableItems(triteMenuObject.isHasUpdatableItems());
+            }
         });
     }
 

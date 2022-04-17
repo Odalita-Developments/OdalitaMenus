@@ -1,13 +1,14 @@
 package nl.tritewolf.tritemenus.menu;
 
+import lombok.Getter;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
+import nl.tritewolf.tritemenus.items.TriteItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.TriteGlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
 import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +18,12 @@ public class TriteMenuProcessor {
 
     @TriteJect
     private TriteMenuContainer triteMenuContainer;
+    @TriteJect
+    private TriteItemProcessor triteItemProcessor;
 
+    @Getter
     private final Map<UUID, TriteMenuObject> menus = new HashMap<>();
+    @Getter
     private final Map<Class<?>, TriteMenuObject> globalMenus = new HashMap<>();
 
     public void openMenu(Class<?> clazz, Player player) {
@@ -38,8 +43,9 @@ public class TriteMenuProcessor {
             Pair<TriteGlobalMenuProvider, TriteMenuObject> globalMenuPair = triteMenuContainer.getTriteGlobalMenus().get(clazz);
             TriteGlobalMenuProvider key = globalMenuPair.getKey();
             key.onLoad(new TriteInventoryContents(globalMenuPair.getValue()));
-            player.openInventory(globalMenuPair.getValue().getInventory());
+            triteItemProcessor.initializeItems(globalMenuPair.getValue());
 
+            player.openInventory(globalMenuPair.getValue().getInventory());
             globalMenus.putIfAbsent(clazz, globalMenuPair.getValue());
             return;
         }
@@ -54,8 +60,9 @@ public class TriteMenuProcessor {
         Pair<TriteMenuProvider, TriteMenuObject> menuPair = triteMenuContainer.getTriteMenus().get(clazz);
         TriteMenuProvider key = menuPair.getKey();
         key.onLoad(player, new TriteInventoryContents(menuPair.getValue()));
-        player.openInventory(menuPair.getValue().getInventory());
+        triteItemProcessor.initializeItems(menuPair.getValue());
 
+        player.openInventory(menuPair.getValue().getInventory());
         menus.putIfAbsent(player.getUniqueId(), menuPair.getValue());
     }
 
