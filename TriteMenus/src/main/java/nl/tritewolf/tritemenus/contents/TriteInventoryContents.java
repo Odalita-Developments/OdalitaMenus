@@ -3,6 +3,7 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
+import nl.tritewolf.tritemenus.items.buttons.TriteSearchItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 
 @Getter
@@ -14,6 +15,11 @@ public class TriteInventoryContents {
     public void addItem(TriteSlotPos slotPos, TriteMenuItem triteMenuItem) {
         triteMenu.setHasUpdatableItems(triteMenuItem.isUpdatable());
         triteMenu.getContents().put(slotPos, triteMenuItem);
+
+        if (triteMenuItem instanceof TriteSearchItem) {
+            TriteSearchItem triteSearchItem = (TriteSearchItem) triteMenuItem;
+            triteMenu.getSearchContents().put(triteSearchItem.getId(), triteSearchItem);
+        }
     }
 
     public void fillRow(int row, TriteMenuItem item) {
@@ -44,5 +50,10 @@ public class TriteInventoryContents {
                 addItem(new TriteSlotPos(row, column), item);
             }
         }
+    }
+
+    public String getSearchQuery(String id) {
+        TriteSearchItem triteSearchItem = triteMenu.getSearchContents().get(id);
+        return (triteSearchItem == null) ? null : triteSearchItem.getQuery();
     }
 }
