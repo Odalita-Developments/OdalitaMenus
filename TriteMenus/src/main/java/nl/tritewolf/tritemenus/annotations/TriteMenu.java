@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.annotations;
 
+import nl.tritewolf.tritemenus.menu.TriteMenuType;
 import org.bukkit.event.inventory.InventoryType;
 
 import java.lang.annotation.ElementType;
@@ -12,6 +13,8 @@ import java.lang.annotation.Target;
 public @interface TriteMenu {
 
     String displayName();
+
+    TriteMenuType menuType();
 
     byte rows() default 3;
 
