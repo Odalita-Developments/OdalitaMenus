@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
@@ -23,7 +22,7 @@ public final class TriteSearchItem implements TriteMenuItem {
         return new TriteSearchItem(id, itemStack, searchHandler);
     }
 
-    @Getter(AccessLevel.MODULE)
+    @Getter
     private final @NotNull String id;
     private final @NotNull ItemStack itemStack;
 
