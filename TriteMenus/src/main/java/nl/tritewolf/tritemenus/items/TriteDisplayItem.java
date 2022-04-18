@@ -3,21 +3,26 @@ package nl.tritewolf.tritemenus.items;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-public class TriteDisplayItem implements TriteMenuItem {
+public final class TriteDisplayItem implements TriteMenuItem {
 
-    private ItemStack itemStack;
+    public static TriteDisplayItem of(@NotNull ItemStack itemStack) {
+        return new TriteDisplayItem(itemStack);
+    }
+
+    private final @NotNull ItemStack itemStack;
 
     @Override
-    public ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack() {
         return this.itemStack;
     }
 
     @Override
-    public Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick() {
         return (event) -> {};
     }
 }

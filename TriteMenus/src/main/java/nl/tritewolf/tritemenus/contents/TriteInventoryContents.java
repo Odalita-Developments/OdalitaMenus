@@ -18,7 +18,7 @@ public class TriteInventoryContents {
 
         if (triteMenuItem instanceof TriteSearchItem) {
             TriteSearchItem triteSearchItem = (TriteSearchItem) triteMenuItem;
-            triteMenu.getSearchContents().put(triteSearchItem.getId(), triteSearchItem);
+            triteMenu.getSearchQueries().put(triteSearchItem.getId(), null);
         }
     }
 
@@ -53,7 +53,6 @@ public class TriteInventoryContents {
     }
 
     public String getSearchQuery(String id) {
-        TriteSearchItem triteSearchItem = triteMenu.getSearchContents().get(id);
-        return (triteSearchItem == null) ? null : triteSearchItem.getQuery();
+        return triteMenu.getSearchQueries().get(id);
     }
 }
