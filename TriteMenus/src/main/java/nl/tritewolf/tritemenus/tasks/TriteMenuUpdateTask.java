@@ -1,26 +1,23 @@
 package nl.tritewolf.tritemenus.tasks;
 
-import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.ItemStack;
-import net.minecraft.server.v1_16_R3.PacketPlayOutSetSlot;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
-import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TriteMenuUpdateTask implements Runnable {
+import static nl.tritewolf.tritemenus.utils.ReflectionUtils.*;
+
+public final class TriteMenuUpdateTask implements Runnable {
 
     @TriteJect
     private TriteMenuProcessor triteMenuProcessor;
@@ -31,36 +28,46 @@ public class TriteMenuUpdateTask implements Runnable {
     public void run() {
         int ticks = TICKS.incrementAndGet();
 
-        for (Map.Entry<UUID, Map<Class<?>, TriteMenuObject>> menus : triteMenuProcessor.getMenus().entrySet()) {
-            TriteMenuObject triteMenuObject = menus.getValue().values().stream().filter(menuObject -> menuObject.isHasUpdatableItems() && menuObject.isHasMenuOpened()).findFirst().orElse(null);
+        for (Map.Entry<UUID, Map<Class<?>, TriteMenuObject>> menus : this.triteMenuProcessor.getMenus().entrySet()) {
+            TriteMenuObject triteMenuObject = menus.getValue().values().stream()
+                    .filter(menuObject -> menuObject.isHasUpdatableItems() && menuObject.isHasMenuOpened())
+                    .findFirst()
+                    .orElse(null);
+
+            if (triteMenuObject == null) continue;
+
             Player player = Bukkit.getPlayer(menus.getKey());
+            if (player == null || !player.isOnline()) continue;
 
-            if (triteMenuObject != null && player != null && player.isOnline()) {
-                for (Map.Entry<TriteSlotPos, TriteMenuItem> menuItemEntry : triteMenuObject.getContents().entrySet()) {
-                    if (menuItemEntry.getValue() instanceof TriteUpdatableItem) {
-                        TriteUpdatableItem updatableItem = (TriteUpdatableItem) menuItemEntry.getValue();
+            for (Map.Entry<TriteSlotPos, TriteMenuItem> menuItemEntry : triteMenuObject.getContents().entrySet()) {
+                TriteMenuItem menuItem = menuItemEntry.getValue();
+                if (!menuItem.isUpdatable()) continue;
 
-                        if (ticks % updatableItem.getUpdateTicks() == 0) {
-                            int slot = menuItemEntry.getKey().getSlot();
-                            org.bukkit.inventory.ItemStack item = menuItemEntry.getValue().getItemStack();
+                if (ticks % menuItem.getUpdateTicks() == 0) {
+                    int slot = menuItemEntry.getKey().getSlot();
+                    ItemStack item = menuItem.getItemStack();
 
-                            this.updateItem(player, slot, item, triteMenuObject.getInventory());
-                        }
-                    }
+                    this.updateItem(player, slot, item, triteMenuObject.getInventory());
                 }
             }
         }
     }
 
-    private void updateItem(Player player, int slot, org.bukkit.inventory.ItemStack itemStack, Inventory inventory) {
-        EntityPlayer handle = ((CraftPlayer) player).getHandle();
-        int windowId = handle.activeContainer.windowId;
-        
-        ItemStack copy = CraftItemStack.asNMSCopy(itemStack);
+    @SuppressWarnings("unchecked, rawtypes")
+    private void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+            int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
 
-        ((CraftInventory) inventory).getInventory().getContents().set(slot, copy);
+            Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
+            List contents = (List) GET_NMS_INVENTORY_CONTENTS.invoke(CRAFT_INVENTORY.cast(inventory));
+            contents.set(slot, nmsItemStack);
 
-        PacketPlayOutSetSlot pack = new PacketPlayOutSetSlot(windowId, slot, copy);
-        handle.playerConnection.sendPacket(pack);
+            Object packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
+            sendPacket(player, packetPlayOutSetSlot);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 }
