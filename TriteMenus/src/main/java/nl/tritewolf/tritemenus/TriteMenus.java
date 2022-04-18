@@ -6,6 +6,7 @@ import nl.tritewolf.tritejection.utils.AnnotationDetector;
 import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import nl.tritewolf.tritemenus.modules.TriteMenusModule;
+import nl.tritewolf.tritemenus.tasks.TriteMenuUpdateTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -33,5 +34,7 @@ public class TriteMenus {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        triteMenus.getTriteJection(TriteMenuUpdateTask.class).runTaskTimer(javaPlugin, 0, 1);
     }
 }

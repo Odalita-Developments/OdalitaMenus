@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 )
 public class TestMenu implements TriteMenuProvider {
 
+    int i = 0;
+
     @Override
     public void onLoad(Player player, TriteInventoryContents contents) {
         contents.setClickable(0, Material.DIAMOND, event -> {
@@ -23,5 +25,12 @@ public class TestMenu implements TriteMenuProvider {
         });
 
         contents.setDisplay(1, Material.STONE);
+
+        contents.setUpdatable(2, () -> {
+            i++;
+            return new ItemBuilder(Material.STONE).setDisplayName("NUMBER -> " +i + "").build();
+        }, event -> {
+            System.out.println("works");
+        });
     }
 }
