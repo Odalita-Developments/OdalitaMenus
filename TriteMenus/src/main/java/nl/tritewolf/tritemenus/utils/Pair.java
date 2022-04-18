@@ -1,6 +1,9 @@
 package nl.tritewolf.tritemenus.utils;
 
-public class Pair<K, V> {
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public final class Pair<K, V> {
 
     private K key;
     private V value;
