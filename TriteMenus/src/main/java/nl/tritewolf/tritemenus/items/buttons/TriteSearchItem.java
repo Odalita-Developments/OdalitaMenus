@@ -48,7 +48,7 @@ public final class TriteSearchItem implements TriteMenuItem {
             if (query.isBlank() || query.isEmpty()) query = null;
 
             TriteMenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(TriteMenuProcessor.class);
-            TriteMenuObject menuObject = menuProcessor.getMenus().get(event.getWhoClicked().getUniqueId());
+            TriteMenuObject menuObject = menuProcessor.getMenus().get(event.getWhoClicked().getUniqueId()).values().stream().filter(TriteMenuObject::isHasMenuOpened).findFirst().orElse(null);
 
             if (menuObject != null) {
                 menuObject.getSearchQueries().put(this.id, query);

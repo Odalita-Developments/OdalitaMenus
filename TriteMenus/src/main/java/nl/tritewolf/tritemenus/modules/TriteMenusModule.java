@@ -11,6 +11,7 @@ import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import nl.tritewolf.tritemenus.modules.multibindings.ListenerBinding;
+import nl.tritewolf.tritemenus.tasks.TriteMenuUpdateTask;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +29,7 @@ public class TriteMenusModule extends TriteJectionModule {
         bind(TriteItemProcessor.class).asEagerSingleton();
         bind(TriteMenuContainer.class).asEagerSingleton();
         bind(TriteMenuBinding.class).asEagerSingleton();
+        bind(TriteMenuUpdateTask.class).asEagerSingleton();
 
         bindListeners(new TritePlayerInventoryListener(), new TriteGlobalInventoryListener());
     }

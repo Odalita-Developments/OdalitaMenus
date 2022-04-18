@@ -7,6 +7,7 @@ import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -22,12 +23,13 @@ public class TritePlayerInventoryListener implements Listener {
     @TriteJect
     private TriteMenuProcessor menuProcessor;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCLick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        Map<UUID, TriteMenuObject> menus = menuProcessor.getMenus();
+        Map<UUID, Map<Class<?>, TriteMenuObject>> menus = menuProcessor.getMenus();
 
-        TriteMenuObject triteMenuObject = menus.get(player.getUniqueId());
+        Map<Class<?>, TriteMenuObject> triteMenuObjects = menus.get(player.getUniqueId());
+        TriteMenuObject triteMenuObject = triteMenuObjects.values().stream().filter(TriteMenuObject::isHasMenuOpened).findFirst().orElse(null);
         Inventory clickedInventory = event.getClickedInventory();
 
         if (triteMenuObject != null && clickedInventory != null && clickedInventory.equals(triteMenuObject.getInventory())) {
@@ -40,18 +42,23 @@ public class TritePlayerInventoryListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void on(InventoryDragEvent event) {
 
     }
 
-    @EventHandler
-    public void onOpen(InventoryOpenEvent event) {
 
-    }
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        Map<UUID, Map<Class<?>, TriteMenuObject>> menus = menuProcessor.getMenus();
 
+        Map<Class<?>, TriteMenuObject> triteMenuObjects = menus.get(player.getUniqueId());
+        TriteMenuObject triteMenuObject = triteMenuObjects.values().stream().filter(TriteMenuObject::isHasMenuOpened).findFirst().orElse(null);
+        Inventory inventory = event.getInventory();
+
+        if (triteMenuObject != null && inventory.equals(triteMenuObject.getInventory())) {
+            triteMenuObject.setHasMenuOpened(false);
+        }
     }
 }

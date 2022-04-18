@@ -2,11 +2,20 @@ package nl.tritewolf.tritemenus.contents;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import nl.tritewolf.tritemenus.items.TriteClickableItem;
+import nl.tritewolf.tritemenus.items.TriteDisplayItem;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
+import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
 import nl.tritewolf.tritemenus.items.buttons.TriteSearchItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
+import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Getter
 @RequiredArgsConstructor
@@ -30,6 +39,111 @@ public class TriteInventoryContents {
 
     public void set(int slot, TriteMenuItem item) {
         this.set(TriteSlotPos.of(slot), item);
+    }
+
+    public void setClickable(TriteSlotPos slotPos, ItemStack itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(slotPos, new TriteClickableItem(itemStack, event));
+    }
+
+    public void setClickable(int row, int column, ItemStack itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(row, column), new TriteClickableItem(itemStack, event));
+    }
+
+    public void setClickable(int slot, ItemStack itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(slot), new TriteClickableItem(itemStack, event));
+    }
+
+    public void setClickable(TriteSlotPos slotPos, Material material, Consumer<InventoryClickEvent> event) {
+        this.set(slotPos, new TriteClickableItem(new ItemStack(material), event));
+    }
+
+    public void setClickable(int row, int column, Material material, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(row, column), new TriteClickableItem(new ItemStack(material), event));
+    }
+
+    public void setClickable(int slot, Material material, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(slot), new TriteClickableItem(new ItemStack(material), event));
+    }
+
+    public void setClickable(TriteSlotPos slotPos, Material material, String displayName, Consumer<InventoryClickEvent> event) {
+        this.set(slotPos, new TriteClickableItem(getItemStack(material, displayName), event));
+    }
+
+    public void setClickable(int row, int column, Material material, String displayName, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(row, column), new TriteClickableItem(getItemStack(material, displayName), event));
+    }
+
+    public void setClickable(int slot, Material material, String displayName, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(slot), new TriteClickableItem(getItemStack(material, displayName), event));
+    }
+
+    public void setDisplay(TriteSlotPos slotPos, ItemStack itemStack) {
+        this.set(slotPos, new TriteDisplayItem(itemStack));
+    }
+
+    public void setDisplay(int row, int column, ItemStack itemStack) {
+        this.set(TriteSlotPos.of(row, column), new TriteDisplayItem(itemStack));
+    }
+
+    public void setDisplay(int slot, ItemStack itemStack) {
+        this.set(TriteSlotPos.of(slot), new TriteDisplayItem(itemStack));
+    }
+
+    public void setDisplay(TriteSlotPos slotPos, Material material) {
+        this.set(slotPos, new TriteDisplayItem(new ItemStack(material)));
+    }
+
+    public void setDisplay(int row, int column, Material material) {
+        this.set(TriteSlotPos.of(row, column), new TriteDisplayItem(new ItemStack(material)));
+    }
+
+    public void setDisplay(int slot, Material material) {
+        this.set(TriteSlotPos.of(slot), new TriteDisplayItem(new ItemStack(material)));
+    }
+
+    public void setDisplay(TriteSlotPos slotPos, Material material, String displayName) {
+        this.set(slotPos, new TriteDisplayItem(getItemStack(material, displayName)));
+    }
+
+    public void setDisplay(int row, int column, Material material, String displayName) {
+        this.set(TriteSlotPos.of(row, column), new TriteDisplayItem(getItemStack(material, displayName)));
+    }
+
+    public void setDisplay(int slot, Material material, String displayName) {
+        this.set(TriteSlotPos.of(slot), new TriteDisplayItem(getItemStack(material, displayName)));
+    }
+
+    public void setUpdatable(TriteSlotPos slotPos, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(slotPos, new TriteUpdatableItem(itemStack, event));
+    }
+
+    public void setUpdatable(int row, int column, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(row, column), new TriteUpdatableItem(itemStack, event));
+    }
+
+    public void setUpdatable(int slot, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event) {
+        this.set(TriteSlotPos.of(slot), new TriteUpdatableItem(itemStack, event));
+    }
+
+    public void setUpdatable(TriteSlotPos slotPos, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event, int time) {
+        this.set(slotPos, new TriteUpdatableItem(itemStack, event, time));
+    }
+
+    public void setUpdatable(int row, int column, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event, int time) {
+        this.set(TriteSlotPos.of(row, column), new TriteUpdatableItem(itemStack, event, time));
+    }
+
+    public void setUpdatable(int slot, Supplier<ItemStack> itemStack, Consumer<InventoryClickEvent> event, int time) {
+        this.set(TriteSlotPos.of(slot), new TriteUpdatableItem(itemStack, event, time));
+    }
+
+    private ItemStack getItemStack(Material material, String displayName) {
+        ItemStack itemStack = new ItemStack(material);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
     }
 
     public void add(TriteMenuItem item) {

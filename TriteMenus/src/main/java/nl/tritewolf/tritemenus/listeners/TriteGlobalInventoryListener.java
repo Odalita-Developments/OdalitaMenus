@@ -30,11 +30,6 @@ public class TriteGlobalInventoryListener implements Listener {
     }
 
     @EventHandler
-    public void onOpen(InventoryOpenEvent event) {
-
-    }
-
-    @EventHandler
     public void onClose(InventoryCloseEvent event) {
 
     }

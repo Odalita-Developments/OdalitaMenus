@@ -22,7 +22,7 @@ public class TriteMenuProcessor {
     private TriteItemProcessor triteItemProcessor;
 
     @Getter
-    private final Map<UUID, TriteMenuObject> menus = new HashMap<>();
+    private final Map<UUID, Map<Class<?>, TriteMenuObject>> menus = new HashMap<>();
     @Getter
     private final Map<Class<?>, TriteMenuObject> globalMenus = new HashMap<>();
 
@@ -37,6 +37,7 @@ public class TriteMenuProcessor {
             TriteMenuObject menuObject = globalMenus.get(clazz);
             if (menuObject != null) {
                 player.openInventory(menuObject.getInventory());
+                menuObject.setHasMenuOpened(true);
                 return;
             }
 
@@ -46,14 +47,17 @@ public class TriteMenuProcessor {
             triteItemProcessor.initializeItems(globalMenuPair.getValue());
 
             player.openInventory(globalMenuPair.getValue().getInventory());
+            globalMenuPair.getValue().setHasMenuOpened(true);
+
             globalMenus.putIfAbsent(clazz, globalMenuPair.getValue());
             return;
         }
 
-        TriteMenuObject menuObject = menus.get(player.getUniqueId());
+        Map<Class<?>, TriteMenuObject> menuObject = menus.get(player.getUniqueId());
         if (menuObject != null) {
-            player.openInventory(menuObject.getInventory());
-            menuObject.setHasMenuOpened(true);
+            TriteMenuObject triteMenuObject = menuObject.get(clazz);
+            player.openInventory(triteMenuObject.getInventory());
+            triteMenuObject.setHasMenuOpened(true);
             return;
         }
 
@@ -63,7 +67,8 @@ public class TriteMenuProcessor {
         triteItemProcessor.initializeItems(menuPair.getValue());
 
         player.openInventory(menuPair.getValue().getInventory());
-        menus.putIfAbsent(player.getUniqueId(), menuPair.getValue());
+        menuPair.getValue().setHasMenuOpened(true);
+        menus.computeIfAbsent(player.getUniqueId(), uuid -> new HashMap<>()).put(clazz, menuPair.getValue());
     }
 
 }
