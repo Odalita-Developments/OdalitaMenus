@@ -9,6 +9,8 @@ import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
+import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
+import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
@@ -31,12 +33,12 @@ public class TriteMenuUpdateTask implements Runnable {
     public void run() {
         int ticks = TICKS.incrementAndGet();
 
-        for (Map.Entry<UUID, Map<Class<?>, TriteMenuObject>> menus : triteMenuProcessor.getMenus().entrySet()) {
-            TriteMenuObject triteMenuObject = menus.getValue().values().stream().filter(menuObject -> menuObject.isHasUpdatableItems() && menuObject.isHasMenuOpened()).findFirst().orElse(null);
+        for (Map.Entry<UUID, Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>>> menus : triteMenuProcessor.getMenus().entrySet()) {
+            Pair<TriteMenuProvider, TriteMenuObject> triteMenuObjectPair = menus.getValue().values().stream().filter(menuObject -> menuObject.getValue().isHasUpdatableItems() && menuObject.getValue().isHasMenuOpened()).findFirst().orElse(null);
             Player player = Bukkit.getPlayer(menus.getKey());
 
-            if (triteMenuObject != null && player != null && player.isOnline()) {
-                for (Map.Entry<TriteSlotPos, TriteMenuItem> menuItemEntry : triteMenuObject.getContents().entrySet()) {
+            if (triteMenuObjectPair != null && player != null && player.isOnline()) {
+                for (Map.Entry<TriteSlotPos, TriteMenuItem> menuItemEntry : triteMenuObjectPair.getValue().getContents().entrySet()) {
                     if (menuItemEntry.getValue() instanceof TriteUpdatableItem) {
                         TriteUpdatableItem updatableItem = (TriteUpdatableItem) menuItemEntry.getValue();
 
@@ -44,7 +46,7 @@ public class TriteMenuUpdateTask implements Runnable {
                             int slot = menuItemEntry.getKey().getSlot();
                             org.bukkit.inventory.ItemStack item = menuItemEntry.getValue().getItemStack();
 
-                            this.updateItem(player, slot, item, triteMenuObject.getInventory());
+                            this.updateItem(player, slot, item, triteMenuObjectPair.getValue().getInventory());
                         }
                     }
                 }
@@ -55,7 +57,7 @@ public class TriteMenuUpdateTask implements Runnable {
     private void updateItem(Player player, int slot, org.bukkit.inventory.ItemStack itemStack, Inventory inventory) {
         EntityPlayer handle = ((CraftPlayer) player).getHandle();
         int windowId = handle.activeContainer.windowId;
-        
+
         ItemStack copy = CraftItemStack.asNMSCopy(itemStack);
 
         ((CraftInventory) inventory).getInventory().getContents().set(slot, copy);

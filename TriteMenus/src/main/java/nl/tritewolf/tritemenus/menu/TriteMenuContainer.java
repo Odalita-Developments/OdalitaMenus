@@ -16,20 +16,13 @@ import java.util.Map;
 @Getter
 public class TriteMenuContainer {
 
-    private final Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>> triteMenus = new HashMap<>();
+    private final Map<Class<?>, TriteMenuProvider> triteMenus = new HashMap<>();
     private final Map<Class<?>, Pair<TriteGlobalMenuProvider, TriteMenuObject>> triteGlobalMenus = new HashMap<>();
 
     public void addMenu(TriteMenuProvider triteMenuProvider) throws MissingInitializationsAnnotationException {
         isMenu(triteMenuProvider.getClass().isAnnotationPresent(TriteMenu.class));
 
-        val annotation = triteMenuProvider.getClass().getAnnotation(TriteMenu.class);
-        if (annotation.menuType().equals(TriteMenuType.GLOBAL)) {
-            //todo THROW EXEPTION
-            return;
-        }
-
-        val triteMenuObject = new TriteMenuObject(annotation.rows(), annotation.displayName(), annotation.menuType());
-        triteMenus.putIfAbsent(triteMenuProvider.getClass(), new Pair<>(triteMenuProvider, triteMenuObject));
+        triteMenus.putIfAbsent(triteMenuProvider.getClass(), triteMenuProvider);
     }
 
     public void addGlobalMenu(TriteGlobalMenuProvider triteMenuProvider) throws MissingInitializationsAnnotationException {

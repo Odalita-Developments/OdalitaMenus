@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.menu;
 
 import lombok.Getter;
+import lombok.val;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
@@ -22,7 +23,7 @@ public class TriteMenuProcessor {
     private TriteItemProcessor triteItemProcessor;
 
     @Getter
-    private final Map<UUID, Map<Class<?>, TriteMenuObject>> menus = new HashMap<>();
+    private final Map<UUID, Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>>> menus = new HashMap<>();
     @Getter
     private final Map<Class<?>, TriteMenuObject> globalMenus = new HashMap<>();
 
@@ -53,22 +54,35 @@ public class TriteMenuProcessor {
             return;
         }
 
-        Map<Class<?>, TriteMenuObject> menuObject = menus.get(player.getUniqueId());
+        Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>> menuObject = menus.get(player.getUniqueId());
         if (menuObject != null) {
-            TriteMenuObject triteMenuObject = menuObject.get(clazz);
-            player.openInventory(triteMenuObject.getInventory());
-            triteMenuObject.setHasMenuOpened(true);
+            Pair<TriteMenuProvider, TriteMenuObject> triteMenuObjectPair = menuObject.get(clazz);
+            player.openInventory(triteMenuObjectPair.getValue().getInventory());
+            triteMenuObjectPair.getValue().setHasMenuOpened(true);
             return;
         }
 
-        Pair<TriteMenuProvider, TriteMenuObject> menuPair = triteMenuContainer.getTriteMenus().get(clazz);
-        TriteMenuProvider key = menuPair.getKey();
-        key.onLoad(player, new TriteInventoryContents(menuPair.getValue()));
-        triteItemProcessor.initializeItems(menuPair.getValue());
+        try {
+            TriteMenuProvider menuProviderBase = triteMenuContainer.getTriteMenus().get(clazz);
+            TriteMenuProvider triteMenuProvider = menuProviderBase.getClass().getDeclaredConstructor().newInstance();
+            val annotation = triteMenuProvider.getClass().getAnnotation(TriteMenu.class);
 
-        player.openInventory(menuPair.getValue().getInventory());
-        menuPair.getValue().setHasMenuOpened(true);
-        menus.computeIfAbsent(player.getUniqueId(), uuid -> new HashMap<>()).put(clazz, menuPair.getValue());
+            if (annotation.menuType().equals(TriteMenuType.GLOBAL)) {
+                //todo THROW EXEPTION
+                return;
+            }
+
+            val triteMenuObject = new TriteMenuObject(annotation.rows(), annotation.displayName(), annotation.menuType());
+
+            triteMenuProvider.onLoad(player, new TriteInventoryContents(triteMenuObject));
+            triteItemProcessor.initializeItems(triteMenuObject);
+
+            player.openInventory(triteMenuObject.getInventory());
+            triteMenuObject.setHasMenuOpened(true);
+            menus.computeIfAbsent(player.getUniqueId(), uuid -> new HashMap<>()).put(clazz, new Pair<>(triteMenuProvider, triteMenuObject));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
