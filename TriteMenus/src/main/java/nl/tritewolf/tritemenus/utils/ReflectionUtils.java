@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @ApiStatus.Internal
@@ -39,6 +40,7 @@ public final class ReflectionUtils {
     public static Method GET_NMS_ITEM_STACK;
     public static Method GET_NMS_INVENTORY;
     public static Method GET_NMS_INVENTORY_CONTENTS;
+    public static Method SET_LIST;
 
     public static Field ACTIVE_CONTAINER_FIELD;
     public static Field WINDOW_ID_FIELD;
@@ -63,7 +65,7 @@ public final class ReflectionUtils {
             IINVENTORY = nmsClass("world", "IInventory");
 
             CRAFT_PLAYER = obcClass("entity.CraftPlayer");
-            CRAFT_INVENTORY = obcClass("inventory.CraftPlayer");
+            CRAFT_INVENTORY = obcClass("inventory.CraftInventory");
             ITEM_STACK = nmsClass("world.item", "ItemStack");
             CRAFT_ITEM_STACK = obcClass("inventory.CraftItemStack");
             PACKET_PLAY_OUT_SET_SLOT = nmsClass("network.protocol.game", "PacketPlayOutSetSlot");
@@ -71,6 +73,7 @@ public final class ReflectionUtils {
             GET_NMS_ITEM_STACK = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
             GET_NMS_INVENTORY = CRAFT_INVENTORY.getMethod("getInventory");
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
+            SET_LIST = List.class.getMethod("set", int.class, Object.class);
 
             ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField((isRepackaged()) ? "bW" : "activeContainer");
             WINDOW_ID_FIELD = CONTAINER.getField((isRepackaged()) ? "j" : "windowId");

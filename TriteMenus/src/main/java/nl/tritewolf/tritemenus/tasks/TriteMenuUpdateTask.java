@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,7 +52,6 @@ public final class TriteMenuUpdateTask implements Runnable {
         }
     }
 
-    @SuppressWarnings("unchecked, rawtypes")
     private void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
@@ -61,8 +59,11 @@ public final class TriteMenuUpdateTask implements Runnable {
             int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
 
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
-            List contents = (List) GET_NMS_INVENTORY_CONTENTS.invoke(CRAFT_INVENTORY.cast(inventory));
-            contents.set(slot, nmsItemStack);
+
+            Object craftInventory = CRAFT_INVENTORY.cast(inventory);
+            Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+            Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
+            SET_LIST.invoke(contents, slot, nmsItemStack);
 
             Object packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
             sendPacket(player, packetPlayOutSetSlot);
