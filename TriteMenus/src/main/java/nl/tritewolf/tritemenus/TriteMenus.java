@@ -13,14 +13,16 @@ import java.util.Arrays;
 @Getter
 public class TriteMenus {
 
+    @Getter
+    private static TriteJection triteMenus;
+
     private final JavaPlugin javaPlugin;
-    private final TriteJection triteMenus;
     private final TriteMenuProcessor menuProcessor;
 
     public TriteMenus(JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
-        this.triteMenus = TriteJection.createTriteJection(new TriteMenusModule(javaPlugin));
-        this.menuProcessor = this.triteMenus.getTriteJection(TriteMenuProcessor.class);
+        triteMenus = TriteJection.createTriteJection(new TriteMenusModule(javaPlugin));
+        this.menuProcessor = triteMenus.getTriteJection(TriteMenuProcessor.class);
 
         try {
             AnnotationDetector annotationDetector = new AnnotationDetector(triteMenus.getTriteJection(TriteMenuBinding.class));

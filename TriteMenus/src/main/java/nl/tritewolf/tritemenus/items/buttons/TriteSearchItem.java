@@ -2,7 +2,10 @@ package nl.tritewolf.tritemenus.items.buttons;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
+import nl.tritewolf.tritemenus.menu.TriteMenuObject;
+import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +47,12 @@ public final class TriteSearchItem implements TriteMenuItem {
             String query = this.searchHandler.apply(event);
             if (query.isBlank() || query.isEmpty()) query = null;
 
-            // TODO get processor and add query to player menu object
+            TriteMenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(TriteMenuProcessor.class);
+            TriteMenuObject menuObject = menuProcessor.getMenus().get(event.getWhoClicked().getUniqueId());
+
+            if (menuObject != null) {
+                menuObject.getSearchQueries().put(this.id, query);
+            }
 
             if (this.newSearchQueryHandler != null) {
                 this.newSearchQueryHandler.accept(event);
