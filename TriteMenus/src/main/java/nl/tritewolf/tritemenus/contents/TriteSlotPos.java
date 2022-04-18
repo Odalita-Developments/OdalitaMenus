@@ -1,17 +1,22 @@
 package nl.tritewolf.tritemenus.contents;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class TriteSlotPos {
+
+    public static TriteSlotPos of(int row, int column) {
+        return new TriteSlotPos(row, column);
+    }
+
+    public static TriteSlotPos of(int slot) {
+        return new TriteSlotPos(slot);
+    }
 
     private final int row;
     private final int column;
-
-    public TriteSlotPos(int row, int column) {
-        this.row = row;
-        this.column = column;
-    }
 
     public TriteSlotPos(int slot) {
         if (slot >= 0 && slot <= 8) {
@@ -37,8 +42,9 @@ public class TriteSlotPos {
             this.column = 0;
         }
     }
+    
+    public int getSlot() {
+        return (this.row * 9) + this.column;
 
-    public static TriteSlotPos of(int slot) {
-        return new TriteSlotPos(slot);
     }
 }

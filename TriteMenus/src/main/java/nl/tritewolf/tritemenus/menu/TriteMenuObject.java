@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
-import nl.tritewolf.tritemenus.items.buttons.TriteSearchItem;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
@@ -20,7 +19,8 @@ public class TriteMenuObject {
     private String displayName;
     private TriteMenuType menuType;
     private final Map<TriteSlotPos, TriteMenuItem> contents = new HashMap<>();
-    private final Map<String, TriteSearchItem> searchContents = new HashMap<>();
+
+    private final Map<String, String> searchQueries = new HashMap<>();
 
     private boolean hasUpdatableItems = false;
     private boolean hasMenuOpened = false;
