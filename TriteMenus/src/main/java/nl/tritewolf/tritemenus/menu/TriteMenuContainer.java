@@ -16,10 +16,6 @@ import java.util.Map;
 @Getter
 public class TriteMenuContainer {
 
-
-    @TriteJect
-    private TriteInventoryContents triteInventoryContents;
-
     private final Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>> triteMenus = new HashMap<>();
     private final Map<Class<?>, Pair<TriteGlobalMenuProvider, TriteMenuObject>> triteGlobalMenus = new HashMap<>();
 

@@ -33,8 +33,10 @@ public class TritePlayerInventoryListener implements Listener {
         if (triteMenuObject != null && clickedInventory != null && clickedInventory.equals(triteMenuObject.getInventory())) {
             event.setCancelled(true);
 
-            TriteMenuItem triteMenuItem = triteMenuObject.getContents().get(TriteSlotPos.of(event.getSlot()));
-            triteMenuItem.onClick().accept(event);
+            TriteMenuItem triteMenuItem = triteMenuObject.getContent(TriteSlotPos.of(event.getSlot()));
+            if (triteMenuItem != null) {
+                triteMenuItem.onClick().accept(event);
+            }
         }
     }
 

@@ -3,7 +3,9 @@ package nl.tritewolf.tritemenus.modules;
 import lombok.AllArgsConstructor;
 import nl.tritewolf.tritejection.module.TriteJectionModule;
 import nl.tritewolf.tritejection.multibinder.TriteJectionMultiBinder;
+import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
 import nl.tritewolf.tritemenus.items.TriteItemProcessor;
+import nl.tritewolf.tritemenus.listeners.TriteGlobalInventoryListener;
 import nl.tritewolf.tritemenus.listeners.TritePlayerInventoryListener;
 import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
@@ -27,16 +29,12 @@ public class TriteMenusModule extends TriteJectionModule {
         bind(TriteMenuContainer.class).asEagerSingleton();
         bind(TriteMenuBinding.class).asEagerSingleton();
 
-        bindListeners(
-                new TritePlayerInventoryListener()
-        );
+        bindListeners(new TritePlayerInventoryListener(), new TriteGlobalInventoryListener());
     }
 
     @Override
     public List<TriteJectionMultiBinder> registerMultiBindings() {
-        return List.of(
-                new ListenerBinding(this.javaPlugin)
-        );
+        return List.of(new ListenerBinding(this.javaPlugin));
     }
 
     private void bindListeners(Listener... listeners) {

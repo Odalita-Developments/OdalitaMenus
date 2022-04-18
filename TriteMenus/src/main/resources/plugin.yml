@@ -1,0 +1,8 @@
+name: "TestPlugin"
+version: 0.0.1
+api-version: 1.16
+description: test plugin
+main: nl.tritewolf.testplugin.TestPlugin
+
+commands:
+  TestCommand:

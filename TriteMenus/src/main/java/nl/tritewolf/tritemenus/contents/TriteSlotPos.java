@@ -42,9 +42,17 @@ public class TriteSlotPos {
             this.column = 0;
         }
     }
-    
+
     public int getSlot() {
         return (this.row * 9) + this.column;
+    }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof TriteSlotPos) {
+            TriteSlotPos slotPos = (TriteSlotPos) object;
+            return slotPos.getRow() == row && slotPos.getColumn() == column;
+        }
+        return false;
     }
 }

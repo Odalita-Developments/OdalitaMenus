@@ -31,4 +31,13 @@ public class TriteMenuObject {
         this.menuType = menuType;
         this.displayName = displayName;
     }
+
+    public TriteMenuItem getContent(TriteSlotPos triteSlotPos) {
+        Map.Entry<TriteSlotPos, TriteMenuItem> menuItem = contents.entrySet().stream().filter(entry -> entry.getKey().equals(triteSlotPos)).findFirst().orElse(null);
+        if (menuItem != null) {
+            return menuItem.getValue();
+        }
+
+        return null;
+    }
 }

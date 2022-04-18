@@ -13,13 +13,13 @@ public class TriteItemProcessor {
         Inventory inventory = triteMenuObject.getInventory();
 
         inventoryContents.forEach((slotPos, triteMenuItem) -> {
-            int position = 9 * (slotPos.getRow() - 1) + slotPos.getColumn();
-            inventory.setItem(position, triteMenuItem.getItemStack());
+            inventory.setItem(slotPos.getSlot(), triteMenuItem.getItemStack());
 
             if (!triteMenuObject.isHasUpdatableItems() && triteMenuItem.isUpdatable()) {
                 triteMenuObject.setHasUpdatableItems(triteMenuObject.isHasUpdatableItems());
             }
         });
+
     }
 
 }
