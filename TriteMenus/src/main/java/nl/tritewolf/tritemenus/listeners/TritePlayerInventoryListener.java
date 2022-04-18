@@ -1,11 +1,10 @@
 package nl.tritewolf.tritemenus.listeners;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
-import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
+import nl.tritewolf.tritemenus.contents.TriteSlotPos;
+import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
-import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
-import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +31,10 @@ public class TritePlayerInventoryListener implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
 
         if (triteMenuObject != null && clickedInventory != null && clickedInventory.equals(triteMenuObject.getInventory())) {
-            
+            event.setCancelled(true);
+
+            TriteMenuItem triteMenuItem = triteMenuObject.getContents().get(TriteSlotPos.of(event.getSlot()));
+            triteMenuItem.onClick().accept(event);
         }
     }
 
