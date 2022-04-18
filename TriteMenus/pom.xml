@@ -22,19 +22,18 @@
     <dependencies>
         <!--Compiled Dependencies-->
         <dependency>
-            <groupId>nl.tritewolf.tritejection</groupId>
+            <groupId>com.github.TryDev07</groupId>
             <artifactId>TriteJection</artifactId>
-            <version>1.2.2</version>
+            <version>v1.2.2</version>
         </dependency>
-
-
-        <!--Provided Dependencies-->
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
             <scope>provided</scope>
             <version>1.18.22</version>
         </dependency>
+
+        <!--Provided Dependencies-->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
