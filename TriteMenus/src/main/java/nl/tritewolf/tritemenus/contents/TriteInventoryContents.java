@@ -25,7 +25,7 @@ public class TriteInventoryContents {
 
     public void set(TriteSlotPos slotPos, TriteMenuItem item) {
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
-        this.triteMenu.getContents().put(slotPos, item);
+        this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (item instanceof TriteSearchItem) {
             TriteSearchItem triteSearchItem = (TriteSearchItem) item;
@@ -157,7 +157,7 @@ public class TriteInventoryContents {
             for (int column = 0; column < 9; column++) {
                 TriteSlotPos slotPos = TriteSlotPos.of(row, column);
 
-                if (!this.triteMenu.getContents().containsKey(slotPos)) {
+                if (this.triteMenu.getContent(slotPos) == null) {
                     return Optional.of(slotPos);
                 }
             }
@@ -167,7 +167,7 @@ public class TriteInventoryContents {
     }
 
     public void fillRow(int row, TriteMenuItem item) {
-        if (row >= this.triteMenu.getContents().size())
+        if (row >= this.triteMenu.getContents().length)
             return;
 
         for (int column = 0; column < 9; column++) {
@@ -208,7 +208,7 @@ public class TriteInventoryContents {
         for (int row = 0; row < this.triteMenu.getRows(); row++) {
             for (int column = 0; column < 9; column++) {
                 TriteSlotPos slotPos = TriteSlotPos.of(row, column);
-                if (this.triteMenu.getContents().containsKey(slotPos)) continue;
+                if (this.triteMenu.getContent(slotPos) != null) continue;
 
                 this.set(slotPos, item);
             }

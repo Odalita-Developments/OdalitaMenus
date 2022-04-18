@@ -1,7 +1,6 @@
 package nl.tritewolf.tritemenus.tasks;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
-import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
@@ -37,20 +36,22 @@ public final class TriteMenuUpdateTask implements Runnable {
             Player player = Bukkit.getPlayer(menus.getKey());
             if (player == null || !player.isOnline()) continue;
 
-            for (Map.Entry<TriteSlotPos, TriteMenuItem> menuItemEntry : triteMenuObjectPair.getValue().getContents().entrySet()) {
-                TriteMenuItem menuItem = menuItemEntry.getValue();
-                if (!menuItem.isUpdatable()) continue;
+            TriteMenuItem[][] contents = triteMenuObjectPair.getValue().getContents();
+            for (int row = 0; row < contents.length; row++) {
+                for (int column = 0; column < contents[0].length; column++) {
+                    TriteMenuItem triteMenuItem = contents[row][column];
+                    if (triteMenuItem == null || !triteMenuItem.isUpdatable()) continue;
 
-                if (ticks % menuItem.getUpdateTicks() == 0) {
-                    int slot = menuItemEntry.getKey().getSlot();
-                    ItemStack item = menuItem.getItemStack();
+                    if (ticks % triteMenuItem.getUpdateTicks() == 0) {
+                        ItemStack item = triteMenuItem.getItemStack();
+                        int slot = 9 + row + column;
 
-                    this.updateItem(player, slot, item, triteMenuObjectPair.getValue().getInventory());
+                        this.updateItem(player, slot, item, triteMenuObjectPair.getValue().getInventory());
+                    }
                 }
             }
         }
     }
-
 
     private void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {

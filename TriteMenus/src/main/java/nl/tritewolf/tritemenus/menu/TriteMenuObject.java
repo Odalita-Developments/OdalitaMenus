@@ -18,7 +18,7 @@ public class TriteMenuObject {
     private byte rows;
     private String displayName;
     private TriteMenuType menuType;
-    private final Map<TriteSlotPos, TriteMenuItem> contents = new HashMap<>();
+    private final TriteMenuItem[][] contents;
 
     private final Map<String, String> searchQueries = new HashMap<>();
 
@@ -26,6 +26,8 @@ public class TriteMenuObject {
     private boolean hasMenuOpened = false;
 
     public TriteMenuObject(byte rows, String displayName, TriteMenuType menuType) {
+        this.contents = new TriteMenuItem[rows][9];
+
         this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
         this.rows = rows;
         this.menuType = menuType;
@@ -33,11 +35,6 @@ public class TriteMenuObject {
     }
 
     public TriteMenuItem getContent(TriteSlotPos triteSlotPos) {
-        Map.Entry<TriteSlotPos, TriteMenuItem> menuItem = contents.entrySet().stream().filter(entry -> entry.getKey().equals(triteSlotPos)).findFirst().orElse(null);
-        if (menuItem != null) {
-            return menuItem.getValue();
-        }
-
-        return null;
+        return this.contents[triteSlotPos.getRow()][triteSlotPos.getColumn()];
     }
 }
