@@ -11,8 +11,10 @@ import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -42,7 +44,7 @@ public class TriteMenuUpdateTask implements Runnable {
                             int slot = menuItemEntry.getKey().getSlot();
                             org.bukkit.inventory.ItemStack item = menuItemEntry.getValue().getItemStack();
 
-                            this.updateItem(player, slot, item);
+                            this.updateItem(player, slot, item, triteMenuObject.getInventory());
                         }
                     }
                 }
@@ -50,11 +52,13 @@ public class TriteMenuUpdateTask implements Runnable {
         }
     }
 
-    private void updateItem(Player player, int slot, org.bukkit.inventory.ItemStack itemStack) {
+    private void updateItem(Player player, int slot, org.bukkit.inventory.ItemStack itemStack, Inventory inventory) {
         EntityPlayer handle = ((CraftPlayer) player).getHandle();
         int windowId = handle.activeContainer.windowId;
-
+        
         ItemStack copy = CraftItemStack.asNMSCopy(itemStack);
+
+        ((CraftInventory) inventory).getInventory().getContents().set(slot, copy);
 
         PacketPlayOutSetSlot pack = new PacketPlayOutSetSlot(windowId, slot, copy);
         handle.playerConnection.sendPacket(pack);
