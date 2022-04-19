@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
         rows = 4,
         displayName = "Test menu"
 )
-public class TestPlayerMenu extends TritePlayerMenuProvider {
+public class TestPlayerMenu implements TritePlayerMenuProvider {
 
     int i = 0;
 

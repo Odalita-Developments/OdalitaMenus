@@ -4,5 +4,5 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @ApiStatus.NonExtendable
-public abstract class TriteMenuProvider {
+public interface TriteMenuProvider {
 }
