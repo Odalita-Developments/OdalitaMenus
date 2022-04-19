@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.tasks;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
+import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
@@ -44,7 +45,7 @@ public final class TriteMenuUpdateTask implements Runnable {
 
                     if (ticks % triteMenuItem.getUpdateTicks() == 0) {
                         ItemStack item = triteMenuItem.getItemStack();
-                        int slot = 9 + row + column;
+                        int slot = TriteSlotPos.of(row, column).getSlot();
 
                         this.updateItem(player, slot, item, triteMenuObjectPair.getValue().getInventory());
                     }

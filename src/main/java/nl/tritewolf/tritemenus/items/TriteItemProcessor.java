@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.items;
 
+import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import org.bukkit.inventory.Inventory;
 
@@ -14,7 +15,7 @@ public class TriteItemProcessor {
                 TriteMenuItem triteMenuItem = contents[row][column];
                 if (triteMenuItem == null) continue;
 
-                int slot = 9 + row + column;
+                int slot = TriteSlotPos.of(row, column).getSlot();
                 inventory.setItem(slot, triteMenuItem.getItemStack());
 
                 if (!triteMenuObject.isHasUpdatableItems() && triteMenuItem.isUpdatable()) {
