@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import nl.tritewolf.tritejection.module.TriteJectionModule;
 import nl.tritewolf.tritejection.multibinder.TriteJectionMultiBinder;
 import nl.tritewolf.tritemenus.items.TriteItemProcessor;
+import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPatternContainer;
 import nl.tritewolf.tritemenus.listeners.TriteInventoryListener;
-import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
+import nl.tritewolf.tritemenus.annotations.TriteAnnotationBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import nl.tritewolf.tritemenus.modules.multibindings.ListenerBinding;
@@ -26,8 +27,9 @@ public final class TriteMenusModule extends TriteJectionModule {
         bind(TriteMenuProcessor.class).asEagerSingleton();
         bind(TriteItemProcessor.class).asEagerSingleton();
         bind(TriteMenuContainer.class).asEagerSingleton();
-        bind(TriteMenuBinding.class).asEagerSingleton();
+        bind(TriteAnnotationBinding.class).asEagerSingleton();
         bind(TriteMenuUpdateTask.class).asEagerSingleton();
+        bind(TriteIteratorPatternContainer.class).asEagerSingleton();
 
         bindListeners(new TriteInventoryListener());
     }

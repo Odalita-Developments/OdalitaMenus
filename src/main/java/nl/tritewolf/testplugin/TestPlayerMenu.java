@@ -1,6 +1,7 @@
 package nl.tritewolf.testplugin;
 
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
+import nl.tritewolf.tritemenus.annotations.TritePattern;
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
 import nl.tritewolf.tritemenus.items.TriteDisplayItem;
 import nl.tritewolf.tritemenus.iterators.TriteIterator;
@@ -39,21 +40,26 @@ public class TestPlayerMenu implements TritePlayerMenuProvider {
         });
 
 //       contents.newTriteIterator(TriteIteratorType.HORIZONTAL, 1,1, () -> return)
-        contents.createSimpleIterator(TriteIteratorType.VERTICAL, 1, 1, List.of(
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
-                        new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE))
-                ),
-                12
-        );
+
+        contents.createPatternIterator(TestPattern.class, TriteIteratorType.VERTICAL, List.of(
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)),
+                new TriteDisplayItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE))
+                ));
 
 //        contents.fill(TriteDisplayItem.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
     }

@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus;
 import lombok.Getter;
 import nl.tritewolf.tritejection.TriteJection;
 import nl.tritewolf.tritejection.utils.AnnotationDetector;
-import nl.tritewolf.tritemenus.menu.TriteMenuBinding;
+import nl.tritewolf.tritemenus.annotations.TriteAnnotationBinding;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
 import nl.tritewolf.tritemenus.modules.TriteMenusModule;
 import nl.tritewolf.tritemenus.tasks.TriteMenuUpdateTask;
@@ -29,11 +29,11 @@ public final class TriteMenus {
         this.menuProcessor = triteMenus.getTriteJection(TriteMenuProcessor.class);
 
         try {
-            AnnotationDetector annotationDetector = new AnnotationDetector(triteMenus.getTriteJection(TriteMenuBinding.class));
+            AnnotationDetector menuDetector = new AnnotationDetector(triteMenus.getTriteJection(TriteAnnotationBinding.class));
 
             ClassLoader classLoader = javaPlugin.getClass().getClassLoader();
             String[] objects = Arrays.stream(Package.getPackages()).map(Package::getName).toArray(String[]::new);
-            annotationDetector.detect(classLoader, objects);
+            menuDetector.detect(classLoader, objects);
         } catch (Exception e) {
             e.printStackTrace();
         }

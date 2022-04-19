@@ -2,13 +2,17 @@ package nl.tritewolf.tritemenus.contents;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.TriteClickableItem;
 import nl.tritewolf.tritemenus.items.TriteDisplayItem;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
 import nl.tritewolf.tritemenus.iterators.TriteIterator;
 import nl.tritewolf.tritemenus.iterators.TriteIteratorType;
+import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPattern;
+import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPatternContainer;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
+import nl.tritewolf.tritemenus.modules.TriteMenusModule;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +26,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class TriteInventoryContents {
 
-    protected final TriteMenuObject triteMenu; 
+    protected final TriteMenuObject triteMenu;
     private final Map<String, TriteIterator> iterators = new HashMap<>();
 
     public void set(TriteSlotPos slotPos, TriteMenuItem item) {
@@ -223,9 +227,40 @@ public class TriteInventoryContents {
         value.blacklist(blacklisted);
 
         for (TriteMenuItem menuItem : menuItems) {
-            value.set(menuItem);
             value.next();
+            value.set(menuItem);
         }
+    }
+
+    public void createPatternIterator(TriteIteratorPattern iteratorPattern, TriteIteratorType iteratorType, List<TriteMenuItem> menuItems) {
+        TriteIterator value = new TriteIterator(this, iteratorType, 0, 0, true);
+        List<String> pattern = iteratorPattern.getPattern();
+
+        Character ignoredSymbol = iteratorPattern.ignoredSymbol();
+        for (int a = 0; a < pattern.size(); a++) {
+            for (int b = 0; b < pattern.get(a).length(); b++) {
+                if (pattern.get(a).charAt(b) == ignoredSymbol) {
+                    value.blacklist(TriteSlotPos.of(a, b).getSlot());
+                }
+            }
+        }
+
+        for (TriteMenuItem menuItem : menuItems) {
+            value.next();
+            value.set(menuItem);
+        }
+    }
+
+    public void createPatternIterator(Class<? extends TriteIteratorPattern> clazz, TriteIteratorType iteratorType, List<TriteMenuItem> menuItems) {
+        TriteIteratorPatternContainer iteratorPatternContainer = TriteMenus.getTriteMenus().getTriteJection(TriteIteratorPatternContainer.class);
+        TriteIteratorPattern iteratorPatternByCass = iteratorPatternContainer.getIteratorPatternByCass(clazz);
+
+        if (iteratorPatternByCass == null) {
+            //todo throw exception
+            return;
+        }
+
+        createPatternIterator(iteratorPatternByCass, iteratorType, menuItems);
     }
 
     public String getSearchQuery(String id) {

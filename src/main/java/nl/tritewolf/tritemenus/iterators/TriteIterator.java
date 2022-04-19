@@ -24,7 +24,6 @@ public class TriteIterator {
     private boolean started = false;
 
     public void set(TriteMenuItem menuItem) {
-        System.out.println(row + " - " + column);
         inventoryContents.set(TriteSlotPos.of(row, column), menuItem);
     }
 
