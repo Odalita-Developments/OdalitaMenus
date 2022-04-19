@@ -6,8 +6,6 @@ import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
-import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
-import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +48,10 @@ public final class TriteSearchItem implements TriteMenuItem {
             if (query.isBlank() || query.isEmpty()) query = null;
 
             TriteMenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(TriteMenuProcessor.class);
-            Pair<TriteMenuProvider, TriteMenuObject> triteMenuObjectPair = menuProcessor.getMenus().get(event.getWhoClicked().getUniqueId()).values().stream().filter(pair -> pair.getValue().isHasMenuOpened()).findFirst().orElse(null);
+            TriteMenuObject openMenuObject = menuProcessor.getOpenMenus().get(event.getWhoClicked().getUniqueId());
 
-            if (triteMenuObjectPair != null) {
-                triteMenuObjectPair.getValue().getSearchQueries().put(this.id, query);
+            if (openMenuObject != null) {
+                openMenuObject.getSearchQueries().put(this.id, query);
             }
 
             if (this.newSearchQueryHandler != null) {

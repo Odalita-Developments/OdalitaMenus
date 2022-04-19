@@ -2,7 +2,7 @@ package nl.tritewolf.tritemenus.menu.providers;
 
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
 
-public interface TriteGlobalMenuProvider {
+public abstract class TriteGlobalMenuProvider extends TriteMenuProvider {
 
-    void onLoad(TriteInventoryContents triteInventoryContents);
+    public abstract void onLoad(TriteInventoryContents triteInventoryContents);
 }

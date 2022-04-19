@@ -3,8 +3,7 @@ package nl.tritewolf.testplugin;
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
 import nl.tritewolf.tritemenus.items.TriteDisplayItem;
-import nl.tritewolf.tritemenus.menu.TriteMenuType;
-import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
+import nl.tritewolf.tritemenus.menu.providers.TritePlayerMenuProvider;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,10 +11,9 @@ import org.bukkit.inventory.ItemStack;
 
 @TriteMenu(
         rows = 4,
-        displayName = "testMenu",
-        menuType = TriteMenuType.PLAYER
+        displayName = "Test menu"
 )
-public class TestMenu implements TriteMenuProvider {
+public class TestPlayerMenu extends TritePlayerMenuProvider {
 
     int i = 0;
 

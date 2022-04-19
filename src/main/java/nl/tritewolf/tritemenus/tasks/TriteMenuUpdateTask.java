@@ -5,8 +5,6 @@ import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import nl.tritewolf.tritemenus.menu.TriteMenuProcessor;
-import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
-import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -27,27 +25,33 @@ public final class TriteMenuUpdateTask implements Runnable {
 
     @Override
     public void run() {
+        Map<UUID, TriteMenuObject> openMenus = this.triteMenuProcessor.getOpenMenus();
+        if (openMenus.isEmpty()) {
+            TICKS.set(0);
+            return;
+        }
+
         int ticks = TICKS.incrementAndGet();
 
-        for (Map.Entry<UUID, Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>>> menus : triteMenuProcessor.getMenus().entrySet()) {
-            Pair<TriteMenuProvider, TriteMenuObject> triteMenuObjectPair = menus.getValue().values().stream().filter(menuObject -> menuObject.getValue().isHasUpdatableItems() && menuObject.getValue().isHasMenuOpened()).findFirst().orElse(null);
+        for (Map.Entry<UUID, TriteMenuObject> entry : openMenus.entrySet()) {
+            TriteMenuObject menuObject = entry.getValue();
+            if (menuObject == null || !menuObject.isHasUpdatableItems()) continue;
 
-            if (triteMenuObjectPair == null) continue;
-
-            Player player = Bukkit.getPlayer(menus.getKey());
+            Player player = Bukkit.getPlayer(entry.getKey());
             if (player == null || !player.isOnline()) continue;
 
-            TriteMenuItem[][] contents = triteMenuObjectPair.getValue().getContents();
+            TriteMenuItem[][] contents = menuObject.getContents();
             for (int row = 0; row < contents.length; row++) {
                 for (int column = 0; column < contents[0].length; column++) {
                     TriteMenuItem triteMenuItem = contents[row][column];
-                    if (triteMenuItem == null || !triteMenuItem.isUpdatable()) continue;
+                    if (triteMenuItem == null || !triteMenuItem.isUpdatable() || triteMenuItem.getUpdateTicks() <= 0)
+                        continue;
 
                     if (ticks % triteMenuItem.getUpdateTicks() == 0) {
                         ItemStack item = triteMenuItem.getItemStack();
                         int slot = TriteSlotPos.of(row, column).getSlot();
 
-                        this.updateItem(player, slot, item, triteMenuObjectPair.getValue().getInventory());
+                        this.updateItem(player, slot, item, menuObject.getInventory());
                     }
                 }
             }

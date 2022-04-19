@@ -1,88 +1,104 @@
 package nl.tritewolf.tritemenus.menu;
 
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.val;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
 import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
 import nl.tritewolf.tritemenus.items.TriteItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.TriteGlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
-import nl.tritewolf.tritemenus.utils.Pair;
+import nl.tritewolf.tritemenus.menu.providers.TritePlayerMenuProvider;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class TriteMenuProcessor {
+@Getter
+public final class TriteMenuProcessor {
 
     @TriteJect
+    @Getter(AccessLevel.NONE)
     private TriteMenuContainer triteMenuContainer;
     @TriteJect
+    @Getter(AccessLevel.NONE)
     private TriteItemProcessor triteItemProcessor;
 
-    @Getter
-    private final Map<UUID, Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>>> menus = new HashMap<>();
-    @Getter
+    private final Map<UUID, Map<Class<?>, TriteMenuObject>> playerMenus = new HashMap<>();
     private final Map<Class<?>, TriteMenuObject> globalMenus = new HashMap<>();
 
-    public void openMenu(Class<?> clazz, Player player) {
+    private final Map<UUID, TriteMenuObject> openMenus = new ConcurrentHashMap<>();
+
+    public void openMenu(Class<? extends TriteMenuProvider> clazz, Player player) {
         if (!clazz.isAnnotationPresent(TriteMenu.class)) {
             //todo throw exception
             return;
         }
 
-        TriteMenu clazzAnnotation = clazz.getAnnotation(TriteMenu.class);
-        if (clazzAnnotation.menuType().equals(TriteMenuType.GLOBAL)) {
-            TriteMenuObject menuObject = globalMenus.get(clazz);
-            if (menuObject != null) {
-                player.openInventory(menuObject.getInventory());
-                menuObject.setHasMenuOpened(true);
-                return;
-            }
+        TriteMenu menuAnnotation = clazz.getAnnotation(TriteMenu.class);
 
-            Pair<TriteGlobalMenuProvider, TriteMenuObject> globalMenuPair = triteMenuContainer.getTriteGlobalMenus().get(clazz);
-            TriteGlobalMenuProvider key = globalMenuPair.getKey();
-            key.onLoad(new TriteInventoryContents(globalMenuPair.getValue()));
-            triteItemProcessor.initializeItems(globalMenuPair.getValue());
-
-            player.openInventory(globalMenuPair.getValue().getInventory());
-            globalMenuPair.getValue().setHasMenuOpened(true);
-
-            globalMenus.putIfAbsent(clazz, globalMenuPair.getValue());
+        if (TriteGlobalMenuProvider.class.isAssignableFrom(clazz)) {
+            this.openGlobalMenu(player, clazz, menuAnnotation);
             return;
         }
 
-        Map<Class<?>, Pair<TriteMenuProvider, TriteMenuObject>> menuObject = menus.get(player.getUniqueId());
-        if (menuObject != null) {
-            Pair<TriteMenuProvider, TriteMenuObject> triteMenuObjectPair = menuObject.get(clazz);
-            player.openInventory(triteMenuObjectPair.getValue().getInventory());
-            triteMenuObjectPair.getValue().setHasMenuOpened(true);
-            return;
-        }
-
-        try {
-            TriteMenuProvider menuProviderBase = triteMenuContainer.getTriteMenus().get(clazz);
-            TriteMenuProvider triteMenuProvider = menuProviderBase.getClass().getDeclaredConstructor().newInstance();
-            val annotation = triteMenuProvider.getClass().getAnnotation(TriteMenu.class);
-
-            if (annotation.menuType().equals(TriteMenuType.GLOBAL)) {
-                //todo THROW EXEPTION
-                return;
-            }
-
-            val triteMenuObject = new TriteMenuObject(annotation.rows(), annotation.displayName(), annotation.menuType());
-
-            triteMenuProvider.onLoad(player, new TriteInventoryContents(triteMenuObject));
-            triteItemProcessor.initializeItems(triteMenuObject);
-
-            player.openInventory(triteMenuObject.getInventory());
-            triteMenuObject.setHasMenuOpened(true);
-            menus.computeIfAbsent(player.getUniqueId(), uuid -> new HashMap<>()).put(clazz, new Pair<>(triteMenuProvider, triteMenuObject));
-        }catch (Exception e){
-            e.printStackTrace();
+        if (TritePlayerMenuProvider.class.isAssignableFrom(clazz)) {
+            this.openPlayerMenu(player, clazz, menuAnnotation);
         }
     }
 
+    private void openGlobalMenu(Player player, Class<? extends TriteMenuProvider> clazz, TriteMenu annotation) {
+        TriteMenuObject menuObject = this.globalMenus.get(clazz);
+        if (menuObject != null) {
+            this.openInventory(player, menuObject);
+            return;
+        }
+
+        menuObject = new TriteMenuObject(annotation.rows(), annotation.displayName());
+
+        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getTriteMenus().get(clazz);
+        if (triteMenuProvider instanceof TriteGlobalMenuProvider) {
+            TriteGlobalMenuProvider triteGlobalMenuProvider = (TriteGlobalMenuProvider) triteMenuProvider;
+
+            triteGlobalMenuProvider.onLoad(new TriteInventoryContents(menuObject));
+            this.triteItemProcessor.initializeItems(menuObject);
+
+            this.openInventory(player, menuObject);
+
+            this.globalMenus.put(clazz, menuObject);
+        }
+    }
+
+    private void openPlayerMenu(Player player, Class<? extends TriteMenuProvider> clazz, TriteMenu annotation) {
+        Map<Class<?>, TriteMenuObject> registeredPlayerMenus = this.playerMenus.get(player.getUniqueId());
+
+        TriteMenuObject menuObject;
+        if (registeredPlayerMenus != null && !registeredPlayerMenus.isEmpty()) {
+            menuObject = registeredPlayerMenus.get(clazz);
+            this.openInventory(player, menuObject);
+            return;
+        }
+
+        menuObject = new TriteMenuObject(annotation.rows(), annotation.displayName());
+
+        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getTriteMenus().get(clazz);
+        if (triteMenuProvider instanceof TritePlayerMenuProvider) {
+            TritePlayerMenuProvider tritePlayerMenuProvider = (TritePlayerMenuProvider) triteMenuProvider;
+
+            tritePlayerMenuProvider.onLoad(player, new TriteInventoryContents(menuObject));
+            this.triteItemProcessor.initializeItems(menuObject);
+
+            this.openInventory(player, menuObject);
+
+            this.playerMenus.computeIfAbsent(player.getUniqueId(), (uuid) -> new HashMap<>())
+                    .put(clazz, menuObject);
+        }
+    }
+
+    private void openInventory(Player player, TriteMenuObject menuObject) {
+        player.openInventory(menuObject.getInventory());
+        this.openMenus.put(player.getUniqueId(), menuObject);
+    }
 }

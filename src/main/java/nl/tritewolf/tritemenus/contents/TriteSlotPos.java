@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TriteSlotPos {
+public final class TriteSlotPos {
 
     public static TriteSlotPos of(int row, int column) {
         return new TriteSlotPos(row, column);
@@ -51,8 +51,9 @@ public class TriteSlotPos {
     public boolean equals(Object object) {
         if (object instanceof TriteSlotPos) {
             TriteSlotPos slotPos = (TriteSlotPos) object;
-            return slotPos.getRow() == row && slotPos.getColumn() == column;
+            return slotPos.getRow() == this.row && slotPos.getColumn() == this.column;
         }
+
         return false;
     }
 }

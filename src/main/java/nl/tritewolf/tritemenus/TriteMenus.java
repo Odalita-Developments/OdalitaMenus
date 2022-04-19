@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class TriteMenus {
+public final class TriteMenus {
 
     @Getter
     private static TriteJection triteMenus;
@@ -24,6 +24,7 @@ public class TriteMenus {
 
     public TriteMenus(JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
+
         triteMenus = TriteJection.createTriteJection(new TriteMenusModule(javaPlugin));
         this.menuProcessor = triteMenus.getTriteJection(TriteMenuProcessor.class);
 

@@ -12,25 +12,22 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class TriteMenuObject {
+public final class TriteMenuObject {
 
     private Inventory inventory;
     private byte rows;
     private String displayName;
-    private TriteMenuType menuType;
     private final TriteMenuItem[][] contents;
 
     private final Map<String, String> searchQueries = new HashMap<>();
 
     private boolean hasUpdatableItems = false;
-    private boolean hasMenuOpened = false;
 
-    public TriteMenuObject(byte rows, String displayName, TriteMenuType menuType) {
+    public TriteMenuObject(byte rows, String displayName) {
         this.contents = new TriteMenuItem[rows][9];
 
         this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
         this.rows = rows;
-        this.menuType = menuType;
         this.displayName = displayName;
     }
 

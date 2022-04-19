@@ -4,7 +4,7 @@ import nl.tritewolf.tritemenus.contents.TriteSlotPos;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import org.bukkit.inventory.Inventory;
 
-public class TriteItemProcessor {
+public final class TriteItemProcessor {
 
     public void initializeItems(TriteMenuObject triteMenuObject) {
         TriteMenuItem[][] contents = triteMenuObject.getContents();
@@ -19,7 +19,7 @@ public class TriteItemProcessor {
                 inventory.setItem(slot, triteMenuItem.getItemStack());
 
                 if (!triteMenuObject.isHasUpdatableItems() && triteMenuItem.isUpdatable()) {
-                    triteMenuObject.setHasUpdatableItems(triteMenuObject.isHasUpdatableItems());
+                    triteMenuObject.setHasUpdatableItems(true);
                 }
             }
         }

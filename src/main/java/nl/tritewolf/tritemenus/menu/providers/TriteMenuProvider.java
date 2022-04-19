@@ -1,10 +1,8 @@
 package nl.tritewolf.tritemenus.menu.providers;
 
-import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface TriteMenuProvider {
-
-
-    void onLoad(Player player, TriteInventoryContents triteInventoryContents);
+@ApiStatus.Internal
+@ApiStatus.NonExtendable
+public abstract class TriteMenuProvider {
 }
