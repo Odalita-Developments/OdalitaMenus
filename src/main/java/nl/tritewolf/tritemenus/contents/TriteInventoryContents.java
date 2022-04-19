@@ -6,7 +6,6 @@ import nl.tritewolf.tritemenus.items.TriteClickableItem;
 import nl.tritewolf.tritemenus.items.TriteDisplayItem;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
-import nl.tritewolf.tritemenus.items.buttons.TriteSearchItem;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,11 +25,6 @@ public class TriteInventoryContents {
     public void set(TriteSlotPos slotPos, TriteMenuItem item) {
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
-
-        if (item instanceof TriteSearchItem) {
-            TriteSearchItem triteSearchItem = (TriteSearchItem) item;
-            this.triteMenu.getSearchQueries().put(triteSearchItem.getId(), null);
-        }
     }
 
     public void set(int row, int column, TriteMenuItem item) {
