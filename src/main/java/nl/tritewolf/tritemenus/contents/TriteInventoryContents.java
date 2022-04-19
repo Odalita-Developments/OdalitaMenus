@@ -6,13 +6,15 @@ import nl.tritewolf.tritemenus.items.TriteClickableItem;
 import nl.tritewolf.tritemenus.items.TriteDisplayItem;
 import nl.tritewolf.tritemenus.items.TriteMenuItem;
 import nl.tritewolf.tritemenus.items.TriteUpdatableItem;
+import nl.tritewolf.tritemenus.iterators.TriteIterator;
+import nl.tritewolf.tritemenus.iterators.TriteIteratorType;
 import nl.tritewolf.tritemenus.menu.TriteMenuObject;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -20,7 +22,8 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class TriteInventoryContents {
 
-    protected final TriteMenuObject triteMenu; // Make protected to create the option to extend this class and add custom methods
+    protected final TriteMenuObject triteMenu; 
+    private final Map<String, TriteIterator> iterators = new HashMap<>();
 
     public void set(TriteSlotPos slotPos, TriteMenuItem item) {
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
@@ -206,6 +209,22 @@ public class TriteInventoryContents {
 
                 this.set(slotPos, item);
             }
+        }
+    }
+
+    public TriteIterator createIterator(String iterator, TriteIteratorType iteratorType, int startRow, int startColumn) {
+        TriteIterator value = new TriteIterator(this, iteratorType, startRow, startColumn, true);
+        iterators.put(iterator, value);
+        return value;
+    }
+
+    public void createSimpleIterator(TriteIteratorType iteratorType, int startRow, int startColumn, List<TriteMenuItem> menuItems, int... blacklisted) {
+        TriteIterator value = new TriteIterator(this, iteratorType, startRow, startColumn, true);
+        value.blacklist(blacklisted);
+
+        for (TriteMenuItem menuItem : menuItems) {
+            value.set(menuItem);
+            value.next();
         }
     }
 
