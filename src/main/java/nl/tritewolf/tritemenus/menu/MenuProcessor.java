@@ -58,11 +58,11 @@ public final class MenuProcessor {
 
         menuObject = new MenuObject(annotation.rows(), annotation.displayName());
 
-        MenuProvider menuProvider = this.menuContainer.getTriteMenus().get(clazz);
+        MenuProvider menuProvider = this.menuContainer.getMenuProviderByClass(clazz);
         if (menuProvider instanceof GlobalMenuProvider) {
-            GlobalMenuProvider globalMenuProvider = (GlobalMenuProvider) menuProvider;
+            GlobalMenuProvider triteGlobalMenuProvider = (GlobalMenuProvider) menuProvider;
 
-            globalMenuProvider.onLoad(new InventoryContents(menuObject));
+            triteGlobalMenuProvider.onLoad(new InventoryContents(menuObject));
             this.itemProcessor.initializeItems(menuObject);
 
             this.openInventory(player, menuObject);
@@ -83,7 +83,7 @@ public final class MenuProcessor {
 
         menuObject = new MenuObject(annotation.rows(), annotation.displayName());
 
-        MenuProvider menuProvider = this.menuContainer.getTriteMenus().get(clazz);
+        MenuProvider menuProvider = this.menuContainer.getMenuProviderByClass(clazz);
         if (menuProvider instanceof PlayerMenuProvider) {
             PlayerMenuProvider tritePlayerMenuProvider = (PlayerMenuProvider) menuProvider;
 

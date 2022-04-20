@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.menu;
 
-import lombok.Getter;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.exceptions.MissingInitializationsAnnotationException;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
@@ -8,7 +7,6 @@ import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 public final class MenuContainer {
 
     private final Map<Class<? extends MenuProvider>, MenuProvider> triteMenus = new HashMap<>();

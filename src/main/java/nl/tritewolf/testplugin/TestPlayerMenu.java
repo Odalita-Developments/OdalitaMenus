@@ -1,10 +1,5 @@
 package nl.tritewolf.testplugin;
 
-import nl.tritewolf.tritemenus.annotations.Menu;
-import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.items.DisplayItem;
-import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
-import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,10 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-@Menu(
-        rows = 4,
-        displayName = "Test menu"
-)
 public class TestPlayerMenu implements PlayerMenuProvider {
 
     int i = 0;

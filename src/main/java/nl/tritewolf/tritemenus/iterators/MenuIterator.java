@@ -11,12 +11,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
-public class MenuIterator {
+public final class MenuIterator {
 
     private final InventoryContents inventoryContents;
     private final Set<Integer> blacklist = new HashSet<>();
 
-    private MenuIteratorType iteratorType;
+    private MenuIteratorType menuIteratorType;
     private int row;
     private int column;
 
@@ -36,7 +36,7 @@ public class MenuIterator {
             if (!this.started) {
                 this.started = true;
             }
-            switch (iteratorType) {
+            switch (menuIteratorType) {
                 case VERTICAL:
                     column--;
 
@@ -71,7 +71,7 @@ public class MenuIterator {
                 this.started = true;
             }
 
-            switch (iteratorType) {
+            switch (menuIteratorType) {
                 case HORIZONTAL:
                     column = ++column % 9;
 

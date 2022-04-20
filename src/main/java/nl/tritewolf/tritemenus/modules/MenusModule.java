@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import nl.tritewolf.tritejection.module.TriteJectionModule;
 import nl.tritewolf.tritejection.multibinder.TriteJectionMultiBinder;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
-import nl.tritewolf.tritemenus.patterns.IteratorPatternContainer;
+import nl.tritewolf.patterns.IteratorPatternContainer;
 import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.annotations.AnnotationBinding;
 import nl.tritewolf.tritemenus.menu.MenuContainer;

@@ -2,8 +2,9 @@ package nl.tritewolf.tritemenus.annotations;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritejection.utils.types.TypeReporter;
-import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPatternContainer;
-import nl.tritewolf.tritemenus.patterns.IteratorPattern;
+import nl.tritewolf.patterns.IteratorPattern;
+import nl.tritewolf.patterns.IteratorPatternContainer;
+import nl.tritewolf.tritemenus.menu.MenuContainer;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 
 import java.lang.annotation.Annotation;
@@ -13,10 +14,10 @@ import java.util.List;
 public final class AnnotationBinding implements TypeReporter {
 
     @TriteJect
-    private TriteIteratorPatternContainer iteratorPatternContainer;
+    private IteratorPatternContainer iteratorPatternContainer;
 
     @TriteJect
-    private TriteMenuContainer triteMenuContainer;
+    private MenuContainer menuContainer;
 
     private final List<String> classNames = new ArrayList<>();
 
@@ -31,7 +32,7 @@ public final class AnnotationBinding implements TypeReporter {
 
                 Class<?> menuClass = Class.forName(className);
                 if (MenuProvider.class.isAssignableFrom(menuClass)) {
-                    this.triteMenuContainer.registerMenu((MenuProvider) menuClass.getDeclaredConstructor().newInstance());
+                    this.menuContainer.registerMenu((MenuProvider) menuClass.getDeclaredConstructor().newInstance());
                 }
             }
 
