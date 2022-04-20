@@ -245,7 +245,7 @@ public class InventoryContents {
         PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
         MenuPattern iteratorPatternByClass = patternContainer.getIteratorPatternByClass(clazz);
 
-        if (!(iteratorPatternByClass instanceof IteratorPattern)) {
+        if (iteratorPatternByClass == null) {
             //todo throw exception
             return;
         }
@@ -261,6 +261,10 @@ public class InventoryContents {
             if (i >= directionsPattern.size() || directionsPattern.get(i).getRow() > triteMenu.getRows()) break;
             set(directionsPattern.get(i), menuItems.get(i));
         }
+    }
+
+    public void registerPlaceableItemSlots(Integer... slots) {
+        this.triteMenu.setPlaceableItems(Arrays.asList(slots));
     }
 
     public String getSearchQuery(String id) {

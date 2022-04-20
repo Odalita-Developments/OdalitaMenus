@@ -7,7 +7,9 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -18,6 +20,7 @@ public final class MenuObject {
     private byte rows;
     private String displayName;
     private final MenuItem[][] contents;
+    private List<Integer> placeableItems = new ArrayList<>();
 
     private final Map<String, String> searchQueries = new HashMap<>();
 
