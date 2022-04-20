@@ -2,8 +2,9 @@ package nl.tritewolf.tritemenus.annotations;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritejection.utils.types.TypeReporter;
-import nl.tritewolf.patterns.IteratorPattern;
-import nl.tritewolf.patterns.IteratorPatternContainer;
+import nl.tritewolf.tritemenus.patterns.DirectionPattern;
+import nl.tritewolf.tritemenus.patterns.IteratorPattern;
+import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.menu.MenuContainer;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public final class AnnotationBinding implements TypeReporter {
 
     @TriteJect
-    private IteratorPatternContainer iteratorPatternContainer;
+    private PatternContainer patternContainer;
 
     @TriteJect
     private MenuContainer menuContainer;
@@ -41,7 +42,10 @@ public final class AnnotationBinding implements TypeReporter {
 
                 Class<?> menuClass = Class.forName(className);
                 if (IteratorPattern.class.isAssignableFrom(menuClass)) {
-                    this.iteratorPatternContainer.registerPattern((IteratorPattern) menuClass.getDeclaredConstructor().newInstance());
+                    this.patternContainer.registerIteratorPattern((IteratorPattern) menuClass.getDeclaredConstructor().newInstance());
+                }
+                if (DirectionPattern.class.isAssignableFrom(menuClass)) {
+                    this.patternContainer.registerDirectionsPattern((DirectionPattern) menuClass.getDeclaredConstructor().newInstance());
                 }
             }
 

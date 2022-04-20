@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import nl.tritewolf.tritejection.module.TriteJectionModule;
 import nl.tritewolf.tritejection.multibinder.TriteJectionMultiBinder;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
-import nl.tritewolf.patterns.IteratorPatternContainer;
+import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.annotations.AnnotationBinding;
 import nl.tritewolf.tritemenus.menu.MenuContainer;
@@ -29,7 +29,7 @@ public final class MenusModule extends TriteJectionModule {
         bind(MenuContainer.class).asEagerSingleton();
         bind(AnnotationBinding.class).asEagerSingleton();
         bind(MenuUpdateTask.class).asEagerSingleton();
-        bind(IteratorPatternContainer.class).asEagerSingleton();
+        bind(PatternContainer.class).asEagerSingleton();
 
         bindListeners(new InventoryListener());
     }

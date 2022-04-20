@@ -9,18 +9,17 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
-import nl.tritewolf.patterns.IteratorPattern;
-import nl.tritewolf.patterns.IteratorPatternContainer;
+import nl.tritewolf.tritemenus.patterns.DirectionPattern;
+import nl.tritewolf.tritemenus.patterns.IteratorPattern;
+import nl.tritewolf.tritemenus.patterns.MenuPattern;
+import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -233,20 +232,9 @@ public class InventoryContents {
         }
     }
 
-    public void createPatternIterator(IteratorPattern iteratorPattern, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
+    public void createPatternIterator(MenuPattern iteratorPattern, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
         MenuIterator value = new MenuIterator(this, menuIteratorType, 0, 0, true);
-        List<String> pattern = iteratorPattern.getPattern();
-
-        Character ignoredSymbol = iteratorPattern.ignoredSymbol();
-        if (ignoredSymbol != null && !ignoredSymbol.toString().isEmpty()) {
-            for (int row = 0; row < pattern.size(); row++) {
-                for (int column = 0; column < pattern.get(row).length(); column++) {
-                    if (pattern.get(row).charAt(column) == ignoredSymbol) {
-                        value.blacklist(SlotPos.of(row, column).getSlot());
-                    }
-                }
-            }
-        }
+        iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {
             value.next().set(menuItem);
@@ -254,15 +242,25 @@ public class InventoryContents {
     }
 
     public void createPatternIterator(Class<? extends IteratorPattern> clazz, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
-        IteratorPatternContainer iteratorPatternContainer = TriteMenus.getTriteMenus().getTriteJection(IteratorPatternContainer.class);
-        IteratorPattern iteratorPatternByClass = iteratorPatternContainer.getIteratorPatternByClass(clazz);
+        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        MenuPattern iteratorPatternByClass = patternContainer.getIteratorPatternByClass(clazz);
 
-        if (iteratorPatternByClass == null) {
+        if (!(iteratorPatternByClass instanceof IteratorPattern)) {
             //todo throw exception
             return;
         }
 
         createPatternIterator(iteratorPatternByClass, menuIteratorType, menuItems);
+    }
+
+    public void createDirectionsPatternIterator(Class<? extends DirectionPattern> clazz, List<MenuItem> menuItems) {
+        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        List<SlotPos> directionsPattern = patternContainer.getDirectionsPatternByClass(clazz);
+
+        for (int i = 0; i < menuItems.size(); i++) {
+            if (i >= directionsPattern.size() || directionsPattern.get(i).getRow() > triteMenu.getRows()) break;
+            set(directionsPattern.get(i), menuItems.get(i));
+        }
     }
 
     public String getSearchQuery(String id) {

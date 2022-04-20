@@ -1,10 +1,18 @@
 package nl.tritewolf.tritemenus.patterns;
 
-import java.util.List;
+import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.iterators.MenuIterator;
 
-public interface IteratorPattern {
+public interface IteratorPattern extends MenuPattern {
 
-    Character ignoredSymbol();
-
-    List<String> getPattern();
+    @Override
+    default void handle(MenuIterator menuIterator) {
+        for (int row = 0; row < getPattern().size(); row++) {
+            for (int column = 0; column < getPattern().get(row).length(); column++) {
+                if (getPattern().get(row).charAt(column) == '#') {
+                    menuIterator.blacklist(SlotPos.of(row, column).getSlot());
+                }
+            }
+        }
+    }
 }
