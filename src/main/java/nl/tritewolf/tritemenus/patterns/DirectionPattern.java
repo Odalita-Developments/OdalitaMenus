@@ -1,12 +1,14 @@
 package nl.tritewolf.tritemenus.patterns;
 
-import com.google.common.collect.Sets;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import org.apache.commons.lang.math.NumberUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeMap;
 
 public interface DirectionPattern extends MenuPattern {
 
@@ -16,53 +18,63 @@ public interface DirectionPattern extends MenuPattern {
 
     default List<SlotPos> getSlots() {
         TreeMap<Integer, SlotPos> slots = new TreeMap<>();
-        int lastIndex = 0;
-        for (int row = 0; row < getPattern().size(); row++) {
-            for (int column = 0; column < getPattern().get(row).length(); column++) {
-                if (lastIndex >= getPattern().get(row).length()) continue;
 
-                String string = getPattern().get(row).substring(lastIndex, lastIndex += 2);
-                if (string.equalsIgnoreCase("##")) continue;
+        for (int row = 0; row < getPattern().size(); row++) {
+            String patternLine = getPattern().get(row);
+            int lastIndex = 0;
+
+            for (int column = 0; column < patternLine.length(); column++) {
+                if (lastIndex >= patternLine.length()) continue;
+
+                String string = patternLine.substring(lastIndex, lastIndex += 2);
                 if (NumberUtils.isDigits(string)) {
                     slots.put(Integer.parseInt(string), SlotPos.of(row, column));
                 }
             }
-            lastIndex = 0;
         }
 
-        Collection<SlotPos> slotsNew = Sets.newCopyOnWriteArraySet(slots.values());
-        if (shouldContinuePattern()) {
-            if (menuIteratorType().equals(MenuIteratorType.HORIZONTAL)) {
-                SlotPos slotPos = slotsNew.stream().max(Comparator.comparing(SlotPos::getColumn)).orElse(null);
-                while (slotPos != null && slotPos.getColumn() < 9) {
-                    SlotPos lastAdded = null;
-                    for (SlotPos pos : slotsNew) {
-                        if (pos.getColumn() + slotPos.getColumn() + 1 >= 9) break;
+        if (!this.shouldContinuePattern() || this.menuIteratorType() == null) {
+            return new ArrayList<>(slots.values());
+        }
 
-                        SlotPos added = new SlotPos(pos.getRow(), pos.getColumn() + slotPos.getColumn() + 1);
-                        lastAdded = added;
+        List<SlotPos> newSlotPositions = new ArrayList<>(slots.values());
+        SlotPos highestPos = newSlotPositions.stream()
+                .max(Comparator.comparing(SlotPos::getColumn))
+                .orElse(null);
 
-                        slotsNew.add(added);
-                    }
-                    slotPos = lastAdded;
+        if (menuIteratorType().equals(MenuIteratorType.HORIZONTAL)) {
+            while (highestPos != null && highestPos.getColumn() < 9) {
+                SlotPos lastAdded = null;
+
+                for (SlotPos pos : newSlotPositions) {
+                    if (pos.getColumn() + highestPos.getColumn() + 1 >= 9) break;
+
+                    SlotPos added = new SlotPos(pos.getRow(), pos.getColumn() + highestPos.getColumn() + 1);
+                    lastAdded = added;
+
+                    newSlotPositions.add(added);
                 }
-            } else if (menuIteratorType().equals(MenuIteratorType.VERTICAL)) {
-                SlotPos slotPos = slotsNew.stream().max(Comparator.comparing(SlotPos::getRow)).orElse(null);
-                while (slotPos != null && slotPos.getRow() < 7) {
-                    SlotPos lastAdded = null;
-                    for (SlotPos pos : slotsNew) {
-                        if (pos.getRow() + slotPos.getRow() + 1 >= 6) break;
 
-                        SlotPos added = new SlotPos(pos.getRow() + slotPos.getRow() + 1, pos.getColumn());
-                        lastAdded = added;
+                highestPos = lastAdded;
+            }
+        } else if (menuIteratorType().equals(MenuIteratorType.VERTICAL)) {
+            while (highestPos != null && highestPos.getRow() < 6) {
+                SlotPos lastAdded = null;
 
-                        slotsNew.add(added);
-                    }
-                    slotPos = lastAdded;
+                for (SlotPos pos : newSlotPositions) {
+                    if (pos.getRow() + highestPos.getRow() + 1 >= 6) break;
+
+                    SlotPos added = new SlotPos(pos.getRow() + highestPos.getRow() + 1, pos.getColumn());
+                    lastAdded = added;
+
+                    newSlotPositions.add(added);
                 }
+
+                highestPos = lastAdded;
             }
         }
-        return new ArrayList<>(slotsNew);
+
+        return new ArrayList<>(newSlotPositions);
     }
 
     @Override
