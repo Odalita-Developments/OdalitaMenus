@@ -8,8 +8,10 @@ public interface IteratorPattern extends MenuPattern {
     @Override
     default void handle(MenuIterator menuIterator) {
         for (int row = 0; row < getPattern().size(); row++) {
-            for (int column = 0; column < getPattern().get(row).length(); column++) {
-                if (getPattern().get(row).charAt(column) == '#') {
+            String patternLine = getPattern().get(row);
+
+            for (int column = 0; column < patternLine.length(); column++) {
+                if (patternLine.charAt(column) == '#') {
                     menuIterator.blacklist(SlotPos.of(row, column).getSlot());
                 }
             }
