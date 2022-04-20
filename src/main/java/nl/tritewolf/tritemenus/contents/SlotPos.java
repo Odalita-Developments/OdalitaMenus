@@ -5,20 +5,20 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class TriteSlotPos {
+public final class SlotPos {
 
-    public static TriteSlotPos of(int row, int column) {
-        return new TriteSlotPos(row, column);
+    public static SlotPos of(int row, int column) {
+        return new SlotPos(row, column);
     }
 
-    public static TriteSlotPos of(int slot) {
-        return new TriteSlotPos(slot);
+    public static SlotPos of(int slot) {
+        return new SlotPos(slot);
     }
 
     private final int row;
     private final int column;
 
-    public TriteSlotPos(int slot) {
+    public SlotPos(int slot) {
         if (slot >= 0 && slot <= 8) {
             this.row = 0;
             this.column = slot;
@@ -49,8 +49,8 @@ public final class TriteSlotPos {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof TriteSlotPos) {
-            TriteSlotPos slotPos = (TriteSlotPos) object;
+        if (object instanceof SlotPos) {
+            SlotPos slotPos = (SlotPos) object;
             return slotPos.getRow() == this.row && slotPos.getColumn() == this.column;
         }
 

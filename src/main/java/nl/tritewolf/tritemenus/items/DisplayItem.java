@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-public final class TriteDisplayItem implements TriteMenuItem {
+public final class DisplayItem implements MenuItem {
 
-    public static TriteDisplayItem of(@NotNull ItemStack itemStack) {
-        return new TriteDisplayItem(itemStack);
+    public static DisplayItem of(@NotNull ItemStack itemStack) {
+        return new DisplayItem(itemStack);
     }
 
     private final @NotNull ItemStack itemStack;

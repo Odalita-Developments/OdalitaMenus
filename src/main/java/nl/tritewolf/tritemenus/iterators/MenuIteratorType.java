@@ -1,6 +1,6 @@
 package nl.tritewolf.tritemenus.iterators;
 
-public enum TriteIteratorType {
+public enum MenuIteratorType {
 
     HORIZONTAL,
     VERTICAL

@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-public final class TriteClickableItem implements TriteMenuItem {
+public final class ClickableItem implements MenuItem {
 
-    public static TriteClickableItem of(@NotNull ItemStack itemStack, @NotNull Consumer<InventoryClickEvent> clickHandler) {
-        return new TriteClickableItem(itemStack, clickHandler);
+    public static ClickableItem of(@NotNull ItemStack itemStack, @NotNull Consumer<InventoryClickEvent> clickHandler) {
+        return new ClickableItem(itemStack, clickHandler);
     }
 
     private final @NotNull ItemStack itemStack;

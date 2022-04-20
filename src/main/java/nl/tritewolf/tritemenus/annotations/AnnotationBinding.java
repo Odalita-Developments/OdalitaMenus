@@ -2,16 +2,15 @@ package nl.tritewolf.tritemenus.annotations;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritejection.utils.types.TypeReporter;
-import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPattern;
 import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPatternContainer;
-import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
-import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
+import nl.tritewolf.tritemenus.patterns.IteratorPattern;
+import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TriteAnnotationBinding implements TypeReporter {
+public final class AnnotationBinding implements TypeReporter {
 
     @TriteJect
     private TriteIteratorPatternContainer iteratorPatternContainer;
@@ -27,21 +26,21 @@ public final class TriteAnnotationBinding implements TypeReporter {
             if (this.classNames.contains(className)) return;
 
             boolean addClassName = false;
-            if (annotation.equals(TriteMenu.class)) {
+            if (annotation.equals(Menu.class)) {
                 addClassName = true;
 
                 Class<?> menuClass = Class.forName(className);
-                if (TriteMenuProvider.class.isAssignableFrom(menuClass)) {
-                    this.triteMenuContainer.registerMenu((TriteMenuProvider) menuClass.getDeclaredConstructor().newInstance());
+                if (MenuProvider.class.isAssignableFrom(menuClass)) {
+                    this.triteMenuContainer.registerMenu((MenuProvider) menuClass.getDeclaredConstructor().newInstance());
                 }
             }
 
-            if (annotation.equals(TritePattern.class)) {
+            if (annotation.equals(Pattern.class)) {
                 addClassName = true;
 
                 Class<?> menuClass = Class.forName(className);
-                if (TriteIteratorPattern.class.isAssignableFrom(menuClass)) {
-                    this.iteratorPatternContainer.registerPattern((TriteIteratorPattern) menuClass.getDeclaredConstructor().newInstance());
+                if (IteratorPattern.class.isAssignableFrom(menuClass)) {
+                    this.iteratorPatternContainer.registerPattern((IteratorPattern) menuClass.getDeclaredConstructor().newInstance());
                 }
             }
 
@@ -56,6 +55,6 @@ public final class TriteAnnotationBinding implements TypeReporter {
     @SuppressWarnings("unchecked")
     @Override
     public Class<? extends Annotation>[] annotations() {
-        return new Class[]{TriteMenu.class, TritePattern.class};
+        return new Class[]{Menu.class, Pattern.class};
     }
 }

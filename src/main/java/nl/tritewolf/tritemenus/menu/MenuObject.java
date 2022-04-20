@@ -2,8 +2,8 @@ package nl.tritewolf.tritemenus.menu;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.tritewolf.tritemenus.contents.TriteSlotPos;
-import nl.tritewolf.tritemenus.items.TriteMenuItem;
+import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
@@ -12,26 +12,26 @@ import java.util.Map;
 
 @Getter
 @Setter
-public final class TriteMenuObject {
+public final class MenuObject {
 
     private Inventory inventory;
     private byte rows;
     private String displayName;
-    private final TriteMenuItem[][] contents;
+    private final MenuItem[][] contents;
 
     private final Map<String, String> searchQueries = new HashMap<>();
 
     private boolean hasUpdatableItems = false;
 
-    public TriteMenuObject(byte rows, String displayName) {
-        this.contents = new TriteMenuItem[rows][9];
+    public MenuObject(byte rows, String displayName) {
+        this.contents = new MenuItem[rows][9];
 
         this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
         this.rows = rows;
         this.displayName = displayName;
     }
 
-    public TriteMenuItem getContent(TriteSlotPos triteSlotPos) {
-        return this.contents[triteSlotPos.getRow()][triteSlotPos.getColumn()];
+    public MenuItem getContent(SlotPos slotPos) {
+        return this.contents[slotPos.getRow()][slotPos.getColumn()];
     }
 }

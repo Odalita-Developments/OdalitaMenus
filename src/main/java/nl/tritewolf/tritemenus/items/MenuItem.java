@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public interface TriteMenuItem {
+public interface MenuItem {
 
     @NotNull
     ItemStack getItemStack();

@@ -1,33 +1,32 @@
 package nl.tritewolf.tritemenus.iterators;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import nl.tritewolf.tritemenus.contents.TriteInventoryContents;
-import nl.tritewolf.tritemenus.contents.TriteSlotPos;
-import nl.tritewolf.tritemenus.items.TriteMenuItem;
-import nl.tritewolf.tritemenus.menu.TriteMenuObject;
+import nl.tritewolf.tritemenus.contents.InventoryContents;
+import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.menu.MenuObject;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
-public final class TriteIterator {
+public class MenuIterator {
 
-    private final TriteInventoryContents inventoryContents;
+    private final InventoryContents inventoryContents;
     private final Set<Integer> blacklist = new HashSet<>();
 
-    private TriteIteratorType iteratorType;
+    private MenuIteratorType iteratorType;
     private int row;
     private int column;
 
     private boolean started = false;
 
-    public void set(TriteMenuItem menuItem) {
-        inventoryContents.set(TriteSlotPos.of(row, column), menuItem);
+    public void set(MenuItem menuItem) {
+        inventoryContents.set(SlotPos.of(row, column), menuItem);
     }
 
-    public TriteIterator previous() {
+    public MenuIterator previous() {
         if (this.row == 0 && this.column == 0) {
             this.started = true;
             return this;
@@ -57,11 +56,11 @@ public final class TriteIterator {
 
             }
         }
-        while (!canSet(TriteSlotPos.of(row, column)) && (row != 0 || column != 0));
+        while (!canSet(SlotPos.of(row, column)) && (row != 0 || column != 0));
         return this;
     }
 
-    public TriteIterator next() {
+    public MenuIterator next() {
         if (ended()) {
             this.started = true;
             return this;
@@ -86,7 +85,7 @@ public final class TriteIterator {
 
             }
         }
-        while (!canSet(TriteSlotPos.of(row, column)) && !ended());
+        while (!canSet(SlotPos.of(row, column)) && !ended());
         return this;
     }
 
@@ -103,9 +102,9 @@ public final class TriteIterator {
         return row == inventoryContents.getTriteMenu().getRows() - 1 && column == 9 - 1;
     }
 
-    public boolean canSet(TriteSlotPos slot) {
-        TriteMenuObject triteMenu = inventoryContents.getTriteMenu();
-        TriteMenuItem content = triteMenu.getContent(slot);
+    public boolean canSet(SlotPos slot) {
+        MenuObject triteMenu = inventoryContents.getTriteMenu();
+        MenuItem content = triteMenu.getContent(slot);
         return !blacklist.contains(slot.getSlot()) && content == null;
     }
 }

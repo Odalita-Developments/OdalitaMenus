@@ -10,37 +10,37 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @AllArgsConstructor
-public final class TriteUpdatableItem implements TriteMenuItem {
+public final class UpdatableItem implements MenuItem {
 
-    public static TriteUpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler, int updateTicks) {
-        return new TriteUpdatableItem(itemStackSupplier, clickHandler, updateTicks);
+    public static UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler, int updateTicks) {
+        return new UpdatableItem(itemStackSupplier, clickHandler, updateTicks);
     }
 
-    public static TriteUpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler) {
-        return new TriteUpdatableItem(itemStackSupplier, clickHandler);
+    public static UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler) {
+        return new UpdatableItem(itemStackSupplier, clickHandler);
     }
 
-    public static TriteUpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, int updateTicks) {
-        return new TriteUpdatableItem(itemStackSupplier, updateTicks);
+    public static UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, int updateTicks) {
+        return new UpdatableItem(itemStackSupplier, updateTicks);
     }
 
-    public static TriteUpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier) {
-        return new TriteUpdatableItem(itemStackSupplier);
+    public static UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier) {
+        return new UpdatableItem(itemStackSupplier);
     }
 
     private final @NotNull Supplier<ItemStack> itemStackSupplier;
     private final @Nullable Consumer<InventoryClickEvent> clickHandler;
     private final int updateTicks;
 
-    public TriteUpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler) {
+    public UpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler) {
         this(itemStackSupplier, clickHandler, 20); // 20 update ticks = 1 second
     }
 
-    public TriteUpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier, int updateTicks) {
+    public UpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier, int updateTicks) {
         this(itemStackSupplier, null, updateTicks);
     }
 
-    public TriteUpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier) {
+    public UpdatableItem(@NotNull Supplier<ItemStack> itemStackSupplier) {
         this(itemStackSupplier, null, 20); // 20 update ticks = 1 second
     }
 
