@@ -58,7 +58,7 @@ public final class TriteMenuProcessor {
 
         menuObject = new TriteMenuObject(annotation.rows(), annotation.displayName());
 
-        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getTriteMenus().get(clazz);
+        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getMenuProviderByClass(clazz);
         if (triteMenuProvider instanceof TriteGlobalMenuProvider) {
             TriteGlobalMenuProvider triteGlobalMenuProvider = (TriteGlobalMenuProvider) triteMenuProvider;
 
@@ -83,7 +83,7 @@ public final class TriteMenuProcessor {
 
         menuObject = new TriteMenuObject(annotation.rows(), annotation.displayName());
 
-        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getTriteMenus().get(clazz);
+        TriteMenuProvider triteMenuProvider = this.triteMenuContainer.getMenuProviderByClass(clazz);
         if (triteMenuProvider instanceof TritePlayerMenuProvider) {
             TritePlayerMenuProvider tritePlayerMenuProvider = (TritePlayerMenuProvider) triteMenuProvider;
 

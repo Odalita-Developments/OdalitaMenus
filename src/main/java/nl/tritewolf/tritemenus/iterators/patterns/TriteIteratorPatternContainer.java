@@ -1,19 +1,32 @@
 package nl.tritewolf.tritemenus.iterators.patterns;
 
+import nl.tritewolf.tritemenus.annotations.TritePattern;
+import nl.tritewolf.tritemenus.exceptions.MissingInitializationsAnnotationException;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class TriteIteratorPatternContainer {
+public final class TriteIteratorPatternContainer {
 
-    private final Map<Class<? extends TriteIteratorPattern>, TriteIteratorPattern> patterns = new HashMap<>();
+    private final Map<Class<? extends TriteIteratorPattern>, TriteIteratorPattern> tritePatterns = new HashMap<>();
 
-    public void addPattern(TriteIteratorPattern iteratorPattern) {
-        patterns.putIfAbsent(iteratorPattern.getClass(), iteratorPattern);
+    public void registerPattern(TriteIteratorPattern triteIteratorPattern) throws MissingInitializationsAnnotationException {
+        this.isPattern(triteIteratorPattern.getClass().isAnnotationPresent(TritePattern.class));
+        this.tritePatterns.putIfAbsent(triteIteratorPattern.getClass(), triteIteratorPattern);
     }
 
-    public TriteIteratorPattern getIteratorPatternByCass(Class<? extends TriteIteratorPattern> itClass) {
-        return patterns.getOrDefault(itClass, null);
+    public void unregisterPattern(TriteIteratorPattern triteIteratorPattern) throws MissingInitializationsAnnotationException {
+        isPattern(triteIteratorPattern.getClass().isAnnotationPresent(TritePattern.class));
+        this.tritePatterns.remove(triteIteratorPattern.getClass());
     }
 
+    public TriteIteratorPattern getIteratorPatternByClass(Class<? extends TriteIteratorPattern> clazz) {
+        return this.tritePatterns.get(clazz);
+    }
 
+    private void isPattern(boolean triteIteratorPattern) throws MissingInitializationsAnnotationException {
+        if (!triteIteratorPattern) {
+            throw new MissingInitializationsAnnotationException(TritePattern.class, "pattern");
+        }
+    }
 }

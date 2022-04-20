@@ -4,5 +4,4 @@ public enum TriteIteratorType {
 
     HORIZONTAL,
     VERTICAL
-
 }

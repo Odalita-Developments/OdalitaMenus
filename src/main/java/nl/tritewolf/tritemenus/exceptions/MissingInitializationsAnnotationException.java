@@ -1,8 +1,10 @@
 package nl.tritewolf.tritemenus.exceptions;
 
+import java.lang.annotation.Annotation;
+
 public final class MissingInitializationsAnnotationException extends Exception {
 
-    public MissingInitializationsAnnotationException() {
-        super("Failed to register menu to container because TriteMenu annotation is not present.");
+    public MissingInitializationsAnnotationException(Class<? extends Annotation> annotation, String type) {
+        super("Failed to register " + type + " to container because '" + annotation.getSimpleName() + "' annotation is not present.");
     }
 }

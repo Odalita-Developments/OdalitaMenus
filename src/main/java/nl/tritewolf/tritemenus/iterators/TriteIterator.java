@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
-public class TriteIterator {
+public final class TriteIterator {
 
     private final TriteInventoryContents inventoryContents;
     private final Set<Integer> blacklist = new HashSet<>();

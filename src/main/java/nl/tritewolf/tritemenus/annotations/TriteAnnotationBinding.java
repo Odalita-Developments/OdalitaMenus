@@ -2,8 +2,6 @@ package nl.tritewolf.tritemenus.annotations;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritejection.utils.types.TypeReporter;
-import nl.tritewolf.tritemenus.annotations.TriteMenu;
-import nl.tritewolf.tritemenus.annotations.TritePattern;
 import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPattern;
 import nl.tritewolf.tritemenus.iterators.patterns.TriteIteratorPatternContainer;
 import nl.tritewolf.tritemenus.menu.TriteMenuContainer;
@@ -26,21 +24,29 @@ public final class TriteAnnotationBinding implements TypeReporter {
     @Override
     public void reportTypeAnnotation(Class<? extends Annotation> annotation, String className) {
         try {
-            if (annotation.equals(TriteMenu.class) && !this.classNames.contains(className)) {
-                this.classNames.add(className);
+            if (this.classNames.contains(className)) return;
+
+            boolean addClassName = false;
+            if (annotation.equals(TriteMenu.class)) {
+                addClassName = true;
 
                 Class<?> menuClass = Class.forName(className);
                 if (TriteMenuProvider.class.isAssignableFrom(menuClass)) {
                     this.triteMenuContainer.registerMenu((TriteMenuProvider) menuClass.getDeclaredConstructor().newInstance());
                 }
-            } else if (annotation.equals(TritePattern.class) && !this.classNames.contains(className)) {
-                this.classNames.add(className);
+            }
+
+            if (annotation.equals(TritePattern.class)) {
+                addClassName = true;
 
                 Class<?> menuClass = Class.forName(className);
                 if (TriteIteratorPattern.class.isAssignableFrom(menuClass)) {
-                    this.iteratorPatternContainer.addPattern((TriteIteratorPattern) menuClass.getDeclaredConstructor().newInstance());
+                    this.iteratorPatternContainer.registerPattern((TriteIteratorPattern) menuClass.getDeclaredConstructor().newInstance());
                 }
+            }
 
+            if (addClassName) {
+                this.classNames.add(className);
             }
         } catch (Throwable t) {
             t.printStackTrace();

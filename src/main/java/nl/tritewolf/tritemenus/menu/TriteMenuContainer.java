@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.menu;
 
-import lombok.Getter;
 import nl.tritewolf.tritemenus.annotations.TriteMenu;
 import nl.tritewolf.tritemenus.exceptions.MissingInitializationsAnnotationException;
 import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
@@ -8,7 +7,6 @@ import nl.tritewolf.tritemenus.menu.providers.TriteMenuProvider;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 public final class TriteMenuContainer {
 
     private final Map<Class<? extends TriteMenuProvider>, TriteMenuProvider> triteMenus = new HashMap<>();
@@ -23,9 +21,13 @@ public final class TriteMenuContainer {
         this.triteMenus.remove(triteMenuProvider.getClass());
     }
 
+    public TriteMenuProvider getMenuProviderByClass(Class<? extends TriteMenuProvider> clazz) {
+        return this.triteMenus.get(clazz);
+    }
+
     private void isMenu(boolean triteMenuProvider) throws MissingInitializationsAnnotationException {
         if (!triteMenuProvider) {
-            throw new MissingInitializationsAnnotationException();
+            throw new MissingInitializationsAnnotationException(TriteMenu.class, "menu");
         }
     }
 }
