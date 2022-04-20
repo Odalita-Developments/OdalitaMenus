@@ -21,12 +21,10 @@ public class PatternContainer {
     }
 
     public IteratorPattern getIteratorPatternByClass(Class<? extends IteratorPattern> itClass) {
-        return patterns.getOrDefault(itClass, null);
+        return patterns.get(itClass);
     }
 
     public List<SlotPos> getDirectionsPatternByClass(Class<? extends DirectionPattern> itClass) {
-        return directionPatterns.getOrDefault(itClass, null);
+        return directionPatterns.get(itClass);
     }
-
-
 }

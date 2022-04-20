@@ -4,12 +4,10 @@ import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,15 @@ import java.util.List;
 )
 public class TestPlayerMenu implements PlayerMenuProvider {
 
-    int i = 0;
+    private final int test;
+
+    public TestPlayerMenu(int test) {
+        this.test = test;
+    }
+
+    public TestPlayerMenu() {
+        this(1);
+    }
 
     @Override
     public void onLoad(Player player, InventoryContents contents) {
@@ -38,7 +44,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
             System.out.println("works");
         });
 */
-//       contents.newTriteIterator(TriteIteratorType.HORIZONTAL, 1,1, () -> return)
+        //       contents.newTriteIterator(TriteIteratorType.HORIZONTAL, 1,1, () -> return)
 
         List<MenuItem> menu = new ArrayList<>();
 
@@ -47,7 +53,9 @@ public class TestPlayerMenu implements PlayerMenuProvider {
         }
         contents.createDirectionsPatternIterator(TestPattern3.class, menu);
 
-//        contents.fill(TriteDisplayItem.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
+        contents.setDisplay(49, new ItemBuilder(Material.BOOK, "TEST " + this.test).build());
+
+        //        contents.fill(TriteDisplayItem.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
     }
 
 

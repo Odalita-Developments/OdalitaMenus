@@ -13,7 +13,14 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         Player player = (Player) commandSender;
-        TestPlugin.getTriteMenus().getMenuProcessor().openMenu(TestPlayerMenu.class, player);
+
+        if (strings.length > 0 && strings[0].equalsIgnoreCase("test")) {
+            TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestPlayerMenu(44), player)
+                    .open();
+            return false;
+        }
+
+        TestPlugin.getTriteMenus().getMenuProcessor().openMenu(new TestPlayerMenu(), player);
         return false;
     }
 }

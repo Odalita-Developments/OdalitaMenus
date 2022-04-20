@@ -11,8 +11,12 @@ import nl.tritewolf.tritemenus.menu.providers.GlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -20,37 +24,28 @@ public final class MenuProcessor {
 
     @TriteJect
     @Getter(AccessLevel.NONE)
-    private MenuContainer menuContainer;
-    @TriteJect
-    @Getter(AccessLevel.NONE)
     private ItemProcessor itemProcessor;
-
-    private final Map<UUID, Map<Class<?>, MenuObject>> playerMenus = new HashMap<>();
-    private final Map<Class<?>, MenuObject> globalMenus = new HashMap<>();
 
     private final Map<UUID, MenuObject> openMenus = new ConcurrentHashMap<>();
 
-    public void openMenu(Class<? extends MenuProvider> clazz, Player player) {
-        this.openMenuBuilder(clazz, player)
+    public void openMenu(MenuProvider menuProvider, Player player) {
+        this.openMenuBuilder(menuProvider, player)
                 .open();
     }
 
-    public MenuOpener openMenuBuilder(Class<? extends MenuProvider> clazz, Player player) {
-        Menu menuAnnotation = clazz.getAnnotation(Menu.class);
-        return new MenuOpener(this, this.menuContainer, this.itemProcessor, player, clazz, menuAnnotation);
+    @Contract("_, _ -> new")
+    public @NotNull MenuOpener openMenuBuilder(MenuProvider menuProvider, Player player) {
+        return new MenuOpener(this, this.itemProcessor, player, menuProvider);
     }
 
     @AllArgsConstructor
     public static class MenuOpener {
 
         private final MenuProcessor processor;
-        private final MenuContainer menuContainer;
         private final ItemProcessor itemProcessor;
 
         private final Player player;
-        private final Class<? extends MenuProvider> providerClass;
-        private final Menu annotation;
-        private final List<Object> objects = new ArrayList<>();
+        private final MenuProvider menuProvider;
         private final Map<String, Integer> paginationPages = new HashMap<>();
 
         public MenuOpener paginationPages(Map<String, Integer> paginationPages) {
@@ -63,81 +58,48 @@ public final class MenuProcessor {
             return this;
         }
 
-        public MenuOpener objects(Object... objects) {
-            this.objects.addAll(Arrays.asList(objects));
-            return this;
-        }
-
-        public MenuOpener objects(List<Object> objects) {
-            this.objects.addAll(objects);
-            return this;
-        }
-
-        public MenuOpener object(Object object) {
-            this.objects.add(object);
-            return this;
-        }
-
         public void open() {
-            if (GlobalMenuProvider.class.isAssignableFrom(this.providerClass)) {
-                this.openGlobalMenu(this.player, this.providerClass, this.annotation);
+            if (this.menuProvider instanceof GlobalMenuProvider) {
+                this.openGlobalMenu(this.player, (GlobalMenuProvider) this.menuProvider);
                 return;
             }
 
-            if (PlayerMenuProvider.class.isAssignableFrom(this.providerClass)) {
-                this.openPlayerMenu(this.player, this.providerClass, this.annotation);
+            if (this.menuProvider instanceof PlayerMenuProvider) {
+                this.openPlayerMenu(this.player, (PlayerMenuProvider) this.menuProvider);
             }
         }
 
-        private void openGlobalMenu(Player player, Class<? extends MenuProvider> clazz, Menu annotation) {
-            MenuObject menuObject = this.processor.getGlobalMenus().get(clazz);
-            if (menuObject != null) {
-                this.openInventory(player, menuObject);
-                return;
-            }
+        private void openGlobalMenu(Player player, GlobalMenuProvider menuProvider) {
+            try {
+                Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
+                MenuObject menuObject = new MenuObject(annotation.rows(), annotation.displayName());
 
-            menuObject = new MenuObject(annotation.rows(), annotation.displayName());
-
-            MenuProvider menuProvider = this.menuContainer.getMenuProviderByClass(clazz);
-            if (menuProvider instanceof GlobalMenuProvider) {
-                GlobalMenuProvider triteGlobalMenuProvider = (GlobalMenuProvider) menuProvider;
-
-                triteGlobalMenuProvider.onLoad(new InventoryContents(menuObject));
+                menuProvider.onLoad(new InventoryContents(menuObject));
                 this.itemProcessor.initializeItems(menuObject);
 
                 this.openInventory(player, menuObject);
-
-                this.processor.getGlobalMenus().put(clazz, menuObject);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                // TODO idk, something else
             }
         }
 
-        private void openPlayerMenu(Player player, Class<? extends MenuProvider> clazz, Menu annotation) {
-            Map<Class<?>, MenuObject> registeredPlayerMenus = this.processor.getPlayerMenus().get(player.getUniqueId());
+        private void openPlayerMenu(Player player, PlayerMenuProvider menuProvider) {
+            try {
+                Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
+                MenuObject menuObject = new MenuObject(annotation.rows(), annotation.displayName());
 
-            MenuObject menuObject;
-            if (registeredPlayerMenus != null && !registeredPlayerMenus.isEmpty()) {
-                menuObject = registeredPlayerMenus.get(clazz);
-                this.openInventory(player, menuObject);
-                return;
-            }
-
-            menuObject = new MenuObject(annotation.rows(), annotation.displayName());
-
-            MenuProvider menuProvider = this.menuContainer.getMenuProviderByClass(clazz);
-            if (menuProvider instanceof PlayerMenuProvider) {
-                PlayerMenuProvider tritePlayerMenuProvider = (PlayerMenuProvider) menuProvider;
-
-                tritePlayerMenuProvider.onLoad(player, new InventoryContents(menuObject));
+                menuProvider.onLoad(player, new InventoryContents(menuObject));
                 this.itemProcessor.initializeItems(menuObject);
 
                 this.openInventory(player, menuObject);
-
-                this.processor.getPlayerMenus().computeIfAbsent(player.getUniqueId(), (uuid) -> new HashMap<>())
-                        .put(clazz, menuObject);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                // TODO idk, something else
             }
         }
 
-        private void openInventory(Player player, MenuObject menuObject) {
+        private void openInventory(@NotNull Player player, @NotNull MenuObject menuObject) {
             player.openInventory(menuObject.getInventory());
             this.processor.getOpenMenus().put(player.getUniqueId(), menuObject);
         }

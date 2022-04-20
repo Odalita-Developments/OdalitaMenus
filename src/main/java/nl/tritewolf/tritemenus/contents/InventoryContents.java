@@ -3,21 +3,23 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.contents.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
+import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
-import nl.tritewolf.tritemenus.menu.MenuObject;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -263,8 +265,14 @@ public class InventoryContents {
         }
     }
 
-    public void registerPlaceableItemSlots(Integer... slots) {
+    public void registerPlaceableItemSlots(@NotNull Integer... slots) {
         this.triteMenu.setPlaceableItems(Arrays.asList(slots));
+    }
+
+    public Pagination pagination(String id, int itemsPerPage, Supplier<List<Supplier<MenuItem>>> itemsSupplier) {
+        Pagination pagination = new Pagination(this, itemsPerPage, itemsSupplier.get());
+        this.triteMenu.getPaginationMap().put(id, pagination);
+        return pagination;
     }
 
     public String getSearchQuery(String id) {
