@@ -27,9 +27,11 @@ public final class MenuObject {
 
     private final MenuItem[][] contents;
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
+    private final Map<String, String> searchQueries = new HashMap<>();
 
     private List<Integer> placeableItems = new ArrayList<>();
-    private final Map<String, String> searchQueries = new HashMap<>();
+    private PlaceableItemsCloseAction placeableItemsCloseAction;
+
 
     private volatile boolean hasUpdatableItems = false;
 

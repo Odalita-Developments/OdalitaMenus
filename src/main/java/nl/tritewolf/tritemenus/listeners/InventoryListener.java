@@ -5,6 +5,7 @@ import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +80,14 @@ public final class InventoryListener implements Listener {
 
         Inventory inventory = event.getInventory();
         if (openMenuObject.getInventory().equals(inventory)) {
+            if (openMenuObject.getPlaceableItemsCloseAction().equals(PlaceableItemsCloseAction.RETURN)) {
+                List<Integer> placeableItems = openMenuObject.getPlaceableItems();
+                placeableItems.forEach(integer -> {
+                    ItemStack item = inventory.getItem(integer);
+                    if (item != null) player.getInventory().addItem(item);
+                });
+            }
+
             this.menuProcessor.getOpenMenus().remove(player.getUniqueId());
         }
     }

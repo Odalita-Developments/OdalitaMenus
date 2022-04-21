@@ -11,12 +11,14 @@ import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -179,8 +181,7 @@ public class InventoryContents {
     }
 
     public void fillRow(int row, MenuItem item) {
-        if (row >= this.triteMenu.getContents().length)
-            return;
+        if (row >= this.triteMenu.getContents().length) return;
 
         for (int column = 0; column < 9; column++) {
             this.set(SlotPos.of(row, column), item);
@@ -200,8 +201,7 @@ public class InventoryContents {
     public void fillRectangle(int fromRow, int fromColumn, int toRow, int toColumn, MenuItem item) {
         for (int row = fromRow; row <= toRow; row++) {
             for (int column = fromColumn; column <= toColumn; column++) {
-                if (row != fromRow && row != toRow && column != fromColumn && column != toColumn)
-                    continue;
+                if (row != fromRow && row != toRow && column != fromColumn && column != toColumn) continue;
 
                 this.set(SlotPos.of(row, column), item);
             }
@@ -275,6 +275,15 @@ public class InventoryContents {
 
     public void registerPlaceableItemSlots(@NotNull Integer... slots) {
         this.triteMenu.setPlaceableItems(Arrays.asList(slots));
+    }
+
+    public void removePlaceableItems(PlaceableItemsCloseAction action) {
+        this.triteMenu.setPlaceableItemsCloseAction(action);
+    }
+
+    public void closeInventory(Player player, PlaceableItemsCloseAction action) {
+        this.triteMenu.setPlaceableItemsCloseAction(action);
+        player.closeInventory();
     }
 
     public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator, List<Supplier<MenuItem>> items) {
