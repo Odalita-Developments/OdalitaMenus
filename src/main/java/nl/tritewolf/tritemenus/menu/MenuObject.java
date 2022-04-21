@@ -6,29 +6,35 @@ import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.contents.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @Setter
 public final class MenuObject {
 
+    private final Player player;
+
     private Inventory inventory;
     private byte rows;
     private String displayName;
+
     private final MenuItem[][] contents;
-    private final Map<String, Pagination> paginationMap = new HashMap<>();
+    private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
 
     private List<Integer> placeableItems = new ArrayList<>();
     private final Map<String, String> searchQueries = new HashMap<>();
 
-    private boolean hasUpdatableItems = false;
+    private volatile boolean hasUpdatableItems = false;
 
-    public MenuObject(byte rows, String displayName) {
+    public MenuObject(Player player, byte rows, String displayName) {
+        this.player = player;
         this.contents = new MenuItem[rows][9];
 
         this.inventory = Bukkit.createInventory(null, rows * 9, displayName);

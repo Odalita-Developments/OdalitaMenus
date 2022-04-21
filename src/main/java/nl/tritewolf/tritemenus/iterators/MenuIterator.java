@@ -22,8 +22,14 @@ public final class MenuIterator {
 
     private boolean started = false;
 
-    public void set(MenuItem menuItem) {
+    public MenuIterator set(MenuItem menuItem) {
         inventoryContents.set(SlotPos.of(row, column), menuItem);
+        return this;
+    }
+
+    public synchronized MenuIterator setAsync(MenuItem menuItem) {
+        this.inventoryContents.setAsync(SlotPos.of(this.row, this.column), menuItem);
+        return this;
     }
 
     public MenuIterator previous() {
@@ -90,12 +96,14 @@ public final class MenuIterator {
     }
 
 
-    public void blacklist(int slot) {
+    public MenuIterator blacklist(int slot) {
         this.blacklist.add(slot);
+        return this;
     }
 
-    public void blacklist(int... slots) {
+    public MenuIterator blacklist(int... slots) {
         Arrays.stream(slots).forEach(blacklist::add);
+        return this;
     }
 
     public boolean ended() {

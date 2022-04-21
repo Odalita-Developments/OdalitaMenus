@@ -15,6 +15,7 @@ import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +36,13 @@ public class InventoryContents {
     public void set(SlotPos slotPos, MenuItem item) {
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
+    }
+
+    public synchronized void setAsync(SlotPos slotPos, MenuItem item) {
+        this.triteMenu.setHasUpdatableItems(item.isUpdatable());
+        this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
+
+        InventoryUtils.updateItem(this.triteMenu.getPlayer(), slotPos.getSlot(), item.getItemStack(), this.triteMenu.getInventory());
     }
 
     public void set(int row, int column, MenuItem item) {
@@ -269,10 +277,18 @@ public class InventoryContents {
         this.triteMenu.setPlaceableItems(Arrays.asList(slots));
     }
 
-    public Pagination pagination(String id, int itemsPerPage, Supplier<List<Supplier<MenuItem>>> itemsSupplier) {
-        Pagination pagination = new Pagination(this, itemsPerPage, itemsSupplier.get());
+    public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator, List<Supplier<MenuItem>> items) {
+        Pagination pagination = new Pagination(this, itemsPerPage, iterator, items);
         this.triteMenu.getPaginationMap().put(id, pagination);
         return pagination;
+    }
+
+    public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator, Supplier<List<Supplier<MenuItem>>> itemsSupplier) {
+        return this.pagination(id, itemsPerPage, iterator, itemsSupplier.get());
+    }
+
+    public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator) {
+        return this.pagination(id, itemsPerPage, iterator, new ArrayList<>());
     }
 
     public String getSearchQuery(String id) {

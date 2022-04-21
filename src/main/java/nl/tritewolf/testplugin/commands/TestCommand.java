@@ -16,6 +16,7 @@ public class TestCommand implements CommandExecutor {
 
         if (strings.length > 0 && strings[0].equalsIgnoreCase("test")) {
             TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestPlayerMenu(44), player)
+                    .pagination("TEST", 1)
                     .open();
             return false;
         }

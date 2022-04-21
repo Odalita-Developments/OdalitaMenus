@@ -6,6 +6,7 @@ import lombok.Getter;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
+import nl.tritewolf.tritemenus.contents.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.GlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
@@ -72,9 +73,17 @@ public final class MenuProcessor {
         private void openGlobalMenu(Player player, GlobalMenuProvider menuProvider) {
             try {
                 Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
-                MenuObject menuObject = new MenuObject(annotation.rows(), annotation.displayName());
+                MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
 
                 menuProvider.onLoad(new InventoryContents(menuObject));
+
+                this.paginationPages.forEach((id, page) -> {
+                    Pagination pagination = menuObject.getPaginationMap().get(id);
+                    if (pagination == null) return;
+
+                    pagination.setCurrentPage(page);
+                });
+
                 this.itemProcessor.initializeItems(menuObject);
 
                 this.openInventory(player, menuObject);
@@ -87,9 +96,17 @@ public final class MenuProcessor {
         private void openPlayerMenu(Player player, PlayerMenuProvider menuProvider) {
             try {
                 Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
-                MenuObject menuObject = new MenuObject(annotation.rows(), annotation.displayName());
+                MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
 
                 menuProvider.onLoad(player, new InventoryContents(menuObject));
+
+                this.paginationPages.forEach((id, page) -> {
+                    Pagination pagination = menuObject.getPaginationMap().get(id);
+                    if (pagination == null) return;
+
+                    pagination.setCurrentPage(page);
+                });
+
                 this.itemProcessor.initializeItems(menuObject);
 
                 this.openInventory(player, menuObject);
