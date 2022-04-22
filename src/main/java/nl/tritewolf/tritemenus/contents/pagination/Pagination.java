@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.contents.pagination;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
@@ -10,10 +11,12 @@ import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import java.util.List;
 import java.util.function.Supplier;
 
+@Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Pagination {
 
+    private final String id;
     private final InventoryContents contents;
     private final int itemsPerPage;
     private final MenuIterator iterator;
@@ -21,25 +24,17 @@ public class Pagination {
 
     @Setter
     private int currentPage = 0;
+    @Setter
+    private volatile boolean initialized = false;
 
     public boolean isOnPage(int index) {
         return index >= this.currentPage * this.itemsPerPage && index < (this.currentPage + 1) * this.itemsPerPage;
     }
 
     public List<Supplier<MenuItem>> getItemsOnPage() {
-        int from = this.currentPage * this.itemsPerPage;
-        int to = (this.currentPage + 1) * this.itemsPerPage;
-
-        if (from < 0 || to > this.items.size()) {
-            return this.items.subList(
-                    0,
-                    this.items.size() - 1
-            );
-        }
-
         return this.items.subList(
-                this.currentPage * this.itemsPerPage,
-                (this.currentPage + 1) * this.itemsPerPage
+                Math.max(0, this.currentPage * this.itemsPerPage),
+                Math.min(this.items.size() - 1, (this.currentPage + 1) * this.itemsPerPage)
         );
     }
 
@@ -52,10 +47,9 @@ public class Pagination {
         return this.currentPage >= pageCount - 1;
     }
 
-    public Pagination addItem(Supplier<MenuItem> menuItemSupplier) {
-        if (this.isOnPage(this.items.size())) {
-            System.out.println("SET ITEM ASYNC");
-            this.iterator.setAsync(menuItemSupplier.get()).next();
+    public synchronized Pagination addItem(Supplier<MenuItem> menuItemSupplier) {
+        if (this.initialized && this.isOnPage(this.items.size())) {
+            this.iterator.setAsync(menuItemSupplier.get(), false).next();
         }
 
         this.items.add(menuItemSupplier);

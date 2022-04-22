@@ -22,14 +22,22 @@ public final class MenuIterator {
 
     private boolean started = false;
 
+    public MenuIterator set(MenuItem menuItem, boolean override) {
+        this.inventoryContents.set(SlotPos.of(this.row, this.column), menuItem, override);
+        return this;
+    }
+
     public MenuIterator set(MenuItem menuItem) {
-        inventoryContents.set(SlotPos.of(row, column), menuItem);
+        return this.set(menuItem, true);
+    }
+
+    public synchronized MenuIterator setAsync(MenuItem menuItem, boolean override) {
+        this.inventoryContents.setAsync(SlotPos.of(this.row, this.column), menuItem, override);
         return this;
     }
 
     public synchronized MenuIterator setAsync(MenuItem menuItem) {
-        this.inventoryContents.setAsync(SlotPos.of(this.row, this.column), menuItem);
-        return this;
+        return this.setAsync(menuItem, true);
     }
 
     public MenuIterator previous() {
@@ -42,27 +50,27 @@ public final class MenuIterator {
             if (!this.started) {
                 this.started = true;
             }
-            switch (menuIteratorType) {
+            switch (this.menuIteratorType) {
                 case VERTICAL:
-                    column--;
+                    this.column--;
 
-                    if (column == 0) {
-                        column = 9 - 1;
-                        row--;
+                    if (this.column == 0) {
+                        this.column = 9 - 1;
+                        this.row--;
                     }
                     break;
                 case HORIZONTAL:
-                    row--;
+                    this.row--;
 
-                    if (row == 0) {
-                        row = inventoryContents.getTriteMenu().getRows() - 1;
-                        column--;
+                    if (this.row == 0) {
+                        this.row = this.inventoryContents.getTriteMenu().getRows() - 1;
+                        this.column--;
                     }
                     break;
 
             }
         }
-        while (!canSet(SlotPos.of(row, column)) && (row != 0 || column != 0));
+        while (!canSet(SlotPos.of(this.row, this.column)) && (this.row != 0 || this.column != 0));
         return this;
     }
 
@@ -77,21 +85,21 @@ public final class MenuIterator {
                 this.started = true;
             }
 
-            switch (menuIteratorType) {
+            switch (this.menuIteratorType) {
                 case HORIZONTAL:
-                    column = ++column % 9;
+                    this.column = ++this.column % 9;
 
-                    if (column == 0) row++;
+                    if (this.column == 0) row++;
                     break;
                 case VERTICAL:
-                    row = ++row % inventoryContents.getTriteMenu().getRows();
+                    this.row = ++this.row % this.inventoryContents.getTriteMenu().getRows();
 
-                    if (row == 0) column++;
+                    if (this.row == 0) this.column++;
                     break;
 
             }
         }
-        while (!canSet(SlotPos.of(row, column)) && !ended());
+        while (!canSet(SlotPos.of(this.row, this.column)) && !ended());
         return this;
     }
 
@@ -102,17 +110,21 @@ public final class MenuIterator {
     }
 
     public MenuIterator blacklist(int... slots) {
-        Arrays.stream(slots).forEach(blacklist::add);
+        Arrays.stream(slots).forEach(this.blacklist::add);
         return this;
     }
 
     public boolean ended() {
-        return row == inventoryContents.getTriteMenu().getRows() - 1 && column == 9 - 1;
+        return this.row == this.inventoryContents.getTriteMenu().getRows() - 1 && this.column == 9 - 1;
     }
 
     public boolean canSet(SlotPos slot) {
-        MenuObject triteMenu = inventoryContents.getTriteMenu();
+        MenuObject triteMenu = this.inventoryContents.getTriteMenu();
         MenuItem content = triteMenu.getContent(slot);
-        return !blacklist.contains(slot.getSlot()) && content == null;
+        return !this.blacklist.contains(slot.getSlot()) && content == null;
+    }
+
+    public SlotPos getSlot() {
+        return SlotPos.of(this.row, this.column);
     }
 }

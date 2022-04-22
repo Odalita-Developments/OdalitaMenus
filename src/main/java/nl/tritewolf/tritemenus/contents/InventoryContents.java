@@ -36,11 +36,23 @@ public class InventoryContents {
     private final Map<String, MenuIterator> iterators = new HashMap<>();
 
     public void set(SlotPos slotPos, MenuItem item) {
+        this.set(slotPos, item, true);
+    }
+
+    public void set(SlotPos slotPos, MenuItem item, boolean override) {
+        if (!override && this.triteMenu.getContent(slotPos) != null) return;
+
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
     }
 
     public synchronized void setAsync(SlotPos slotPos, MenuItem item) {
+        this.setAsync(slotPos, item, true);
+    }
+
+    public synchronized void setAsync(SlotPos slotPos, MenuItem item, boolean override) {
+        if (!override && this.triteMenu.getContent(slotPos) != null) return;
+
         this.triteMenu.setHasUpdatableItems(item.isUpdatable());
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
 
@@ -287,7 +299,7 @@ public class InventoryContents {
     }
 
     public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator, List<Supplier<MenuItem>> items) {
-        Pagination pagination = new Pagination(this, itemsPerPage, iterator, items);
+        Pagination pagination = new Pagination(id, this, itemsPerPage, iterator, items);
         this.triteMenu.getPaginationMap().put(id, pagination);
         return pagination;
     }
