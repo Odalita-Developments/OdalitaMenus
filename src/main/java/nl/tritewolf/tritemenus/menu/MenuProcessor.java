@@ -6,7 +6,7 @@ import lombok.Getter;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.contents.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.GlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;

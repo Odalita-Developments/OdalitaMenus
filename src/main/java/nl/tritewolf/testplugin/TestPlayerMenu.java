@@ -2,13 +2,14 @@ package nl.tritewolf.testplugin;
 
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.contents.pagination.Pagination;
-import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.items.DisplayItem;
+import nl.tritewolf.tritemenus.items.buttons.NextItem;
+import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -19,7 +20,6 @@ import org.bukkit.entity.Player;
 public class TestPlayerMenu implements PlayerMenuProvider {
 
     private final int test;
-    private int test2;
 
     public TestPlayerMenu(int test) {
         this.test = test;
@@ -31,15 +31,16 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
     @Override
     public void onLoad(Player player, InventoryContents contents) {
-        Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(contents, MenuIteratorType.HORIZONTAL, 1, 1, true)
+        Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(contents, true, MenuIteratorType.HORIZONTAL, 1, 1, true)
                 .blacklist(17, 18));
 
         for (int i = 0; i < 22; i++) {
             int finalI = i;
-            Bukkit.getScheduler().runTaskLaterAsynchronously(TestPlugin.getPlugin(TestPlugin.class), () -> {
-                pagination.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEATHER, "TEST PAGINATION ITEM: " + (++test2)).build(), (event) -> System.out.println("CLICKED ON " + finalI), 40));
-            }, 20 + (i * 20));
+            pagination.addItem(() -> DisplayItem.of(new ItemBuilder(Material.LEATHER, "TEST PAGINATION ITEM: " + finalI).build()));
         }
+
+        contents.set(45, PreviousItem.of(this, pagination));
+        contents.set(53, NextItem.of(this, pagination));
 
        /* contents.setClickable(0, Material.DIAMOND, event -> {
             System.out.println("CLicked");

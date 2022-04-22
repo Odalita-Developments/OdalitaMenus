@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.menu;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
-import nl.tritewolf.tritemenus.contents.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

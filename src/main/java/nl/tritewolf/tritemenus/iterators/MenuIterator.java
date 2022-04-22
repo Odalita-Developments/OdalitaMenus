@@ -15,29 +15,39 @@ public final class MenuIterator {
 
     private final InventoryContents inventoryContents;
     private final Set<Integer> blacklist = new HashSet<>();
+    private final boolean override;
 
     private MenuIteratorType menuIteratorType;
+
+    private final int startRow;
+    private final int startColumn;
+
     private int row;
     private int column;
 
     private boolean started = false;
 
-    public MenuIterator set(MenuItem menuItem, boolean override) {
-        this.inventoryContents.set(SlotPos.of(this.row, this.column), menuItem, override);
-        return this;
+    public MenuIterator(InventoryContents inventoryContents, boolean override, MenuIteratorType menuIteratorType, int startRow, int startColumn, boolean started) {
+        this.inventoryContents = inventoryContents;
+        this.override = override;
+        this.menuIteratorType = menuIteratorType;
+        this.startRow = startRow;
+        this.startColumn = startColumn;
+
+        this.row = startRow;
+        this.column = startColumn;
+
+        this.started = started;
     }
 
     public MenuIterator set(MenuItem menuItem) {
-        return this.set(menuItem, true);
-    }
-
-    public synchronized MenuIterator setAsync(MenuItem menuItem, boolean override) {
-        this.inventoryContents.setAsync(SlotPos.of(this.row, this.column), menuItem, override);
+        this.inventoryContents.set(SlotPos.of(this.row, this.column), menuItem);
         return this;
     }
 
     public synchronized MenuIterator setAsync(MenuItem menuItem) {
-        return this.setAsync(menuItem, true);
+        this.inventoryContents.setAsync(SlotPos.of(this.row, this.column), menuItem);
+        return this;
     }
 
     public MenuIterator previous() {
@@ -103,7 +113,6 @@ public final class MenuIterator {
         return this;
     }
 
-
     public MenuIterator blacklist(int slot) {
         this.blacklist.add(slot);
         return this;
@@ -119,12 +128,22 @@ public final class MenuIterator {
     }
 
     public boolean canSet(SlotPos slot) {
+        if (this.override) {
+            return !this.blacklist.contains(slot.getSlot());
+        }
+
         MenuObject triteMenu = this.inventoryContents.getTriteMenu();
         MenuItem content = triteMenu.getContent(slot);
         return !this.blacklist.contains(slot.getSlot()) && content == null;
     }
 
-    public SlotPos getSlot() {
+    public MenuIterator reset() {
+        this.row = this.startRow;
+        this.column = this.startColumn;
+        return this;
+    }
+
+    public SlotPos getSlotPos() {
         return SlotPos.of(this.row, this.column);
     }
 }

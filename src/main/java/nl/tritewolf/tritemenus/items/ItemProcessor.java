@@ -1,7 +1,7 @@
 package nl.tritewolf.tritemenus.items;
 
 import nl.tritewolf.tritemenus.contents.SlotPos;
-import nl.tritewolf.tritemenus.contents.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import org.bukkit.inventory.Inventory;
 
@@ -21,7 +21,7 @@ public final class ItemProcessor {
                 MenuItem menuItem = item.get();
                 if (menuItem == null) continue;
 
-                int slot = pagination.getIterator().getSlot().getSlot();
+                int slot = pagination.getIterator().getSlotPos().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
                 inventory.setItem(slot, menuItem.getItemStack());

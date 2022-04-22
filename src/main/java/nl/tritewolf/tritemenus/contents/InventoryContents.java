@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
-import nl.tritewolf.tritemenus.contents.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
@@ -246,13 +246,13 @@ public class InventoryContents {
     }
 
     public MenuIterator createIterator(String iterator, MenuIteratorType menuIteratorType, int startRow, int startColumn) {
-        MenuIterator value = new MenuIterator(this, menuIteratorType, startRow, startColumn, true);
+        MenuIterator value = new MenuIterator(this, false, menuIteratorType, startRow, startColumn, true);
         iterators.put(iterator, value);
         return value;
     }
 
     public void createSimpleIterator(MenuIteratorType menuIteratorType, int startRow, int startColumn, List<MenuItem> menuItems, int... blacklisted) {
-        MenuIterator value = new MenuIterator(this, menuIteratorType, startRow, startColumn, true);
+        MenuIterator value = new MenuIterator(this, false, menuIteratorType, startRow, startColumn, true);
         value.blacklist(blacklisted);
 
         for (MenuItem menuItem : menuItems) {
@@ -261,7 +261,7 @@ public class InventoryContents {
     }
 
     public void createPatternIterator(MenuPattern iteratorPattern, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
-        MenuIterator value = new MenuIterator(this, menuIteratorType, 0, 0, true);
+        MenuIterator value = new MenuIterator(this, false, menuIteratorType, 0, 0, true);
         iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {

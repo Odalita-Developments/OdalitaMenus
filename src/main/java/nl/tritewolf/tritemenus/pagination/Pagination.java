@@ -1,4 +1,4 @@
-package nl.tritewolf.tritemenus.contents.pagination;
+package nl.tritewolf.tritemenus.pagination;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,7 +54,7 @@ public class Pagination {
 
     public synchronized Pagination addItem(Supplier<MenuItem> menuItemSupplier) {
         if (this.initialized && this.isOnPage(this.items.size())) {
-            this.iterator.setAsync(menuItemSupplier.get(), false).next();
+            this.iterator.setAsync(menuItemSupplier.get()).next();
         }
 
         this.items.add(menuItemSupplier);
