@@ -80,7 +80,9 @@ public final class InventoryListener implements Listener {
 
         Inventory inventory = event.getInventory();
         if (openMenuObject.getInventory().equals(inventory)) {
-            if (openMenuObject.getPlaceableItemsCloseAction().equals(PlaceableItemsCloseAction.RETURN)) {
+            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuObject.getPlaceableItemsCloseAction();
+
+            if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
                 List<Integer> placeableItems = openMenuObject.getPlaceableItems();
                 placeableItems.forEach(integer -> {
                     ItemStack item = inventory.getItem(integer);
