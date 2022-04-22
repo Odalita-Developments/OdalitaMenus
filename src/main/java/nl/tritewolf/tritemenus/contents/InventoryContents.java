@@ -42,7 +42,10 @@ public class InventoryContents {
     public void set(SlotPos slotPos, MenuItem item, boolean override) {
         if (!override && this.triteMenu.getContent(slotPos) != null) return;
 
-        this.triteMenu.setHasUpdatableItems(item.isUpdatable());
+        if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
+            this.triteMenu.setHasUpdatableItems(true);
+        }
+
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
     }
 
@@ -53,7 +56,10 @@ public class InventoryContents {
     public synchronized void setAsync(SlotPos slotPos, MenuItem item, boolean override) {
         if (!override && this.triteMenu.getContent(slotPos) != null) return;
 
-        this.triteMenu.setHasUpdatableItems(item.isUpdatable());
+        if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
+            this.triteMenu.setHasUpdatableItems(true);
+        }
+
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
 
         InventoryUtils.updateItem(this.triteMenu.getPlayer(), slotPos.getSlot(), item.getItemStack(), this.triteMenu.getInventory());

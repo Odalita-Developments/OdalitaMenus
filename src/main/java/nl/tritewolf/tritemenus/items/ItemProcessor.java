@@ -26,9 +26,9 @@ public final class ItemProcessor {
 
                 inventory.setItem(slot, menuItem.getItemStack());
                 pagination.getIterator().next();
-
-                pagination.setInitialized(true);
             }
+
+            pagination.setInitialized(true);
         }
 
         for (int row = 0; row < contents.length; row++) {

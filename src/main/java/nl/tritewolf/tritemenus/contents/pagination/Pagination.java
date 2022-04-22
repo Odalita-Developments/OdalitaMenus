@@ -8,6 +8,7 @@ import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -32,9 +33,13 @@ public class Pagination {
     }
 
     public List<Supplier<MenuItem>> getItemsOnPage() {
+        if (this.items.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         return this.items.subList(
                 Math.max(0, this.currentPage * this.itemsPerPage),
-                Math.min(this.items.size() - 1, (this.currentPage + 1) * this.itemsPerPage)
+                Math.min(this.items.size(), (this.currentPage + 1) * this.itemsPerPage)
         );
     }
 
