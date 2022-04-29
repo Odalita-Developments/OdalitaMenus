@@ -3,6 +3,8 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.items.buttons.NextItem;
+import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
@@ -44,6 +46,16 @@ public class InventoryContents {
 
         if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
             this.triteMenu.setHasUpdatableItems(true);
+        }
+        if (item instanceof PreviousItem) {
+            triteMenu.setPreviousItem((PreviousItem) item);
+            triteMenu.getPreviousItem().setSlot(slotPos);
+        }
+
+        if (item instanceof NextItem) {
+            triteMenu.setNextItem((NextItem) item);
+            triteMenu.getNextItem().setSlot(slotPos);
+
         }
 
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
@@ -304,6 +316,7 @@ public class InventoryContents {
         player.closeInventory();
     }
 
+
     public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator, List<Supplier<MenuItem>> items) {
         Pagination pagination = new Pagination(id, this, itemsPerPage, iterator, items);
         this.triteMenu.getPaginationMap().put(id, pagination);
@@ -315,7 +328,9 @@ public class InventoryContents {
     }
 
     public Pagination pagination(String id, int itemsPerPage, MenuIterator iterator) {
-        return this.pagination(id, itemsPerPage, iterator, new ArrayList<>());
+        Pagination pagination = new Pagination(id, this, itemsPerPage, iterator);
+        this.triteMenu.getPaginationMap().put(id, pagination);
+        return pagination;
     }
 
     public String getSearchQuery(String id) {

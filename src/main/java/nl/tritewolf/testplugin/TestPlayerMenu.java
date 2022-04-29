@@ -1,9 +1,10 @@
 package nl.tritewolf.testplugin;
 
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
+import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.items.buttons.NextItem;
 import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
@@ -11,11 +12,12 @@ import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Menu(
         rows = 6,
@@ -36,11 +38,12 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     @Override
     public void onLoad(Player player, InventoryContents contents) {
         Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(MenuIteratorType.HORIZONTAL, contents, 1, 1)
-                .blacklist(17, 18));
-
-        for (int i = 0; i < 22; i++) {
+                .blacklist(17, 18).setOverride(true));
+        for (int i = 0; i < 50; i++) {
             int finalI = i;
-            pagination.addItem(() -> DisplayItem.of(new ItemBuilder(Material.LEATHER, "TEST PAGINATION ITEM: " + finalI).build()));
+            Bukkit.getScheduler().runTaskTimerAsynchronously(JavaPlugin.getPlugin(TestPlugin.class), () -> {
+                pagination.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEATHER, "TEST PAGINATION ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(9999)).build()));
+            }, 0, 2 * 20);
         }
 
         contents.set(45, PreviousItem.of(this, pagination));

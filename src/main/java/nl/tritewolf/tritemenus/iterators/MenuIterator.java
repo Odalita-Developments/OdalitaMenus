@@ -71,6 +71,11 @@ public class MenuIterator {
         return this;
     }
 
+    public MenuIterator setOverride(Boolean override) {
+        this.override = override;
+        return this;
+    }
+
     public boolean hasNext() {
         if (items.isEmpty()) init(this.menuIteratorType);
         return items.get((index + 1)) != null;

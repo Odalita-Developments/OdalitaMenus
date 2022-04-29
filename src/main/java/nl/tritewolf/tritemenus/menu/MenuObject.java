@@ -3,8 +3,10 @@ package nl.tritewolf.tritemenus.menu;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
-import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.items.buttons.NextItem;
+import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -29,9 +31,13 @@ public final class MenuObject {
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
     private final Map<String, String> searchQueries = new HashMap<>();
 
+    private PreviousItem previousItem;
+    private NextItem nextItem;
+
     private List<Integer> placeableItems = new ArrayList<>();
     private PlaceableItemsCloseAction placeableItemsCloseAction;
 
+    private int slot;
 
     private volatile boolean hasUpdatableItems = false;
 
