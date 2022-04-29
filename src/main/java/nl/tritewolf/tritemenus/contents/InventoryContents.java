@@ -3,12 +3,12 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
-import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
@@ -246,26 +246,26 @@ public class InventoryContents {
     }
 
     public MenuIterator createIterator(String iterator, MenuIteratorType menuIteratorType, int startRow, int startColumn) {
-        MenuIterator value = new MenuIterator(this, false, menuIteratorType, startRow, startColumn, true);
-        iterators.put(iterator, value);
-        return value;
+        MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
+        iterators.put(iterator, menuIterator);
+        return menuIterator;
     }
 
     public void createSimpleIterator(MenuIteratorType menuIteratorType, int startRow, int startColumn, List<MenuItem> menuItems, int... blacklisted) {
-        MenuIterator value = new MenuIterator(this, false, menuIteratorType, startRow, startColumn, true);
-        value.blacklist(blacklisted);
+        MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
+        menuIterator.blacklist(blacklisted);
 
         for (MenuItem menuItem : menuItems) {
-            value.next().set(menuItem);
+            menuIterator.setNext(menuItem);
         }
     }
 
     public void createPatternIterator(MenuPattern iteratorPattern, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
-        MenuIterator value = new MenuIterator(this, false, menuIteratorType, 0, 0, true);
+        MenuIterator value = new MenuIterator(menuIteratorType, this, 0, 0);
         iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {
-            value.next().set(menuItem);
+            value.setNext(menuItem);
         }
     }
 

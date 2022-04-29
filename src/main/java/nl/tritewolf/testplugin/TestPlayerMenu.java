@@ -2,16 +2,20 @@ package nl.tritewolf.testplugin;
 
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.buttons.NextItem;
 import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Menu(
         rows = 6,
@@ -31,7 +35,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
     @Override
     public void onLoad(Player player, InventoryContents contents) {
-        Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(contents, true, MenuIteratorType.HORIZONTAL, 1, 1, true)
+        Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(MenuIteratorType.HORIZONTAL, contents, 1, 1)
                 .blacklist(17, 18));
 
         for (int i = 0; i < 22; i++) {
@@ -56,16 +60,15 @@ public class TestPlayerMenu implements PlayerMenuProvider {
             System.out.println("works");
         });
 */
-        //       contents.newTriteIterator(TriteIteratorType.HORIZONTAL, 1,1, () -> return)
 
-        //        List<MenuItem> menu = new ArrayList<>();
-        //
-        //        for (int j = 0; j < 30; j++) {
-        //            menu.add(new DisplayItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, "Plek " + j).build()));
-        //        }
-        //        contents.createDirectionsPatternIterator(TestPattern3.class, menu);
+//        List<MenuItem> menu = new ArrayList<>();
+//
+//        for (int j = 0; j < 30; j++) {
+//            menu.add(new DisplayItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, "Plek " + j).build()));
+//        }
+//        contents.createSimpleIterator(MenuIteratorType.VERTICAL, 0, 0, menu);
 
-        contents.setDisplay(49, new ItemBuilder(Material.BOOK, "TEST " + this.test).build());
+//        contents.setDisplay(49, new ItemBuilder(Material.BOOK, "TEST " + this.test).build());
 
         //        contents.fill(TriteDisplayItem.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
     }

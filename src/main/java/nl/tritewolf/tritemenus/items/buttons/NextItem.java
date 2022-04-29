@@ -105,8 +105,8 @@ public class NextItem implements MenuItem {
                 MenuItem menuItem = itemSupplier.get();
                 if (menuItem == null) continue;
 
-                iterator.set(menuItem);
-                int slot = iterator.getSlotPos().getSlot();
+                iterator.setNext(menuItem);
+                int slot = iterator.getSlot();
 
                 menuObject.getInventory().setItem(slot, menuItem.getItemStack());
 

@@ -37,9 +37,12 @@ public class Pagination {
             return new ArrayList<>();
         }
 
+        System.out.println(currentPage);
+        int startIndex = Math.max(0, this.currentPage * this.itemsPerPage);
+        int endIndex = Math.min(this.items.size(), (this.currentPage + 1) * this.itemsPerPage);
         return this.items.subList(
-                Math.max(0, this.currentPage * this.itemsPerPage),
-                Math.min(this.items.size(), (this.currentPage + 1) * this.itemsPerPage)
+                Math.min(startIndex, endIndex),
+                endIndex
         );
     }
 
@@ -54,7 +57,7 @@ public class Pagination {
 
     public synchronized Pagination addItem(Supplier<MenuItem> menuItemSupplier) {
         if (this.initialized && this.isOnPage(this.items.size())) {
-            this.iterator.setAsync(menuItemSupplier.get()).next();
+            this.iterator.setNextAsync(menuItemSupplier.get()).next();
         }
 
         this.items.add(menuItemSupplier);

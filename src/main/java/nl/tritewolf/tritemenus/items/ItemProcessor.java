@@ -21,7 +21,7 @@ public final class ItemProcessor {
                 MenuItem menuItem = item.get();
                 if (menuItem == null) continue;
 
-                int slot = pagination.getIterator().getSlotPos().getSlot();
+                int slot = pagination.getIterator().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
                 inventory.setItem(slot, menuItem.getItemStack());

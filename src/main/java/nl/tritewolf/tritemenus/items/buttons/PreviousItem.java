@@ -106,7 +106,7 @@ public class PreviousItem implements MenuItem {
                 if (menuItem == null) continue;
 
                 iterator.set(menuItem);
-                int slot = iterator.getSlotPos().getSlot();
+                int slot = iterator.getSlot();
 
                 menuObject.getInventory().setItem(slot, menuItem.getItemStack());
 
