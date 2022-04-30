@@ -50,32 +50,6 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
         contents.setPageSwitchUpdateItem(45, PreviousItem.of(this, pagination));
         contents.setPageSwitchUpdateItem(53, NextItem.of(this, pagination));
-
-       /* contents.setClickable(0, Material.DIAMOND, event -> {
-            System.out.println("CLicked");
-            player.getInventory().addItem(new ItemBuilder(Material.DIAMOND).build());
-        });
-
-        contents.setDisplay(1, Material.STONE);
-
-        contents.setUpdatable(2, () -> {
-            i++;
-            return new ItemBuilder(Material.STONE).setDisplayName("NUMBER -> " + i + "").build();
-        }, event -> {
-            System.out.println("works");
-        });
-*/
-
-//        List<MenuItem> menu = new ArrayList<>();
-//
-//        for (int j = 0; j < 30; j++) {
-//            menu.add(new DisplayItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, "Plek " + j).build()));
-//        }
-//        contents.createSimpleIterator(MenuIteratorType.VERTICAL, 0, 0, menu);
-
-//        contents.setDisplay(49, new ItemBuilder(Material.BOOK, "TEST " + this.test).build());
-
-        //        contents.fill(TriteDisplayItem.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
     }
 
 
