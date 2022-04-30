@@ -56,11 +56,6 @@ public class PreviousItem implements MenuItem {
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
 
-        if (!this.showOnFirstPage && pagination.isFirst()) {
-            this.itemStack = new ItemStack(Material.AIR);
-            return;
-        }
-
         this.itemStack = itemStack;
     }
 
@@ -68,11 +63,6 @@ public class PreviousItem implements MenuItem {
         this.provider = provider;
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
-
-        if (!this.showOnFirstPage && pagination.isFirst()) {
-            this.itemStack = new ItemStack(Material.AIR);
-            return;
-        }
 
         this.itemStack = new ItemStack(Material.ARROW);
         ItemMeta itemMeta = this.itemStack.getItemMeta();
@@ -91,6 +81,9 @@ public class PreviousItem implements MenuItem {
 
     @Override
     public @NotNull ItemStack getItemStack() {
+        if (!this.showOnFirstPage && pagination.isFirst()) {
+            return new ItemStack(Material.AIR);
+        }
         return this.itemStack;
     }
 
@@ -100,21 +93,7 @@ public class PreviousItem implements MenuItem {
             if (!(event.getWhoClicked() instanceof Player)) return;
             if (this.pagination.isFirst()) return;
 
-            pagination.previousPage(() -> {
-                if (showOnFirstPage || !this.pagination.isFirst()) return;
-                MenuObject triteMenu = pagination.getContents().getTriteMenu();
-                Inventory inventory = triteMenu.getInventory();
-
-                int slot = event.getSlot();
-                ItemStack itemStack = new ItemStack(Material.AIR);
-
-                pagination.getContents().set(slot, new DisplayItem(itemStack));
-                InventoryUtils.updateItem((Player) event.getWhoClicked(), slot, itemStack, inventory);
-
-                int slotNextItem = triteMenu.getNextItem().getSlot().getSlot();
-                pagination.getContents().set(slotNextItem, new NextItem(this.provider, this.pagination));
-                InventoryUtils.updateItem((Player) event.getWhoClicked(), slotNextItem, triteMenu.getNextItem().getItemStack(), inventory);
-            });
+            pagination.previousPage();
         };
     }
 }

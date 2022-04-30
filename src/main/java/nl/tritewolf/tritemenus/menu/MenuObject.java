@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Getter
 @Setter
@@ -31,9 +33,7 @@ public final class MenuObject {
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
     private final Map<String, String> searchQueries = new HashMap<>();
 
-    private PreviousItem previousItem;
-    private NextItem nextItem;
-
+    private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = new HashMap<>();
     private List<Integer> placeableItems = new ArrayList<>();
     private PlaceableItemsCloseAction placeableItemsCloseAction;
 

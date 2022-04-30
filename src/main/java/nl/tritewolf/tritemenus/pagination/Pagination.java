@@ -8,6 +8,7 @@ import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import nl.tritewolf.tritemenus.utils.callback.Callback;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -56,8 +57,7 @@ public class Pagination {
     }
 
     public boolean isLast() {
-        System.out.println(currentPage + " / " + (itemIndex.size() - 1));
-        return this.currentPage >= (itemIndex.size() - 1);
+        return itemIndex.get(currentPage + 1) == null;
     }
 
     public Supplier<MenuItem>[] getItemsOnPage() {
@@ -77,6 +77,17 @@ public class Pagination {
         Supplier<MenuItem>[] items = this.itemIndex.computeIfAbsent(pageIndex, integer -> new Supplier[itemsPerPage]);
         items[index] = menuItemSupplier;
         index++;
+
+        if (this.itemIndex.get(currentPage + 1) != null) {
+            MenuObject menuObject = contents.getTriteMenu();
+            Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = menuObject.getPageSwitchUpdateItems();
+
+            pageSwitchUpdateItems.forEach((slot, item) -> {
+                this.contents.set(slot, item.get());
+                InventoryUtils.updateItem(menuObject.getPlayer(), slot, item.get().getItemStack(), menuObject.getInventory());
+            });
+        }
+
         return this;
     }
 
@@ -108,15 +119,18 @@ public class Pagination {
         MenuIterator iterator = this.iterator.reset();
 
         Supplier<MenuItem>[] itemsOnPage = getItemsOnPage();
+        List<Integer> reusableItems = new ArrayList<>();
         for (Supplier<MenuItem> menuItemSupplier : itemsOnPage) {
 
             if (menuItemSupplier == null) {
                 int slot = iterator.getSlot();
+                reusableItems.add(slot);
                 iterator.setNext(new DisplayItem(new ItemStack(Material.AIR)));
 
                 menuObject.getInventory().setItem(slot, new ItemStack(Material.AIR));
                 continue;
             }
+
 
             MenuItem menuItem = menuItemSupplier.get();
             int slot = iterator.getSlot();
@@ -124,6 +138,13 @@ public class Pagination {
 
             menuObject.getInventory().setItem(slot, menuItem.getItemStack());
         }
+        reusableItems.forEach(iterator::addReusableSlot);
+
+        Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = this.contents.getTriteMenu().getPageSwitchUpdateItems();
+        pageSwitchUpdateItems.forEach((slot, item) -> {
+            this.contents.set(slot, item.get());
+            InventoryUtils.updateItem(menuObject.getPlayer(), slot, item.get().getItemStack(), menuObject.getInventory());
+        });
 
         callback.callback();
     }

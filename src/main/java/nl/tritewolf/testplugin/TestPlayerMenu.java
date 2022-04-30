@@ -39,15 +39,17 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     public void onLoad(Player player, InventoryContents contents) {
         Pagination pagination = contents.pagination("TEST", 14, new MenuIterator(MenuIteratorType.HORIZONTAL, contents, 1, 1)
                 .blacklist(17, 18).setOverride(true));
+
         for (int i = 0; i < 50; i++) {
             int finalI = i;
-            Bukkit.getScheduler().runTaskTimerAsynchronously(JavaPlugin.getPlugin(TestPlugin.class), () -> {
-                pagination.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEATHER, "TEST PAGINATION ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(9999)).build()));
-            }, 0, 2 * 20);
+            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(TestPlugin.class), () -> {
+                pagination.addItem(() -> DisplayItem.of(new ItemBuilder(Material.LEATHER, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
+            }, i * 20);
+
         }
 
-        contents.set(45, PreviousItem.of(this, pagination));
-        contents.set(53, NextItem.of(this, pagination));
+        contents.setPageSwitchUpdateItem(45, PreviousItem.of(this, pagination));
+        contents.setPageSwitchUpdateItem(53, NextItem.of(this, pagination));
 
        /* contents.setClickable(0, Material.DIAMOND, event -> {
             System.out.println("CLicked");

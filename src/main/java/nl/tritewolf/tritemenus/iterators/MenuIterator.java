@@ -16,6 +16,7 @@ import java.util.*;
 @Setter
 public class MenuIterator {
 
+    private final List<Integer> canStillUse = new ArrayList<>();
     private final List<Integer> items = new ArrayList<>();
     private final Set<Integer> blacklist = new HashSet<>();
 
@@ -44,6 +45,11 @@ public class MenuIterator {
                 verticalInitialization();
                 break;
         }
+    }
+
+    public MenuIterator addReusableSlot(int slot){
+        this.canStillUse.add(slot);
+        return this;
     }
 
     public MenuIterator set(MenuItem menuItem) {
@@ -78,27 +84,56 @@ public class MenuIterator {
 
     public boolean hasNext() {
         if (items.isEmpty()) init(this.menuIteratorType);
+
+        Iterator<Integer> iterator = canStillUse.iterator();
+        if (iterator.hasNext()) return true;
+
         return items.get((index + 1)) != null;
     }
 
     public Integer getSlot() {
         if (items.isEmpty()) init(this.menuIteratorType);
+
+        Iterator<Integer> iterator = canStillUse.iterator();
+        if (iterator.hasNext()) {
+            Integer slot = iterator.next();
+            iterator.remove();
+            return slot;
+        }
+
         return items.get(index);
     }
 
     public Integer next() {
         if (items.isEmpty()) init(this.menuIteratorType);
+
+        Iterator<Integer> iterator = canStillUse.iterator();
+        if (iterator.hasNext()) {
+            Integer slot = iterator.next();
+            iterator.remove();
+            return slot;
+        }
+
         return items.get(index++);
     }
 
     public Integer previous() {
         if (items.isEmpty()) init(this.menuIteratorType);
         if (index == 0) return 0;
+
+        Iterator<Integer> iterator = canStillUse.iterator();
+        if (iterator.hasNext()) {
+            Integer slot = iterator.next();
+            iterator.remove();
+            return slot;
+        }
+
         return items.get(--index);
     }
 
     public MenuIterator reset() {
         index = 0;
+        canStillUse.clear();
         return this;
     }
 

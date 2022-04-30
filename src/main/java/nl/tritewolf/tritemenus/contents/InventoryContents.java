@@ -47,16 +47,6 @@ public class InventoryContents {
         if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
             this.triteMenu.setHasUpdatableItems(true);
         }
-        if (item instanceof PreviousItem) {
-            triteMenu.setPreviousItem((PreviousItem) item);
-            triteMenu.getPreviousItem().setSlot(slotPos);
-        }
-
-        if (item instanceof NextItem) {
-            triteMenu.setNextItem((NextItem) item);
-            triteMenu.getNextItem().setSlot(slotPos);
-
-        }
 
         this.triteMenu.getContents()[slotPos.getRow()][slotPos.getColumn()] = item;
     }
@@ -83,6 +73,11 @@ public class InventoryContents {
 
     public void set(int slot, MenuItem item) {
         this.set(SlotPos.of(slot), item);
+    }
+
+    public void setPageSwitchUpdateItem(int slot, MenuItem menuItem) {
+        this.triteMenu.getPageSwitchUpdateItems().put(slot, () -> menuItem);
+        set(SlotPos.of(slot), menuItem, true);
     }
 
     public void setClickable(SlotPos slotPos, ItemStack itemStack, Consumer<InventoryClickEvent> event) {
