@@ -56,6 +56,8 @@ public final class InventoryListener implements Listener {
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player.getUniqueId());
+        if (openMenuObject == null) return;
+
         List<Integer> placeableItems = openMenuObject.getPlaceableItems();
 
         if (event.getView().getTopInventory().equals(openMenuObject.getInventory())) {

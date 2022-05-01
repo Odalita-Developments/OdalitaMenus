@@ -47,7 +47,7 @@ public class MenuIterator {
         }
     }
 
-    public MenuIterator addReusableSlot(int slot){
+    public MenuIterator addReusableSlot(int slot) {
         this.canStillUse.add(slot);
         return this;
     }
@@ -87,8 +87,7 @@ public class MenuIterator {
 
         Iterator<Integer> iterator = canStillUse.iterator();
         if (iterator.hasNext()) return true;
-
-        return items.get((index + 1)) != null;
+        return items.size() > (index + 1);
     }
 
     public Integer getSlot() {

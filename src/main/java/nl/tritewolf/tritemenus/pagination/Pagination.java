@@ -127,7 +127,7 @@ public class Pagination {
                 reusableItems.add(slot);
                 iterator.setNext(new DisplayItem(new ItemStack(Material.AIR)));
 
-                menuObject.getInventory().setItem(slot, new ItemStack(Material.AIR));
+                InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
                 continue;
             }
 
@@ -136,7 +136,8 @@ public class Pagination {
             int slot = iterator.getSlot();
             iterator.setNext(menuItem);
 
-            menuObject.getInventory().setItem(slot, menuItem.getItemStack());
+            InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItem.getItemStack(), menuObject.getInventory());
+
         }
         reusableItems.forEach(iterator::addReusableSlot);
 
