@@ -19,28 +19,10 @@ public final class SlotPos {
     private final int column;
 
     public SlotPos(int slot) {
-        if (slot >= 0 && slot <= 8) {
-            this.row = 0;
-            this.column = slot;
-        } else if (slot >= 9 && slot <= 17) {
-            this.row = 1;
-            this.column = slot - 9;
-        } else if (slot >= 18 && slot <= 26) {
-            this.row = 2;
-            this.column = slot - 18;
-        } else if (slot >= 27 && slot <= 35) {
-            this.row = 3;
-            this.column = slot - 27;
-        } else if (slot >= 36 && slot <= 44) {
-            this.row = 4;
-            this.column = slot - 36;
-        } else if (slot >= 45 && slot <= 53) {
-            this.row = 5;
-            this.column = slot - 45;
-        } else {
-            this.row = 0;
-            this.column = 0;
-        }
+        slot = Math.max(Math.min(53, slot), 0); // Make sure slot is 0 or higher and lower or equal to 53
+
+        this.row = slot / 9;
+        this.column = slot - (9 * this.row);
     }
 
     public int getSlot() {
