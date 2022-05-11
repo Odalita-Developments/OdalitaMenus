@@ -267,8 +267,8 @@ public class InventoryContents {
         }
     }
 
-    public void createPatternIterator(MenuPattern iteratorPattern, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
-        MenuIterator value = new MenuIterator(menuIteratorType, this, 0, 0);
+    public void createPatternIterator(MenuPattern iteratorPattern, List<MenuItem> menuItems) {
+        MenuIterator value = new MenuIterator(MenuIteratorType.PATTERN, this, 0, 0);
         iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {
@@ -276,7 +276,7 @@ public class InventoryContents {
         }
     }
 
-    public void createPatternIterator(Class<? extends IteratorPattern> clazz, MenuIteratorType menuIteratorType, List<MenuItem> menuItems) {
+    public void createPatternIterator(Class<? extends IteratorPattern> clazz, List<MenuItem> menuItems) {
         PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
         MenuPattern iteratorPatternByClass = patternContainer.getIteratorPatternByClass(clazz);
 
@@ -285,7 +285,7 @@ public class InventoryContents {
             return;
         }
 
-        createPatternIterator(iteratorPatternByClass, menuIteratorType, menuItems);
+        createPatternIterator(iteratorPatternByClass, menuItems);
     }
 
     public void createDirectionsPatternIterator(Class<? extends DirectionPattern> clazz, List<MenuItem> menuItems) {
