@@ -42,8 +42,8 @@ public class Scrollable {
         this.showYAxis = showYAxis;
         this.showXAxis = showXAxis;
 
-        this.yIndex = iterator.getColumn();
-        this.xIndex = iterator.getRow();
+        this.yIndex = iterator.getRow();
+        this.xIndex = iterator.getColumn();
     }
 
     public synchronized Scrollable addItem(Supplier<MenuItem> menuItem) {
@@ -58,78 +58,107 @@ public class Scrollable {
         int index = this.getIndex(this.xIndex, this.yIndex);
         this.items.put(index, menuItem);
 
-        if (index <= this.showXAxis * this.showYAxis) {
-            this.contents.setAsync(slotPos, menuItem.get());
+        SlotPos slot = SlotPos.of(this.xIndex, this.yIndex);
+
+        if (slot.getSlot() <= Math.max(this.iterator.getColumn() + this.showXAxis, 8) * Math.max(this.iterator.getRow() + this.showYAxis, 5)) {
+            this.contents.setAsync(slot, menuItem.get());
         }
 
-        if (this.iterator.getMenuIteratorType() == MenuIteratorType.HORIZONTAL && this.yIndex <= this.showYAxis) {
-            ++this.yIndex;
-        }
+        if (this.iterator.getMenuIteratorType() == MenuIteratorType.HORIZONTAL) {
+            if (this.xIndex >= this.showXAxis) {
+                ++this.yIndex;
+                this.xIndex = this.iterator.getColumn();
 
-        if (this.iterator.getMenuIteratorType() == MenuIteratorType.VERTICAL && this.xIndex <= this.showXAxis) {
+                return this;
+            }
+
             ++this.xIndex;
+        }
+
+        if (this.iterator.getMenuIteratorType() == MenuIteratorType.VERTICAL) {
+            if (this.yIndex <= this.showYAxis) {
+                ++this.xIndex;
+                this.yIndex = this.iterator.getRow();
+
+                return this;
+            }
+
+            ++this.yIndex;
         }
 
         return this;
     }
 
+    public int lastYAxis() {
+        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis);
+    }
+
+    public int lastXAxis() {
+        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis);
+    }
 
     public Scrollable nextYAxis() {
-        return this.openYAxis(++this.currentYAxis);
+        return this.openYAxis(this.currentYAxis + 1);
     }
 
     public Scrollable previousYAxis() {
-        return this.openYAxis(--this.currentYAxis);
+        return this.openYAxis(this.currentYAxis - 1);
     }
 
     public Scrollable nextXAxis() {
-        return this.openXAxis(++this.currentXAxis);
+        return this.openXAxis(this.currentXAxis + 1);
     }
 
     public Scrollable previousXAxis() {
-        return this.openXAxis(--this.currentXAxis);
+        return this.openXAxis(this.currentXAxis - 1);
     }
 
     public Scrollable openYAxis(int newYAxis) {
+        newYAxis = Math.max(0, Math.min(newYAxis, this.lastYAxis()));
+
         MenuObject menuObject = this.contents.getTriteMenu();
 
         for (int y = newYAxis; y < newYAxis + this.showYAxis; y++) {
             for (int x = this.iterator.getColumn(); x < this.iterator.getColumn() + this.showXAxis; x++) {
                 int index = this.getIndex(x, y);
-                int slot = SlotPos.of(x, this.iterator.getRow() + (y - newYAxis)).getSlot();
+                int slot = SlotPos.of(this.iterator.getRow() + (y - newYAxis), x).getSlot();
 
-                Supplier<MenuItem> menuItemSupplier = this.items.get(index);
-                if (menuItemSupplier == null) {
-                    InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
-                    continue;
-                }
-
-                InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItemSupplier.get().getItemStack(), menuObject.getInventory());
+                this.updateItem(menuObject, slot, index);
             }
         }
+
+        this.currentYAxis = newYAxis;
 
         return this;
     }
 
     public Scrollable openXAxis(int newXAxis) {
+        newXAxis = Math.max(0, Math.min(newXAxis, this.lastXAxis()));
+
         MenuObject menuObject = this.contents.getTriteMenu();
 
         for (int y = this.iterator.getRow(); y < this.iterator.getRow() + this.showYAxis; y++) {
             for (int x = newXAxis; x < newXAxis + this.showXAxis; x++) {
                 int index = this.getIndex(x, y);
-                int slot = SlotPos.of(this.iterator.getColumn() + (x - newXAxis), y).getSlot();
+                int slot = SlotPos.of(y, this.iterator.getColumn() + (x - newXAxis)).getSlot();
 
-                Supplier<MenuItem> menuItemSupplier = this.items.get(index);
-                if (menuItemSupplier == null) {
-                    InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
-                    continue;
-                }
-
-                InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItemSupplier.get().getItemStack(), menuObject.getInventory());
+                this.updateItem(menuObject, slot, index);
             }
         }
 
+        this.currentXAxis = newXAxis;
+
         return this;
+    }
+
+    private void updateItem(MenuObject menuObject, int slot, int index) {
+        Supplier<MenuItem> menuItemSupplier = this.items.get(index);
+        if (menuItemSupplier == null) {
+            InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
+            return;
+        }
+
+        InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItemSupplier.get().getItemStack(), menuObject.getInventory());
     }
 
     private int getIndex(int x, int y) {

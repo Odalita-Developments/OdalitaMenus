@@ -34,22 +34,22 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     @Override
     public void onLoad(Player player, InventoryContents contents) {
         MenuIterator iterator = new MenuIterator(MenuIteratorType.HORIZONTAL, contents, 1, 1)
-                .blacklist(17, 18).setOverride(true);
-        Scrollable scrollable = new Scrollable("test", contents, iterator, 7, 2);
+                .blacklist(17, 18)
+                .setOverride(true);
+
+        Scrollable scrollable = new Scrollable("test", contents, iterator, 4, 7);
 
         for (int i = 0; i < 50; i++) {
             int finalI = i;
-            scrollable.addItem(() -> DisplayItem.of(new ItemBuilder((finalI % 2 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
+            scrollable.addItem(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
         }
 
-        contents.set(46, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+        contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
             scrollable.previousYAxis();
         }));
 
-        contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+        contents.set(53, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
             scrollable.nextYAxis();
         }));
     }
-
-
 }

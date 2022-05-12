@@ -146,6 +146,10 @@ public class MenuIterator {
         return this;
     }
 
+    public SlotPos getStartPos() {
+        return SlotPos.of(this.row, this.column);
+    }
+
     private Inventory getInventory() {
         return this.inventoryContents.getTriteMenu().getInventory();
     }
