@@ -115,6 +115,7 @@ public class Scrollable {
         this.currentYAxis = newYAxis;
 
         return this;
+
     }
 
     public Scrollable openXAxis(int newXAxis) {
