@@ -19,8 +19,6 @@ public final class SlotPos {
     private final int column;
 
     public SlotPos(int slot) {
-        slot = Math.max(Math.min(53, slot), 0); // Make sure slot is 0 or higher and lower or equal to 53
-
         this.row = slot / 9;
         this.column = slot - (9 * this.row);
     }

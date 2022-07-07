@@ -41,6 +41,7 @@ public final class ReflectionUtils {
     public static Method GET_NMS_INVENTORY;
     public static Method GET_NMS_INVENTORY_CONTENTS;
     public static Method SET_LIST;
+    public static Method WINDOW_STATE_ID_118_METHOD;
 
     public static Field ACTIVE_CONTAINER_FIELD;
     public static Field WINDOW_ID_FIELD;
@@ -75,10 +76,15 @@ public final class ReflectionUtils {
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
 
-            ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField((isRepackaged()) ? "bW" : "activeContainer");
+            ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField((isRepackaged()) ? "bV" : "activeContainer");
             WINDOW_ID_FIELD = CONTAINER.getField((isRepackaged()) ? "j" : "windowId");
 
-            PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, ITEM_STACK);
+            if (isRepackaged()) {
+                WINDOW_STATE_ID_118_METHOD = CONTAINER.getMethod("k");
+                PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, int.class, ITEM_STACK);
+            } else {
+                PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, ITEM_STACK);
+            }
 
             Field playerConnectionField = Arrays.stream(ENTITY_PLAYER.getFields())
                     .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))

@@ -11,6 +11,7 @@ import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,55 +47,39 @@ public class Scrollable {
         this.xIndex = iterator.getColumn();
     }
 
-    public synchronized Scrollable addItem(Supplier<MenuItem> menuItem) {
-        int next = this.iterator.next();
-        SlotPos slotPos = SlotPos.of(next);
+    public synchronized Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItem) {
+        int lastSlot = SlotPos.of(this.yIndex, this.xIndex).getSlot();
 
-        if (!this.iterator.hasNext() || (slotPos.getRow() - this.iterator.getRow()) >= this.showXAxis || (slotPos.getColumn() - this.iterator.getColumn()) >= this.showYAxis) {
+        int nextSlot = this.iterator.next();
+        SlotPos nextSlotPos = SlotPos.of(nextSlot);
+
+        if(!this.iterator.hasNext()
+                || (nextSlotPos.getRow() - this.iterator.getRow()) >= this.showYAxis
+                || (nextSlotPos.getColumn() - this.iterator.getColumn()) >= this.showXAxis) {
             this.iterator.reset();
-            slotPos = SlotPos.of(this.iterator.next());
+            nextSlotPos = SlotPos.of(this.iterator.next() + lastSlot);
+            nextSlot = nextSlotPos.getSlot();
         }
+
+        this.xIndex = nextSlotPos.getColumn();
+        this.yIndex = nextSlotPos.getRow();
 
         int index = this.getIndex(this.xIndex, this.yIndex);
         this.items.put(index, menuItem);
 
-        SlotPos slot = SlotPos.of(this.xIndex, this.yIndex);
-
-        if (slot.getSlot() <= Math.max(this.iterator.getColumn() + this.showXAxis, 8) * Math.max(this.iterator.getRow() + this.showYAxis, 5)) {
-            this.contents.setAsync(slot, menuItem.get());
-        }
-
-        if (this.iterator.getMenuIteratorType() == MenuIteratorType.HORIZONTAL) {
-            if (this.xIndex >= this.showXAxis) {
-                ++this.yIndex;
-                this.xIndex = this.iterator.getColumn();
-
-                return this;
-            }
-
-            ++this.xIndex;
-        }
-
-        if (this.iterator.getMenuIteratorType() == MenuIteratorType.VERTICAL) {
-            if (this.yIndex <= this.showYAxis) {
-                ++this.xIndex;
-                this.yIndex = this.iterator.getRow();
-
-                return this;
-            }
-
-            ++this.yIndex;
+        if (nextSlot <= Math.max(this.iterator.getColumn() + this.showXAxis, 8) * Math.max(this.iterator.getRow() + this.showYAxis, 5)) {
+            this.contents.setAsync(nextSlotPos, menuItem.get());
         }
 
         return this;
     }
 
     public int lastYAxis() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis);
+        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis) + 1 - this.showYAxis;
     }
 
     public int lastXAxis() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis);
+        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) + 1 - this.showXAxis;
     }
 
     public Scrollable nextYAxis() {

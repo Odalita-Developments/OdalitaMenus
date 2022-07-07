@@ -33,7 +33,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
     @Override
     public void onLoad(Player player, InventoryContents contents) {
-        MenuIterator iterator = new MenuIterator(MenuIteratorType.HORIZONTAL, contents, 1, 1)
+        MenuIterator iterator = new MenuIterator(MenuIteratorType.VERTICAL, contents, 1, 1)
                 .blacklist(17, 18)
                 .setOverride(true);
 
@@ -45,11 +45,11 @@ public class TestPlayerMenu implements PlayerMenuProvider {
         }
 
         contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.previousYAxis();
+            scrollable.previousXAxis();
         }));
 
         contents.set(53, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.nextYAxis();
+            scrollable.nextXAxis();
         }));
     }
 }
