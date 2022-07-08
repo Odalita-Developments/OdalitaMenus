@@ -5,149 +5,199 @@ import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.iterators.MenuIterator;
-import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.scrollable.pattern.DirectionScrollablePattern;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 @Getter
-public class Scrollable {
+public final class Scrollable {
 
     private final String id;
     private final InventoryContents contents;
-    private final MenuIterator iterator;
-    private final int showYAxis;
-    private final int showXAxis;
+    private final int showYAxis, showXAxis;
+    private final int startRow, startColumn;
+    private final boolean isSingle;
 
-    private final Map<Integer, Supplier<MenuItem>> items = new HashMap<>();
+    private final ScrollableBuilder.PatternDirection direction;
+    private final DirectionScrollablePattern pattern;
+
+    private final NavigableMap<Integer, Supplier<MenuItem>> items = new TreeMap<>();
 
     @Setter
     private int currentYAxis = 0;
     @Setter
     private int currentXAxis = 0;
 
-    private int yIndex;
-    private int xIndex;
+    private int lastRow, lastColumn;
 
-    public Scrollable(String id, InventoryContents contents, MenuIterator iterator, int showYAxis, int showXAxis) {
-        this.id = id;
-        this.contents = contents;
-        this.iterator = iterator;
-        this.showYAxis = showYAxis;
-        this.showXAxis = showXAxis;
+    Scrollable(@NotNull ScrollableBuilder builder) {
+        this.id = builder.getId();
+        this.contents = builder.getContents();
+        this.showYAxis = builder.getShowYAxis();
+        this.showXAxis = builder.getShowXAxis();
+        this.startRow = builder.getStartRow();
+        this.startColumn = builder.getStartColumn();
+        this.isSingle = builder.isSingle();
 
-        this.yIndex = iterator.getRow();
-        this.xIndex = iterator.getColumn();
+        this.direction = builder.getDirection();
+        this.pattern = builder.getPattern();
+
+        this.lastRow = this.startRow;
+        this.lastColumn = this.startColumn;
+
+        if (!builder.isSingle()) {
+            // TODO initialize pattern
+        }
     }
 
     public synchronized Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItem) {
-        int lastSlot = SlotPos.of(this.yIndex, this.xIndex).getSlot();
-
-        int nextSlot = this.iterator.next();
-        SlotPos nextSlotPos = SlotPos.of(nextSlot);
-
-        if(!this.iterator.hasNext()
-                || (nextSlotPos.getRow() - this.iterator.getRow()) >= this.showYAxis
-                || (nextSlotPos.getColumn() - this.iterator.getColumn()) >= this.showXAxis) {
-            this.iterator.reset();
-            nextSlotPos = SlotPos.of(this.iterator.next() + lastSlot);
-            nextSlot = nextSlotPos.getSlot();
+        int index;
+        if (this.isSingle) {
+            index = (this.items.isEmpty()) ? 0 : this.items.lastKey() + 1;
+        } else {
+            index = 0;
         }
 
-        this.xIndex = nextSlotPos.getColumn();
-        this.yIndex = nextSlotPos.getRow();
-
-        int index = this.getIndex(this.xIndex, this.yIndex);
         this.items.put(index, menuItem);
 
-        if (nextSlot <= Math.max(this.iterator.getColumn() + this.showXAxis, 8) * Math.max(this.iterator.getRow() + this.showYAxis, 5)) {
-            this.contents.setAsync(nextSlotPos, menuItem.get());
-        }
+        if (index < this.showXAxis * this.showYAxis) {
+            this.contents.setAsync(SlotPos.of(this.lastRow, this.lastColumn), menuItem.get());
 
-        return this;
-    }
+            if (this.direction == ScrollableBuilder.PatternDirection.HORIZONTALLY) {
+                this.lastRow++;
 
-    public int lastYAxis() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis) + 1 - this.showYAxis;
-    }
+                if (this.lastRow >= this.showYAxis + this.startRow && this.lastColumn + 1 < this.showXAxis + this.startColumn) {
+                    this.lastRow = this.startRow;
+                    this.lastColumn++;
+                }
+            } else if (this.direction == ScrollableBuilder.PatternDirection.VERTICALLY) {
+                this.lastColumn++;
 
-    public int lastXAxis() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) + 1 - this.showXAxis;
-    }
-
-    public Scrollable nextYAxis() {
-        return this.openYAxis(this.currentYAxis + 1);
-    }
-
-    public Scrollable previousYAxis() {
-        return this.openYAxis(this.currentYAxis - 1);
-    }
-
-    public Scrollable nextXAxis() {
-        return this.openXAxis(this.currentXAxis + 1);
-    }
-
-    public Scrollable previousXAxis() {
-        return this.openXAxis(this.currentXAxis - 1);
-    }
-
-    public Scrollable openYAxis(int newYAxis) {
-        newYAxis = Math.max(0, Math.min(newYAxis, this.lastYAxis()));
-
-        MenuObject menuObject = this.contents.getTriteMenu();
-
-        for (int y = newYAxis; y < newYAxis + this.showYAxis; y++) {
-            for (int x = this.iterator.getColumn(); x < this.iterator.getColumn() + this.showXAxis; x++) {
-                int index = this.getIndex(x, y);
-                int slot = SlotPos.of(this.iterator.getRow() + (y - newYAxis), x).getSlot();
-
-                this.updateItem(menuObject, slot, index);
+                if (this.lastColumn >= this.showXAxis + this.startColumn && this.lastRow + 1 < this.showYAxis + this.startRow) {
+                    this.lastColumn = this.startColumn;
+                    this.lastRow++;
+                }
             }
         }
 
-        this.currentYAxis = newYAxis;
-
         return this;
-
     }
 
-    public Scrollable openXAxis(int newXAxis) {
-        newXAxis = Math.max(0, Math.min(newXAxis, this.lastXAxis()));
+    public int lastVertical() {
+        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis) - this.showYAxis;
+    }
 
-        MenuObject menuObject = this.contents.getTriteMenu();
+    public int lastHorizontal() {
+        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) - this.showXAxis;
+    }
 
-        for (int y = this.iterator.getRow(); y < this.iterator.getRow() + this.showYAxis; y++) {
-            for (int x = newXAxis; x < newXAxis + this.showXAxis; x++) {
-                int index = this.getIndex(x, y);
-                int slot = SlotPos.of(y, this.iterator.getColumn() + (x - newXAxis)).getSlot();
+    public Scrollable nextVertical() {
+        return this.openVertical(this.currentYAxis + 1);
+    }
 
-                this.updateItem(menuObject, slot, index);
+    public Scrollable previousVertical() {
+        return this.openVertical(this.currentYAxis - 1);
+    }
+
+    public Scrollable nextHorizontal() {
+        return this.openHorizontal(this.currentXAxis + 1);
+    }
+
+    public Scrollable previousHorizontal() {
+        return this.openHorizontal(this.currentXAxis - 1);
+    }
+
+    public Scrollable next() {
+        return switch (this.direction) {
+            case VERTICALLY:
+                yield this.nextVertical();
+            case HORIZONTALLY:
+                yield this.nextHorizontal();
+            case ALL:
+                throw new UnsupportedOperationException("Next is not supported for 'all' direction.");
+        };
+    }
+
+    public Scrollable previous() {
+        return switch (this.direction) {
+            case VERTICALLY:
+                yield this.previousVertical();
+            case HORIZONTALLY:
+                yield this.previousHorizontal();
+            case ALL:
+                throw new UnsupportedOperationException("Previous is not supported for 'all' direction.");
+        };
+    }
+
+    public @NotNull Scrollable open(int newAxis, @NotNull ScrollableBuilder.SingleDirection direction) {
+        int lastAxis = (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) ? this.lastHorizontal() : this.lastVertical();
+        newAxis = Math.max(0, Math.min(newAxis, lastAxis));
+
+        List<Supplier<MenuItem>> pageItems;
+        if (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) {
+            pageItems = new ArrayList<>(this.items.subMap(newAxis * this.showYAxis, (newAxis + this.showXAxis) * this.showYAxis).values());
+        } else {
+            pageItems = new ArrayList<>(this.items.subMap(newAxis * this.showXAxis, (newAxis + this.showYAxis) * this.showXAxis).values());
+        }
+
+        for (int i = pageItems.size(); i < this.showXAxis * this.showYAxis; i++) {
+            pageItems.add(null);
+        }
+
+        int lastRow = this.startRow;
+        int lastColumn = this.startColumn;
+        for (Supplier<MenuItem> menuItemSupplier : pageItems) {
+            this.updateItem(this.contents.getTriteMenu(), SlotPos.of(lastRow, lastColumn).getSlot(), menuItemSupplier);
+
+            if (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) {
+                lastRow++;
+
+                if (lastRow >= this.showYAxis + this.startRow && lastColumn + 1 < this.showXAxis + this.startColumn) {
+                    lastRow = this.startRow;
+                    lastColumn++;
+                }
+            } else if (direction == ScrollableBuilder.SingleDirection.VERTICALLY) {
+                lastColumn++;
+
+                if (lastColumn >= this.showXAxis + this.startColumn && lastRow + 1 < this.showYAxis + this.startRow) {
+                    lastColumn = this.startColumn;
+                    lastRow++;
+                }
             }
         }
 
-        this.currentXAxis = newXAxis;
+        if (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) {
+            this.currentXAxis = newAxis;
+        } else {
+            this.currentYAxis = newAxis;
+        }
 
         return this;
     }
 
-    private void updateItem(MenuObject menuObject, int slot, int index) {
-        Supplier<MenuItem> menuItemSupplier = this.items.get(index);
+    public @NotNull Scrollable openVertical(int newYAxis) {
+        return this.open(newYAxis, ScrollableBuilder.SingleDirection.VERTICALLY);
+    }
+
+    public @NotNull Scrollable openHorizontal(int newXAxis) {
+        return this.open(newXAxis, ScrollableBuilder.SingleDirection.HORIZONTALLY);
+    }
+
+    private void updateItem(MenuObject menuObject, int slot, Supplier<MenuItem> menuItemSupplier) {
         if (menuItemSupplier == null) {
             InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
             return;
         }
 
         InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItemSupplier.get().getItemStack(), menuObject.getInventory());
-    }
-
-    private int getIndex(int x, int y) {
-        return (y * 9) + x;
     }
 }

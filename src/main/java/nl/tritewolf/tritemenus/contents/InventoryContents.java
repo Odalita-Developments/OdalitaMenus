@@ -3,8 +3,7 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
-import nl.tritewolf.tritemenus.items.buttons.NextItem;
-import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
+import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
@@ -326,6 +325,10 @@ public class InventoryContents {
         Pagination pagination = new Pagination(id, this, itemsPerPage, iterator);
         this.triteMenu.getPaginationMap().put(id, pagination);
         return pagination;
+    }
+
+    public ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
+        return new ScrollableBuilder(this, id, showYAxis, showXAxis);
     }
 
     public String getSearchQuery(String id) {

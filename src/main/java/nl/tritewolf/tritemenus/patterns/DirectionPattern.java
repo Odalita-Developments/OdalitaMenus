@@ -39,7 +39,7 @@ public interface DirectionPattern extends MenuPattern {
                     for (SlotPos pos : slotsNew) {
                         if (pos.getColumn() + slotPos.getColumn() + 1 >= 9) break;
 
-                        SlotPos added = new SlotPos(pos.getRow(), pos.getColumn() + slotPos.getColumn() + 1);
+                        SlotPos added = SlotPos.of(pos.getRow(), pos.getColumn() + slotPos.getColumn() + 1);
                         lastAdded = added;
 
                         slotsNew.add(added);
@@ -53,7 +53,7 @@ public interface DirectionPattern extends MenuPattern {
                     for (SlotPos pos : slotsNew) {
                         if (pos.getRow() + slotPos.getRow() + 1 >= 6) break;
 
-                        SlotPos added = new SlotPos(pos.getRow() + slotPos.getRow() + 1, pos.getColumn());
+                        SlotPos added = SlotPos.of(pos.getRow() + slotPos.getRow() + 1, pos.getColumn());
                         lastAdded = added;
 
                         slotsNew.add(added);

@@ -2,6 +2,8 @@ package nl.tritewolf.testplugin;
 
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
+import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
@@ -33,23 +35,26 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
     @Override
     public void onLoad(Player player, InventoryContents contents) {
-        MenuIterator iterator = new MenuIterator(MenuIteratorType.VERTICAL, contents, 1, 1)
-                .blacklist(17, 18)
-                .setOverride(true);
+        Scrollable scrollable = contents.scrollable("test", 4, 7)
+                .single(1, 1)
+                .direction(ScrollableBuilder.SingleDirection.VERTICALLY)
+                .create();
 
-        Scrollable scrollable = new Scrollable("test", contents, iterator, 4, 7);
-
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             int finalI = i;
             scrollable.addItem(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
         }
 
+        scrollable.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEAD)
+                .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
+                .build(), 5));
+
         contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.previousXAxis();
+            scrollable.previous();
         }));
 
         contents.set(53, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.nextXAxis();
+            scrollable.next();
         }));
     }
 }

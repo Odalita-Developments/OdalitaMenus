@@ -4,19 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.items.buttons.NextItem;
-import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Getter
@@ -50,7 +49,9 @@ public final class MenuObject {
         this.displayName = displayName;
     }
 
-    public MenuItem getContent(SlotPos slotPos) {
+    public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {
+        if (slotPos.getSlot() < 0 || slotPos.getSlot() > this.inventory.getSize()) return null;
+
         return this.contents[slotPos.getRow()][slotPos.getColumn()];
     }
 }

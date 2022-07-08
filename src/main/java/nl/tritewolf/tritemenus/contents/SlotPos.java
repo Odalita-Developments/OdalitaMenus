@@ -1,10 +1,8 @@
 package nl.tritewolf.tritemenus.contents;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public final class SlotPos {
 
     public static SlotPos of(int row, int column) {
@@ -17,20 +15,23 @@ public final class SlotPos {
 
     private final int row;
     private final int column;
+    private final int slot;
 
-    public SlotPos(int slot) {
+    SlotPos(int row, int column) {
+        this.row = row;
+        this.column = column;
+        this.slot = (row * 9) + column;
+    }
+
+    SlotPos(int slot) {
+        this.slot = slot;
         this.row = slot / 9;
         this.column = slot - (9 * this.row);
     }
 
-    public int getSlot() {
-        return (this.row * 9) + this.column;
-    }
-
     @Override
     public boolean equals(Object object) {
-        if (object instanceof SlotPos) {
-            SlotPos slotPos = (SlotPos) object;
+        if (object instanceof SlotPos slotPos) {
             return slotPos.getRow() == this.row && slotPos.getColumn() == this.column;
         }
 
