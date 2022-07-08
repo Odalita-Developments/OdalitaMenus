@@ -38,12 +38,16 @@ public final class MenuUpdateTask implements Runnable {
             Player player = Bukkit.getPlayer(entry.getKey());
             if (player == null || !player.isOnline()) continue;
 
+            int updatableItems = 0;
+
             MenuItem[][] contents = menuObject.getContents();
             for (int row = 0; row < contents.length; row++) {
                 for (int column = 0; column < contents[0].length; column++) {
                     MenuItem menuItem = contents[row][column];
                     if (menuItem == null || !menuItem.isUpdatable() || menuItem.getUpdateTicks() <= 0)
                         continue;
+
+                    updatableItems++;
 
                     if (ticks % menuItem.getUpdateTicks() == 0) {
                         ItemStack item = menuItem.getItemStack();
@@ -52,6 +56,10 @@ public final class MenuUpdateTask implements Runnable {
                         InventoryUtils.updateItem(player, slot, item, menuObject.getInventory());
                     }
                 }
+            }
+
+            if (updatableItems == 0) {
+                menuObject.setHasUpdatableItems(false);
             }
         }
     }

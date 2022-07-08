@@ -153,10 +153,22 @@ public final class Scrollable {
             pageItems.add(null);
         }
 
+        boolean updatable = this.contents.getTriteMenu().isHasUpdatableItems();
+        if (updatable) {
+            this.contents.getTriteMenu().setHasUpdatableItems(false);
+        }
+
         int lastRow = this.startRow;
         int lastColumn = this.startColumn;
         for (Supplier<MenuItem> menuItemSupplier : pageItems) {
-            this.updateItem(this.contents.getTriteMenu(), SlotPos.of(lastRow, lastColumn).getSlot(), menuItemSupplier);
+            if (updatable) {
+                MenuItem menuItem = this.contents.getTriteMenu().getContents()[lastRow][lastColumn];
+                if (menuItem != null && menuItem.isUpdatable()) {
+                    this.contents.getTriteMenu().getContents()[lastRow][lastColumn] = null;
+                }
+            }
+
+            this.updateItem(SlotPos.of(lastRow, lastColumn).getSlot(), menuItemSupplier);
 
             if (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) {
                 lastRow++;
@@ -192,12 +204,22 @@ public final class Scrollable {
         return this.open(newXAxis, ScrollableBuilder.SingleDirection.HORIZONTALLY);
     }
 
-    private void updateItem(MenuObject menuObject, int slot, Supplier<MenuItem> menuItemSupplier) {
+    private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
+        MenuObject menuObject = this.contents.getTriteMenu();
+
         if (menuItemSupplier == null) {
             InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
             return;
         }
 
-        InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItemSupplier.get().getItemStack(), menuObject.getInventory());
+        MenuItem menuItem = menuItemSupplier.get();
+        if (menuItem.isUpdatable()) {
+            SlotPos slotPos = SlotPos.of(slot);
+
+            menuObject.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
+            menuObject.setHasUpdatableItems(true);
+        }
+
+        InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItem.getItemStack(), menuObject.getInventory());
     }
 }
