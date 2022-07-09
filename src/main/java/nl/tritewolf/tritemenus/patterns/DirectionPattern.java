@@ -5,6 +5,7 @@ import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -66,6 +67,6 @@ public interface DirectionPattern extends MenuPattern {
     }
 
     @Override
-    default void handle(MenuIterator menuIterator) {
+    default void handle(@NotNull MenuIterator menuIterator) {
     }
 }

@@ -1,8 +1,6 @@
 package nl.tritewolf.tritemenus.scrollable.pattern;
 
-import com.google.common.collect.Maps;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import org.apache.commons.lang.math.NumberUtils;
 

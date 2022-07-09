@@ -28,7 +28,7 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player.getUniqueId());
+        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuObject == null) return;
 
         Inventory clickedInventory = event.getClickedInventory();
@@ -55,7 +55,7 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player.getUniqueId());
+        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuObject == null) return;
 
         List<Integer> placeableItems = openMenuObject.getPlaceableItems();
@@ -77,7 +77,7 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player.getUniqueId());
+        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuObject == null) return;
 
         Inventory inventory = event.getInventory();
@@ -92,7 +92,7 @@ public final class InventoryListener implements Listener {
                 });
             }
 
-            this.menuProcessor.getOpenMenus().remove(player.getUniqueId());
+            this.menuProcessor.getOpenMenus().remove(player);
         }
     }
 }

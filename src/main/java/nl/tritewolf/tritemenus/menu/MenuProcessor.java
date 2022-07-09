@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -27,15 +26,15 @@ public final class MenuProcessor {
     @Getter(AccessLevel.NONE)
     private ItemProcessor itemProcessor;
 
-    private final Map<UUID, MenuObject> openMenus = new ConcurrentHashMap<>();
+    private final Map<Player, MenuObject> openMenus = new ConcurrentHashMap<>();
 
-    public void openMenu(MenuProvider menuProvider, Player player) {
+    public void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player) {
         this.openMenuBuilder(menuProvider, player)
                 .open();
     }
 
     @Contract("_, _ -> new")
-    public @NotNull MenuOpener openMenuBuilder(MenuProvider menuProvider, Player player) {
+    public @NotNull MenuOpener openMenuBuilder(@NotNull MenuProvider menuProvider, @NotNull Player player) {
         return new MenuOpener(this, this.itemProcessor, player, menuProvider);
     }
 
@@ -49,12 +48,12 @@ public final class MenuProcessor {
         private final MenuProvider menuProvider;
         private final Map<String, Integer> paginationPages = new HashMap<>();
 
-        public MenuOpener paginationPages(Map<String, Integer> paginationPages) {
+        public @NotNull MenuOpener paginationPages(@NotNull Map<@NotNull String, @NotNull Integer> paginationPages) {
             this.paginationPages.putAll(paginationPages);
             return this;
         }
 
-        public MenuOpener pagination(String key, int page) {
+        public @NotNull MenuOpener pagination(@NotNull String key, int page) {
             this.paginationPages.put(key, page);
             return this;
         }
@@ -70,7 +69,7 @@ public final class MenuProcessor {
             }
         }
 
-        private void openGlobalMenu(Player player, GlobalMenuProvider menuProvider) {
+        private void openGlobalMenu(@NotNull Player player, @NotNull GlobalMenuProvider menuProvider) {
             try {
                 Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
                 MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
@@ -93,7 +92,7 @@ public final class MenuProcessor {
             }
         }
 
-        private void openPlayerMenu(Player player, PlayerMenuProvider menuProvider) {
+        private void openPlayerMenu(@NotNull Player player, @NotNull PlayerMenuProvider menuProvider) {
             try {
                 Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
                 MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
@@ -118,7 +117,7 @@ public final class MenuProcessor {
 
         private void openInventory(@NotNull Player player, @NotNull MenuObject menuObject) {
             player.openInventory(menuObject.getInventory());
-            this.processor.getOpenMenus().put(player.getUniqueId(), menuObject);
+            this.processor.getOpenMenus().put(player, menuObject);
         }
     }
 }

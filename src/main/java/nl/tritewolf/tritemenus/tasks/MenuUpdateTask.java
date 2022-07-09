@@ -6,12 +6,10 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MenuUpdateTask implements Runnable {
@@ -23,7 +21,7 @@ public final class MenuUpdateTask implements Runnable {
 
     @Override
     public void run() {
-        Map<UUID, MenuObject> openMenus = this.menuProcessor.getOpenMenus();
+        Map<Player, MenuObject> openMenus = this.menuProcessor.getOpenMenus();
         if (openMenus.isEmpty()) {
             TICKS.set(0);
             return;
@@ -31,11 +29,11 @@ public final class MenuUpdateTask implements Runnable {
 
         int ticks = TICKS.incrementAndGet();
 
-        for (Map.Entry<UUID, MenuObject> entry : openMenus.entrySet()) {
+        for (Map.Entry<Player, MenuObject> entry : openMenus.entrySet()) {
             MenuObject menuObject = entry.getValue();
             if (menuObject == null || !menuObject.isHasUpdatableItems()) continue;
 
-            Player player = Bukkit.getPlayer(entry.getKey());
+            Player player = entry.getKey();
             if (player == null || !player.isOnline()) continue;
 
             int updatableItems = 0;

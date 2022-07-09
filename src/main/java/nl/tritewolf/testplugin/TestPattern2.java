@@ -3,6 +3,7 @@ package nl.tritewolf.testplugin;
 import nl.tritewolf.tritemenus.annotations.Pattern;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class TestPattern2 implements DirectionPattern {
 
     @Override
-    public List<String> getPattern() {
+    public @NotNull List<String> getPattern() {
         return Arrays.asList(
                 "01##0910",
                 "02##08##",

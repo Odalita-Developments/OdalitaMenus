@@ -1,12 +1,13 @@
 package nl.tritewolf.tritemenus.patterns;
 
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface MenuPattern {
 
-    List<String> getPattern();
+    @NotNull List<@NotNull String> getPattern();
 
-    void handle(MenuIterator menuIterator);
+    void handle(@NotNull MenuIterator menuIterator);
 }

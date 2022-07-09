@@ -57,9 +57,11 @@ public final class Scrollable {
         if (!builder.isSingle()) {
             // TODO initialize pattern
         }
+
+        builder.getItems().forEach(this::addItem);
     }
 
-    public synchronized Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItem) {
+    public synchronized @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItem) {
         int index;
         if (this.isSingle) {
             index = (this.items.isEmpty()) ? 0 : this.items.lastKey() + 1;
@@ -100,23 +102,23 @@ public final class Scrollable {
         return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) - this.showXAxis;
     }
 
-    public Scrollable nextVertical() {
+    public @NotNull Scrollable nextVertical() {
         return this.openVertical(this.currentYAxis + 1);
     }
 
-    public Scrollable previousVertical() {
+    public @NotNull Scrollable previousVertical() {
         return this.openVertical(this.currentYAxis - 1);
     }
 
-    public Scrollable nextHorizontal() {
+    public @NotNull Scrollable nextHorizontal() {
         return this.openHorizontal(this.currentXAxis + 1);
     }
 
-    public Scrollable previousHorizontal() {
+    public @NotNull Scrollable previousHorizontal() {
         return this.openHorizontal(this.currentXAxis - 1);
     }
 
-    public Scrollable next() {
+    public @NotNull Scrollable next() {
         return switch (this.direction) {
             case VERTICALLY:
                 yield this.nextVertical();
@@ -127,7 +129,7 @@ public final class Scrollable {
         };
     }
 
-    public Scrollable previous() {
+    public @NotNull Scrollable previous() {
         return switch (this.direction) {
             case VERTICALLY:
                 yield this.previousVertical();

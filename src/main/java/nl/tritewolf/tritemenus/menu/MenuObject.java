@@ -51,7 +51,6 @@ public final class MenuObject {
 
     public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {
         if (slotPos.getSlot() < 0 || slotPos.getSlot() > this.inventory.getSize()) return null;
-
         return this.contents[slotPos.getRow()][slotPos.getColumn()];
     }
 }

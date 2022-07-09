@@ -14,6 +14,7 @@ import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,7 +35,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     }
 
     @Override
-    public void onLoad(Player player, InventoryContents contents) {
+    public void onLoad(@NotNull Player player, @NotNull InventoryContents contents) {
         Scrollable scrollable = contents.scrollable("test", 4, 7)
                 .single(1, 1)
                 .direction(ScrollableBuilder.SingleDirection.VERTICALLY)

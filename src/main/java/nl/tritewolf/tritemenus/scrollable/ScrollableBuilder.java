@@ -4,9 +4,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
+import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.scrollable.pattern.DirectionScrollablePattern;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 @RequiredArgsConstructor
 @Getter(AccessLevel.PACKAGE)
@@ -17,6 +22,8 @@ public final class ScrollableBuilder {
     private final int showYAxis;
     private final int showXAxis;
 
+    private List<Supplier<MenuItem>> items = new ArrayList<>();
+
     private int startRow;
     private int startColumn;
 
@@ -25,19 +32,24 @@ public final class ScrollableBuilder {
     private DirectionScrollablePattern pattern;
 
     @ApiStatus.Internal
-    ScrollableBuilder setDirection(PatternDirection direction) {
+    @NotNull ScrollableBuilder setDirection(@NotNull PatternDirection direction) {
         this.direction = direction;
         return this;
     }
 
-    public SingleBuilder single(int startRow, int startColumn) {
+    public @NotNull ScrollableBuilder items(@NotNull List<@NotNull Supplier<@NotNull MenuItem>> items) {
+        this.items = items;
+        return this;
+    }
+
+    public @NotNull SingleBuilder single(int startRow, int startColumn) {
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.isSingle = true;
         return new SingleBuilder(this);
     }
 
-    public PatternBuilder pattern(int startRow, int startColumn, @NotNull DirectionScrollablePattern pattern) { // TODO add pattern
+    public @NotNull PatternBuilder pattern(int startRow, int startColumn, @NotNull DirectionScrollablePattern pattern) { // TODO add pattern
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.isSingle = false;
@@ -45,7 +57,7 @@ public final class ScrollableBuilder {
         return new PatternBuilder(this);
     }
 
-    public Scrollable create() {
+    public @NotNull Scrollable create() {
         return new Scrollable(this);
     }
 

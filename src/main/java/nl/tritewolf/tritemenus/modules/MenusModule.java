@@ -12,6 +12,7 @@ import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,13 +24,13 @@ public final class MenusModule extends TriteJectionModule {
 
     @Override
     public void bindings() {
-        bind(MenuProcessor.class).asEagerSingleton();
-        bind(ItemProcessor.class).asEagerSingleton();
-        bind(AnnotationBinding.class).asEagerSingleton();
-        bind(MenuUpdateTask.class).asEagerSingleton();
-        bind(PatternContainer.class).asEagerSingleton();
+        this.bind(MenuProcessor.class).asEagerSingleton();
+        this.bind(ItemProcessor.class).asEagerSingleton();
+        this.bind(AnnotationBinding.class).asEagerSingleton();
+        this.bind(MenuUpdateTask.class).asEagerSingleton();
+        this.bind(PatternContainer.class).asEagerSingleton();
 
-        bindListeners(new InventoryListener());
+        this.bindListeners(new InventoryListener());
     }
 
     @Override
@@ -37,7 +38,7 @@ public final class MenusModule extends TriteJectionModule {
         return List.of(new ListenerBinding(this.javaPlugin));
     }
 
-    private void bindListeners(Listener... listeners) {
-        Arrays.stream(listeners).forEach(listener -> bind(listener.getClass()).toMultiBinder(Listener.class).asEagerSingleton());
+    private void bindListeners(Listener @NotNull ... listeners) {
+        Arrays.stream(listeners).forEach(listener -> this.bind(listener.getClass()).toMultiBinder(Listener.class).asEagerSingleton());
     }
 }

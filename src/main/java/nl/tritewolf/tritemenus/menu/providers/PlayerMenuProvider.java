@@ -2,8 +2,9 @@ package nl.tritewolf.tritemenus.menu.providers;
 
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public interface PlayerMenuProvider extends MenuProvider {
+public non-sealed interface PlayerMenuProvider extends MenuProvider {
 
-    void onLoad(Player player, InventoryContents inventoryContents);
+    void onLoad(@NotNull Player player, @NotNull InventoryContents inventoryContents);
 }

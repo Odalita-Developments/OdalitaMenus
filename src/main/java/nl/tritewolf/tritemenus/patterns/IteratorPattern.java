@@ -2,11 +2,12 @@ package nl.tritewolf.tritemenus.patterns;
 
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
+import org.jetbrains.annotations.NotNull;
 
 public interface IteratorPattern extends MenuPattern {
 
     @Override
-    default void handle(MenuIterator menuIterator) {
+    default void handle(@NotNull MenuIterator menuIterator) {
         for (int row = 0; row < getPattern().size(); row++) {
             String patternLine = getPattern().get(row);
 
