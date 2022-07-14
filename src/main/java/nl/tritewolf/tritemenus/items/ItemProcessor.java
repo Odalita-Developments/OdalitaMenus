@@ -5,7 +5,6 @@ import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import org.bukkit.inventory.Inventory;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public final class ItemProcessor {

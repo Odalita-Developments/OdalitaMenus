@@ -12,10 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Getter
@@ -38,6 +35,7 @@ public final class Scrollable {
     private int currentXAxis = 0;
 
     private int lastRow, lastColumn;
+    private int lastPatternIndex;
 
     Scrollable(@NotNull ScrollableBuilder builder) {
         this.id = builder.getId();
@@ -53,10 +51,7 @@ public final class Scrollable {
 
         this.lastRow = this.startRow;
         this.lastColumn = this.startColumn;
-
-        if (!builder.isSingle()) {
-            // TODO initialize pattern
-        }
+        this.lastPatternIndex = -1;
 
         builder.getItems().forEach(this::addItem);
     }
@@ -66,27 +61,53 @@ public final class Scrollable {
         if (this.isSingle) {
             index = (this.items.isEmpty()) ? 0 : this.items.lastKey() + 1;
         } else {
-            index = 0;
+            Map.Entry<Integer, Integer> newIndexEntry = this.pattern.getIndex().entrySet().stream()
+                    .filter((entry) -> entry.getValue() > this.lastPatternIndex)
+                    .min(Comparator.comparingInt(Map.Entry::getValue))
+                    .orElse(null);
+
+            if (newIndexEntry == null) {
+                return this;
+            }
+
+            index = newIndexEntry.getKey();
+            this.lastPatternIndex = newIndexEntry.getValue();
+
+            if (index == -1) {
+                return this;
+            }
+
+            if (index < this.showXAxis * this.showYAxis) {
+                int startSlot = SlotPos.of(this.startRow, this.startColumn).getSlot();
+
+                int rows = (int) ((double) index / (double) this.showXAxis);
+                int toAdd = Math.max(9 - this.showXAxis, 0);
+
+                startSlot += index + rows * toAdd;
+                this.contents.setAsync(SlotPos.of(startSlot), menuItem.get());
+            }
         }
 
         this.items.put(index, menuItem);
 
-        if (index < this.showXAxis * this.showYAxis) {
-            this.contents.setAsync(SlotPos.of(this.lastRow, this.lastColumn), menuItem.get());
+        if (this.isSingle) {
+            if (index < this.showXAxis * this.showYAxis) {
+                this.contents.setAsync(SlotPos.of(this.lastRow, this.lastColumn), menuItem.get());
 
-            if (this.direction == ScrollableBuilder.PatternDirection.HORIZONTALLY) {
-                this.lastRow++;
-
-                if (this.lastRow >= this.showYAxis + this.startRow && this.lastColumn + 1 < this.showXAxis + this.startColumn) {
-                    this.lastRow = this.startRow;
-                    this.lastColumn++;
-                }
-            } else if (this.direction == ScrollableBuilder.PatternDirection.VERTICALLY) {
-                this.lastColumn++;
-
-                if (this.lastColumn >= this.showXAxis + this.startColumn && this.lastRow + 1 < this.showYAxis + this.startRow) {
-                    this.lastColumn = this.startColumn;
+                if (this.direction == ScrollableBuilder.PatternDirection.HORIZONTALLY) {
                     this.lastRow++;
+
+                    if (this.lastRow >= this.showYAxis + this.startRow && this.lastColumn + 1 < this.showXAxis + this.startColumn) {
+                        this.lastRow = this.startRow;
+                        this.lastColumn++;
+                    }
+                } else if (this.direction == ScrollableBuilder.PatternDirection.VERTICALLY) {
+                    this.lastColumn++;
+
+                    if (this.lastColumn >= this.showXAxis + this.startColumn && this.lastRow + 1 < this.showYAxis + this.startRow) {
+                        this.lastColumn = this.startColumn;
+                        this.lastRow++;
+                    }
                 }
             }
         }
@@ -141,6 +162,10 @@ public final class Scrollable {
     }
 
     public @NotNull Scrollable open(int newAxis, @NotNull ScrollableBuilder.SingleDirection direction) {
+        if (this.isSingle && !this.direction.name().equals(direction.name())) {
+            throw new IllegalArgumentException("Cannot open a single scrollable in a different direction.");
+        }
+
         int lastAxis = (direction == ScrollableBuilder.SingleDirection.HORIZONTALLY) ? this.lastHorizontal() : this.lastVertical();
         newAxis = Math.max(0, Math.min(newAxis, lastAxis));
 
@@ -150,6 +175,8 @@ public final class Scrollable {
         } else {
             pageItems = new ArrayList<>(this.items.subMap(newAxis * this.showXAxis, (newAxis + this.showYAxis) * this.showXAxis).values());
         }
+
+        System.out.println(pageItems);
 
         for (int i = pageItems.size(); i < this.showXAxis * this.showYAxis; i++) {
             pageItems.add(null);
