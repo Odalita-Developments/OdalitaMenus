@@ -3,9 +3,10 @@ package nl.tritewolf.tritemenus.scrollable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.scrollable.pattern.ScrollableDirectionPattern;
+import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
 
     private boolean isSingle;
     private ScrollableDirection direction;
-    private ScrollableDirectionPattern pattern;
+    private ScrollableDirectionPatternCache patternCache;
     private boolean continuousPattern;
 
     @Override
@@ -50,7 +51,22 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.isSingle = false;
-        this.pattern = pattern;
+        this.patternCache = pattern.getCache();
+        return new ScrollablePatternBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass) {
+        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        ScrollableDirectionPatternCache patternCache = patternContainer.getPattern(patternClass);
+        if (patternCache == null) {
+            throw new IllegalArgumentException("No scrollable pattern found for class: '" + patternClass.getName() + "'");
+        }
+
+        this.startRow = startRow;
+        this.startColumn = startColumn;
+        this.isSingle = false;
+        this.patternCache = patternCache;
         return new ScrollablePatternBuilderImpl(this);
     }
 

@@ -2,7 +2,6 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.scrollable.pattern.ScrollableDirectionPattern;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,6 +18,8 @@ public interface ScrollableBuilder {
     @NotNull ScrollableSingleBuilder single(int startRow, int startColumn);
 
     @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull ScrollableDirectionPattern pattern);
+
+    @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass);
 
     @NotNull Scrollable create();
 

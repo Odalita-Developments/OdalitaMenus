@@ -10,7 +10,6 @@ import java.util.List;
 @Pattern
 public class TestPattern implements IteratorPattern {
 
-
     @Override
     public @NotNull List<String> getPattern() {
         return Arrays.asList(

@@ -9,13 +9,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public interface DirectionPattern extends MenuPattern {
+public interface DirectionPattern extends MenuPattern<List<SlotPos>> {
 
     boolean shouldContinuePattern();
 
     MenuIteratorType menuIteratorType();
 
-    default List<SlotPos> getSlots() {
+    @Override
+    default @NotNull List<SlotPos> getCache() {
         TreeMap<Integer, SlotPos> slots = new TreeMap<>();
         int lastIndex = 0;
         for (int row = 0; row < getPattern().size(); row++) {

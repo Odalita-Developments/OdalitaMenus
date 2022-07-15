@@ -277,10 +277,10 @@ public class InventoryContents {
 
     public void createPatternIterator(Class<? extends IteratorPattern> clazz, List<MenuItem> menuItems) {
         PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
-        MenuPattern iteratorPatternByClass = patternContainer.getIteratorPatternByClass(clazz);
+        IteratorPattern iteratorPatternByClass = patternContainer.getPattern(clazz);
 
         if (iteratorPatternByClass == null) {
-            //todo throw exception
+            // TODO throw exception
             return;
         }
 
@@ -289,7 +289,11 @@ public class InventoryContents {
 
     public void createDirectionsPatternIterator(Class<? extends DirectionPattern> clazz, List<MenuItem> menuItems) {
         PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
-        List<SlotPos> directionsPattern = patternContainer.getDirectionsPatternByClass(clazz);
+        List<SlotPos> directionsPattern = patternContainer.getPattern(clazz);
+        if (directionsPattern == null) {
+            // TODO throw exception
+            return;
+        }
 
         for (int i = 0; i < menuItems.size(); i++) {
             if (i >= directionsPattern.size() || directionsPattern.get(i).getRow() > triteMenu.getRows()) break;
@@ -327,7 +331,7 @@ public class InventoryContents {
         return pagination;
     }
 
-    public ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
+    public @NotNull ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
         return ScrollableBuilder.builder(this, id, showYAxis, showXAxis);
     }
 

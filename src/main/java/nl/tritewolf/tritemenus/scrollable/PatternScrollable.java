@@ -2,7 +2,6 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.scrollable.pattern.ScrollableDirectionPattern;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -12,7 +11,7 @@ import java.util.function.Supplier;
 
 final class PatternScrollable extends AbstractScrollable {
 
-    private final ScrollableDirectionPattern pattern;
+    private final ScrollableDirectionPatternCache patternCache;
     private final boolean continuousPattern;
 
     private int lastPatternIndex;
@@ -20,7 +19,7 @@ final class PatternScrollable extends AbstractScrollable {
     PatternScrollable(@NotNull ScrollableBuilderImpl builder) { // TODO continuous
         super(builder);
 
-        this.pattern = builder.getPattern();
+        this.patternCache = builder.getPatternCache();
         this.continuousPattern = builder.isContinuousPattern();
 
         this.lastPatternIndex = -1;
@@ -28,7 +27,7 @@ final class PatternScrollable extends AbstractScrollable {
 
     @Override
     public @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
-        Map.Entry<Integer, Integer> newIndexEntry = this.pattern.getIndex().entrySet().stream()
+        Map.Entry<Integer, Integer> newIndexEntry = this.patternCache.index().entrySet().stream()
                 .filter((entry) -> entry.getValue() > this.lastPatternIndex)
                 .min(Comparator.comparingInt(Map.Entry::getValue))
                 .orElse(null);
@@ -54,12 +53,12 @@ final class PatternScrollable extends AbstractScrollable {
 
     @Override
     public int lastVertical() {
-        return this.pattern.getHeight() - this.showYAxis;
+        return this.patternCache.height() - this.showYAxis;
     }
 
     @Override
     public int lastHorizontal() {
-        return this.pattern.getWidth() - this.showXAxis;
+        return this.patternCache.width() - this.showXAxis;
     }
 
     @Override
@@ -123,10 +122,10 @@ final class PatternScrollable extends AbstractScrollable {
     }
 
     private ScrollableSlotPos createSlotPos(int index) {
-        return ScrollableSlotPos.of(this.pattern.getHeight(), this.pattern.getWidth(), index);
+        return ScrollableSlotPos.of(this.patternCache.height(), this.patternCache.width(), index);
     }
 
     private ScrollableSlotPos createSlotPos(int row, int column) {
-        return ScrollableSlotPos.of(this.pattern.getHeight(), this.pattern.getWidth(), row, column);
+        return ScrollableSlotPos.of(this.patternCache.height(), this.patternCache.width(), row, column);
     }
 }

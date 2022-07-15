@@ -2,11 +2,11 @@ package nl.tritewolf.tritemenus.annotations;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritejection.utils.types.TypeReporter;
-import nl.tritewolf.tritemenus.patterns.DirectionPattern;
-import nl.tritewolf.tritemenus.patterns.IteratorPattern;
+import nl.tritewolf.tritemenus.patterns.MenuPattern;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +24,12 @@ public final class AnnotationBinding implements TypeReporter {
                 this.classNames.add(className);
 
                 Class<?> patternClass = Class.forName(className);
-                if (IteratorPattern.class.isAssignableFrom(patternClass)) {
-                    this.patternContainer.registerIteratorPattern((IteratorPattern) patternClass.getDeclaredConstructor().newInstance());
-                }
+                if (MenuPattern.class.isAssignableFrom(patternClass)) {
+                    Constructor<?> declaredConstructor = patternClass.getDeclaredConstructor();
+                    declaredConstructor.setAccessible(true);
 
-                if (DirectionPattern.class.isAssignableFrom(patternClass)) {
-                    this.patternContainer.registerDirectionsPattern((DirectionPattern) patternClass.getDeclaredConstructor().newInstance());
+                    this.patternContainer.registerPattern((MenuPattern<?>) declaredConstructor.newInstance());
+                    declaredConstructor.setAccessible(false);
                 }
             }
         } catch (Throwable t) {
