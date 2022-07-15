@@ -3,20 +3,20 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
-import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
-import nl.tritewolf.tritemenus.iterators.MenuIterator;
-import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
+import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
+import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -328,7 +328,7 @@ public class InventoryContents {
     }
 
     public ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
-        return new ScrollableBuilder(this, id, showYAxis, showXAxis);
+        return ScrollableBuilder.builder(this, id, showYAxis, showXAxis);
     }
 
     public String getSearchQuery(String id) {

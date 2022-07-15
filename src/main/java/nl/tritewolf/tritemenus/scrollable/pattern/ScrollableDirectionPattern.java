@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class DirectionScrollablePattern {
+public class ScrollableDirectionPattern {
 
     /**
-     * X = empty
+     * ## = empty
      * | = Seperator
      * int = position;
      */
@@ -20,8 +20,15 @@ public class DirectionScrollablePattern {
     private final List<String> pattern;
     private final Map<Integer, Integer> index = new HashMap<>();
 
-    public DirectionScrollablePattern(@NotNull List<@NotNull String> pattern) {
+    private int width;
+    private final int height;
+
+    public ScrollableDirectionPattern(@NotNull List<@NotNull String> pattern) {
         this.pattern = pattern;
+
+        this.width = 0;
+        this.height = pattern.size();
+
         this.initializeIndex();
     }
 
@@ -29,15 +36,22 @@ public class DirectionScrollablePattern {
         int currentIndex = 0;
 
         for (String patternLine : this.pattern) {
+            int width = 0;
             for (String s : patternLine.split("\\|")) {
-                if (s.equalsIgnoreCase("X")) {
+                if (s.equalsIgnoreCase("##")) {
                     this.index.put(currentIndex++, -1);
+                    width++;
                     continue;
                 }
 
                 if (NumberUtils.isDigits(s)) {
                     this.index.put(currentIndex++, Integer.parseInt(s));
+                    width++;
                 }
+            }
+
+            if (width > this.width) {
+                this.width = width;
             }
         }
     }

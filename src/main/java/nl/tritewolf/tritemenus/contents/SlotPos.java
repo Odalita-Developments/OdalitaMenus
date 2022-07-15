@@ -1,9 +1,6 @@
 package nl.tritewolf.tritemenus.contents;
 
-import lombok.Getter;
-
-@Getter
-public final class SlotPos {
+public final class SlotPos extends SlotPosition {
 
     public static SlotPos of(int row, int column) {
         return new SlotPos(row, column);
@@ -13,28 +10,11 @@ public final class SlotPos {
         return new SlotPos(slot);
     }
 
-    private final int row;
-    private final int column;
-    private final int slot;
-
-    SlotPos(int row, int column) {
-        this.row = row;
-        this.column = column;
-        this.slot = (row * 9) + column;
+    private SlotPos(int row, int column) {
+        super(6, 9, row, column);
     }
 
-    SlotPos(int slot) {
-        this.slot = slot;
-        this.row = slot / 9;
-        this.column = slot - (9 * this.row);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof SlotPos slotPos) {
-            return slotPos.getRow() == this.row && slotPos.getColumn() == this.column;
-        }
-
-        return false;
+    private SlotPos(int slot) {
+        super(6, 9, slot);
     }
 }
