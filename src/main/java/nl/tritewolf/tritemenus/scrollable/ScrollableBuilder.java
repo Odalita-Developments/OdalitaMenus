@@ -25,9 +25,9 @@ public interface ScrollableBuilder {
 
     interface ScrollableSingleBuilder {
 
-        @NotNull ScrollableBuilder horizontally();
+        @NotNull Scrollable horizontally();
 
-        @NotNull ScrollableBuilder vertically();
+        @NotNull Scrollable vertically();
     }
 
     interface ScrollablePatternBuilder {
@@ -36,15 +36,13 @@ public interface ScrollableBuilder {
 
         @NotNull ScrollableContinuousPatternBuilder vertically();
 
-        @NotNull ScrollableBuilder horizontallyAndVertically();
+        @NotNull Scrollable horizontallyAndVertically();
     }
 
     interface ScrollableContinuousPatternBuilder {
 
-        @NotNull ScrollableBuilder continuous();
+        @NotNull Scrollable continuous();
 
-        @NotNull ScrollableBuilder continuous(boolean continuous);
-
-        @NotNull Scrollable create();
+        @NotNull Scrollable continuous(boolean continuous);
     }
 }

@@ -85,15 +85,15 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         private final ScrollableBuilderImpl builder;
 
         @Override
-        public @NotNull ScrollableBuilder horizontally() {
+        public @NotNull Scrollable horizontally() {
             this.builder.direction = ScrollableDirection.HORIZONTALLY;
-            return this.builder;
+            return this.builder.create();
         }
 
         @Override
-        public @NotNull ScrollableBuilder vertically() {
+        public @NotNull Scrollable vertically() {
             this.builder.direction = ScrollableDirection.VERTICALLY;
-            return this.builder;
+            return this.builder.create();
         }
     }
 
@@ -115,9 +115,9 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         }
 
         @Override
-        public @NotNull ScrollableBuilder horizontallyAndVertically() {
+        public @NotNull Scrollable horizontallyAndVertically() {
             this.builder.direction = ScrollableDirection.ALL;
-            return this.builder;
+            return this.builder.create();
         }
     }
 
@@ -127,19 +127,14 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         private final ScrollableBuilderImpl builder;
 
         @Override
-        public @NotNull ScrollableBuilder continuous() {
+        public @NotNull Scrollable continuous() {
             this.builder.continuousPattern = true;
-            return this.builder;
+            return this.builder.create();
         }
 
         @Override
-        public @NotNull ScrollableBuilder continuous(boolean continuous) {
+        public @NotNull Scrollable continuous(boolean continuous) {
             this.builder.continuousPattern = continuous;
-            return this.builder;
-        }
-
-        @Override
-        public @NotNull Scrollable create() {
             return this.builder.create();
         }
     }

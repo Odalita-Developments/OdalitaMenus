@@ -35,8 +35,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     public void onLoad(@NotNull Player player, @NotNull InventoryContents contents) {
         Scrollable scrollable = contents.scrollable("test", 3, 7)
                 .pattern(1, 1, TestScrollablePattern.class)
-                .horizontallyAndVertically()
-                .create();
+                .horizontallyAndVertically();
 
         for (int i = 0; i < 73; i++) {
             int finalI = i;
