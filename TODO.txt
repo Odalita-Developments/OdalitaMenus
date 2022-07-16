@@ -1,0 +1,5 @@
+performance check / benchmark
+syntax changes
+cleanup code
+
+check if every feature we wanted is present

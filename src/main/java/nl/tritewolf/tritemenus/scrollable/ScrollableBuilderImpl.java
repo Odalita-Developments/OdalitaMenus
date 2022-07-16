@@ -47,15 +47,6 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
     }
 
     @Override
-    public @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull ScrollableDirectionPattern pattern) {
-        this.startRow = startRow;
-        this.startColumn = startColumn;
-        this.isSingle = false;
-        this.patternCache = pattern.getCache();
-        return new ScrollablePatternBuilderImpl(this);
-    }
-
-    @Override
     public @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass) {
         PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
         ScrollableDirectionPatternCache patternCache = patternContainer.getPattern(patternClass);
@@ -74,6 +65,15 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
     public @NotNull Scrollable create() {
         if (this.isSingle) {
             return new SingleScrollable(this);
+        }
+
+        if (this.continuousPattern) {
+            if ((this.direction == ScrollableDirection.HORIZONTALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.VERTICALLY)
+                    || (this.direction == ScrollableDirection.VERTICALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.HORIZONTALLY)) {
+                throw new IllegalArgumentException("Pattern direction does not match with scrollable direction.");
+            }
+
+            return new ContinuousPatternScrollable(this);
         } else {
             return new PatternScrollable(this);
         }

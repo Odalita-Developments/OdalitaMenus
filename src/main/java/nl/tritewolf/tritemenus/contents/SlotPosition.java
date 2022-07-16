@@ -9,8 +9,8 @@ public abstract class SlotPosition {
 
     protected final int height, width;
 
-    protected final int row, column;
-    protected final int slot;
+    protected int row, column;
+    protected int slot;
 
     protected SlotPosition(int height, int width, int row, int column) {
         this.height = height;

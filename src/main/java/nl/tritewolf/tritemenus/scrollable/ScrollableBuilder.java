@@ -17,8 +17,6 @@ public interface ScrollableBuilder {
 
     @NotNull ScrollableSingleBuilder single(int startRow, int startColumn);
 
-    @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull ScrollableDirectionPattern pattern);
-
     @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass);
 
     @NotNull Scrollable create();

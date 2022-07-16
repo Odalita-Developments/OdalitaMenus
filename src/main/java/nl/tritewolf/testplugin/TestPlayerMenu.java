@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Menu(
-        rows = 5,
+        rows = 6,
         displayName = "Test menu"
 )
 public class TestPlayerMenu implements PlayerMenuProvider {
@@ -33,11 +33,12 @@ public class TestPlayerMenu implements PlayerMenuProvider {
 
     @Override
     public void onLoad(@NotNull Player player, @NotNull InventoryContents contents) {
-        Scrollable scrollable = contents.scrollable("test", 3, 7)
-                .pattern(1, 1, TestScrollablePattern.class)
-                .horizontallyAndVertically();
+        Scrollable scrollable = contents.scrollable("test", 5, 9)
+                .pattern(0, 0, TestScrollablePattern.class)
+                .vertically()
+                .continuous();
 
-        for (int i = 0; i < 73; i++) {
+        for (int i = 0; i < 74; i++) {
             int finalI = i;
             scrollable.addItem(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
         }
@@ -46,20 +47,28 @@ public class TestPlayerMenu implements PlayerMenuProvider {
                 .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
                 .build(), 5));
 
-        contents.set(4, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
-            scrollable.previousVertical();
+        contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+            scrollable.previous();
         }));
 
-        contents.set(18, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.previousHorizontal();
+        contents.set(53, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+            scrollable.next();
         }));
 
-        contents.set(26, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.nextHorizontal();
-        }));
+        //        contents.set(4, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
+        //            scrollable.previousVertical();
+        //        }));
+        //
+        //        contents.set(18, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+        //            scrollable.previousHorizontal();
+        //        }));
+        //
+        //        contents.set(26, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
+        //            scrollable.nextHorizontal();
+        //        }));
 
-        contents.set(40, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
-            scrollable.nextVertical();
-        }));
+        //        contents.set(40, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
+        //            scrollable.nextVertical();
+        //        }));
     }
 }

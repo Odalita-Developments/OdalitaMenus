@@ -12,15 +12,13 @@ import java.util.function.Supplier;
 final class PatternScrollable extends AbstractScrollable {
 
     private final ScrollableDirectionPatternCache patternCache;
-    private final boolean continuousPattern;
 
     private int lastPatternIndex;
 
-    PatternScrollable(@NotNull ScrollableBuilderImpl builder) { // TODO continuous
+    PatternScrollable(@NotNull ScrollableBuilderImpl builder) {
         super(builder);
 
         this.patternCache = builder.getPatternCache();
-        this.continuousPattern = builder.isContinuousPattern();
 
         this.lastPatternIndex = -1;
     }
