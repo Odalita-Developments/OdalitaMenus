@@ -13,7 +13,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-abstract class AbstractScrollable implements Scrollable {
+abstract sealed class AbstractScrollable implements Scrollable permits ContinuousPatternScrollable, PatternScrollable, SingleScrollable {
 
     protected final ScrollableBuilderImpl builder;
 

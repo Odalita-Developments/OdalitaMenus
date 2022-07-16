@@ -20,7 +20,7 @@ final class SingleScrollable extends AbstractScrollable {
     }
 
     @Override
-    public @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
+    public synchronized @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
         int index = (this.items.isEmpty()) ? 0 : this.items.lastKey() + 1;
 
         this.items.put(index, menuItemSupplier);

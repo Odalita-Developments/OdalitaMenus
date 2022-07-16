@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public interface Scrollable {
+public sealed interface Scrollable permits AbstractScrollable {
 
     @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier);
 

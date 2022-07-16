@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface MenuPattern<CacheType> extends PatternCache<CacheType> {
+public non-sealed interface MenuPattern<CacheType> extends PatternCache<CacheType> {
 
     @NotNull List<@NotNull String> getPattern();
 

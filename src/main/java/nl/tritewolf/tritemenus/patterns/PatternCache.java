@@ -1,10 +1,8 @@
 package nl.tritewolf.tritemenus.patterns;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-@ApiStatus.Internal
-public interface PatternCache<CacheType> {
+public sealed interface PatternCache<CacheType> permits MenuPattern {
 
     @NotNull CacheType getCache();
 }

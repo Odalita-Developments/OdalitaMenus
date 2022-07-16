@@ -1,10 +1,8 @@
 package nl.tritewolf.tritemenus.contents;
 
 import lombok.Getter;
-import org.jetbrains.annotations.ApiStatus;
 
 @Getter
-@ApiStatus.Internal
 public abstract class SlotPosition {
 
     protected final int height, width;

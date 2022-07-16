@@ -28,7 +28,7 @@ final class ContinuousPatternScrollable extends AbstractScrollable {
     }
 
     @Override
-    public @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
+    public synchronized @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
         Map.Entry<Integer, Integer> newIndexEntry = this.patternCache.index().entrySet().stream()
                 .filter((entry) -> entry.getValue() > this.lastPatternIndex)
                 .min(Comparator.comparingInt(Map.Entry::getValue))
