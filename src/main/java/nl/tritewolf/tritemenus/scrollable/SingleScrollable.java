@@ -25,7 +25,7 @@ final class SingleScrollable extends AbstractScrollable {
 
         this.items.put(index, menuItemSupplier);
 
-        if (index < this.showXAxis * this.showYAxis) {
+        if (this.isInsideMenu(index)) {
             this.contents.setAsync(SlotPos.of(this.lastRow, this.lastColumn), menuItemSupplier.get());
 
             if (this.direction == ScrollableDirection.HORIZONTALLY) {
@@ -50,12 +50,12 @@ final class SingleScrollable extends AbstractScrollable {
 
     @Override
     public int lastVertical() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showXAxis) - this.showYAxis;
+        return Math.max(0, (int) Math.ceil((double) this.items.size() / (double) this.showXAxis) - this.showYAxis);
     }
 
     @Override
     public int lastHorizontal() {
-        return (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) - this.showXAxis;
+        return Math.max(0, (int) Math.ceil((double) this.items.size() / (double) this.showYAxis) - this.showXAxis);
     }
 
     @Override
@@ -108,11 +108,16 @@ final class SingleScrollable extends AbstractScrollable {
     }
 
     private List<Supplier<MenuItem>> getPageItems(int newAxis, ScrollableDirection direction) {
+        int startIndex = (direction == ScrollableDirection.HORIZONTALLY)
+                ? newAxis * this.showYAxis
+                : newAxis * this.showXAxis;
+
+        int endIndex = (direction == ScrollableDirection.HORIZONTALLY)
+                ? (newAxis + this.showXAxis) * this.showYAxis
+                : (newAxis + this.showYAxis) * this.showXAxis;
+
         List<Supplier<MenuItem>> pageItems = new ArrayList<>(
-                this.items.subMap(
-                        (direction == ScrollableDirection.HORIZONTALLY) ? newAxis * this.showYAxis : newAxis * this.showXAxis,
-                        (direction == ScrollableDirection.HORIZONTALLY) ? (newAxis + this.showXAxis) * this.showYAxis : (newAxis + this.showYAxis) * this.showXAxis
-                ).values()
+                this.items.subMap(startIndex, endIndex).values()
         );
 
         for (int i = pageItems.size(); i < this.showXAxis * this.showYAxis; i++) {

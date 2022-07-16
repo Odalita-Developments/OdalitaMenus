@@ -2,14 +2,14 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-final class ContinuousPatternScrollable extends AbstractScrollable {
+final class ContinuousPatternScrollable extends PatternScrollable {
 
     private final ScrollableDirectionPatternCache patternCache;
 
@@ -75,16 +75,9 @@ final class ContinuousPatternScrollable extends AbstractScrollable {
 
     @Override
     public int lastVertical() { // TODO performance updated needed :)
-        int usedPatternAmount = (int) Math.floor((double) this.items.size() / (double) this.patternCache.amountOfIndexes());
-        int restItems = this.items.size() - usedPatternAmount * this.patternCache.amountOfIndexes();
-
-        int offsetIndex = -1;
-        for (Map.Entry<Integer, Integer> entry : this.patternCache.index().entrySet()) {
-            if (entry.getValue() == restItems) {
-                offsetIndex = entry.getKey();
-                break;
-            }
-        }
+        LastPageData lastPageData = this.calculateLastPageData();
+        int usedPatternAmount = lastPageData.usedPatternAmount();
+        int offsetIndex = lastPageData.offsetIndex();
 
         int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getRow() + 1;
         return Math.max(0, usedPatternAmount * this.patternCache.height() - this.showYAxis + offset);
@@ -92,74 +85,33 @@ final class ContinuousPatternScrollable extends AbstractScrollable {
 
     @Override
     public int lastHorizontal() { // TODO performance updated needed :)
-        int usedPatternAmount = (int) Math.floor((double) this.items.size() / (double) this.patternCache.amountOfIndexes());
-        int restItems = this.items.size() - usedPatternAmount * this.patternCache.amountOfIndexes();
-
-        int offsetIndex = -1;
-        for (Map.Entry<Integer, Integer> entry : this.patternCache.index().entrySet()) {
-            if (entry.getValue() == restItems) {
-                offsetIndex = entry.getKey();
-                break;
-            }
-        }
+        LastPageData lastPageData = this.calculateLastPageData();
+        int usedPatternAmount = lastPageData.usedPatternAmount();
+        int offsetIndex = lastPageData.offsetIndex();
 
         int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getColumn() + 1;
         return Math.max(0, usedPatternAmount * this.patternCache.width() - this.showXAxis + offset);
     }
 
     @Override
-    @NotNull Scrollable open(int newAxis, @NotNull ScrollableDirection direction) {
-        if (!this.isValidDirection(direction)) return this;
+    protected Pair<Integer, Integer> getUpdateRowColumn(int index, int newAxis, ScrollableDirection direction) {
+        int offset = (direction == ScrollableDirection.HORIZONTALLY) ? newAxis * this.showYAxis : newAxis * this.showXAxis;
+        ScrollableSlotPos scrollableSlotPos = this.createSlotPos(index - offset);
 
-        int lastAxis = (direction == ScrollableDirection.HORIZONTALLY) ? this.lastHorizontal() : this.lastVertical();
-        if (newAxis > lastAxis) return this;
-
-        newAxis = Math.max(0, newAxis);
-
-        Map<Integer, Supplier<MenuItem>> pageItems = this.getPageItems(newAxis, direction);
-
-        boolean updatable = this.contents.getTriteMenu().isHasUpdatableItems();
-        if (updatable) {
-            this.contents.getTriteMenu().setHasUpdatableItems(false);
-        }
-
-        this.setNewPage(newAxis, direction);
-
-        for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
-            int offset = (direction == ScrollableDirection.HORIZONTALLY) ? newAxis * this.showYAxis : newAxis * this.showXAxis;
-            ScrollableSlotPos scrollableSlotPos = this.createSlotPos(entry.getKey() - offset);
-
-            int row = scrollableSlotPos.getRow();
-            int column = scrollableSlotPos.getColumn();
-
-            if (row < this.startRow || column < this.startColumn || row > this.showYAxis || column > this.showXAxis) {
-                continue;
-            }
-
-            if (updatable) {
-                MenuItem menuItem = this.contents.getTriteMenu().getContents()[row][column];
-                if (menuItem != null && menuItem.isUpdatable()) {
-                    this.contents.getTriteMenu().getContents()[row][column] = null;
-                }
-            }
-
-            this.updateItem(SlotPos.of(row, column).getSlot(), entry.getValue());
-        }
-
-        return this;
+        return new Pair<>(scrollableSlotPos.getRow(), scrollableSlotPos.getColumn());
     }
 
-    private Map<Integer, Supplier<MenuItem>> getPageItems(int newAxis, ScrollableDirection direction) {
-        int startIndex = (direction == ScrollableDirection.HORIZONTALLY) ? newAxis * this.showYAxis : newAxis * this.showXAxis;
-        int endIndex = (direction == ScrollableDirection.HORIZONTALLY) ? this.showYAxis * this.showXAxis + newAxis * this.showYAxis : this.showYAxis * this.showXAxis + newAxis * this.showXAxis;
+    @Override
+    protected Pair<Integer, Integer> getPageItemsStartEndIndex(int newAxis, ScrollableDirection direction) {
+        int startIndex = (direction == ScrollableDirection.HORIZONTALLY)
+                ? newAxis * this.showYAxis
+                : newAxis * this.showXAxis;
 
-        Map<Integer, Supplier<MenuItem>> pageItems = new HashMap<>(this.items.subMap(startIndex, endIndex));
+        int endIndex = (direction == ScrollableDirection.HORIZONTALLY)
+                ? this.showYAxis * this.showXAxis + newAxis * this.showYAxis
+                : this.showYAxis * this.showXAxis + newAxis * this.showXAxis;
 
-        for (int i = startIndex; i < endIndex; i++) {
-            pageItems.putIfAbsent(i, null);
-        }
-
-        return pageItems;
+        return new Pair<>(startIndex, endIndex);
     }
 
     private ScrollableSlotPos createSlotPos(int index) {
@@ -169,5 +121,23 @@ final class ContinuousPatternScrollable extends AbstractScrollable {
                 this.patternCache.width(),
                 index
         );
+    }
+
+    private LastPageData calculateLastPageData() {
+        int usedPatternAmount = (int) Math.floor((double) this.items.size() / (double) this.patternCache.amountOfIndexes());
+        int restItems = this.items.size() - usedPatternAmount * this.patternCache.amountOfIndexes();
+
+        int offsetIndex = -1;
+        for (Map.Entry<Integer, Integer> entry : this.patternCache.index().entrySet()) {
+            if (entry.getValue() == restItems) {
+                offsetIndex = entry.getKey();
+                break;
+            }
+        }
+
+        return new LastPageData(usedPatternAmount, offsetIndex);
+    }
+
+    record LastPageData(int usedPatternAmount, int offsetIndex) {
     }
 }

@@ -2,6 +2,7 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-final class PatternScrollable extends AbstractScrollable {
+sealed class PatternScrollable extends AbstractScrollable permits ContinuousPatternScrollable {
 
     private final ScrollableDirectionPatternCache patternCache;
 
@@ -78,9 +79,9 @@ final class PatternScrollable extends AbstractScrollable {
         this.setNewPage(newAxis, direction);
 
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
-            ScrollableSlotPos slotPos = this.createSlotPos(entry.getKey());
-            int row = this.startRow + slotPos.getRow() - this.currentYAxis;
-            int column = this.startColumn + slotPos.getColumn() - this.currentXAxis;
+            Pair<Integer, Integer> pair = this.getUpdateRowColumn(entry.getKey(), newAxis, direction);
+            int row = pair.getKey();
+            int column = pair.getValue();
 
             if (row < this.startRow || column < this.startColumn || row > this.showYAxis || column > this.showXAxis) {
                 continue;
@@ -99,7 +100,14 @@ final class PatternScrollable extends AbstractScrollable {
         return this;
     }
 
-    private Map<Integer, Supplier<MenuItem>> getPageItems(int newAxis, ScrollableDirection direction) {
+    protected Pair<Integer, Integer> getUpdateRowColumn(int index, int newAxis, ScrollableDirection direction) {
+        ScrollableSlotPos slotPos = this.createSlotPos(index);
+        int row = this.startRow + slotPos.getRow() - this.currentYAxis;
+        int column = this.startColumn + slotPos.getColumn() - this.currentXAxis;
+        return new Pair<>(row, column);
+    }
+
+    protected Pair<Integer, Integer> getPageItemsStartEndIndex(int newAxis, ScrollableDirection direction) {
         int startIndex = this.createSlotPos(
                 (direction == ScrollableDirection.HORIZONTALLY) ? this.currentYAxis : newAxis, // row
                 (direction == ScrollableDirection.HORIZONTALLY) ? newAxis : this.currentXAxis // column
@@ -110,7 +118,17 @@ final class PatternScrollable extends AbstractScrollable {
                 (direction == ScrollableDirection.HORIZONTALLY) ? this.showXAxis + newAxis : this.showXAxis + this.currentXAxis // column
         ).getSlot();
 
-        Map<Integer, Supplier<MenuItem>> pageItems = new HashMap<>(this.items.subMap(startIndex, endIndex));
+        return new Pair<>(startIndex, endIndex);
+    }
+
+    private Map<Integer, Supplier<MenuItem>> getPageItems(int newAxis, ScrollableDirection direction) {
+        Pair<Integer, Integer> pair = this.getPageItemsStartEndIndex(newAxis, direction);
+        int startIndex = pair.getKey();
+        int endIndex = pair.getValue();
+
+        Map<Integer, Supplier<MenuItem>> pageItems = new HashMap<>(
+                this.items.subMap(startIndex, endIndex)
+        );
 
         for (int i = startIndex; i < endIndex; i++) {
             pageItems.putIfAbsent(i, null);

@@ -13,7 +13,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-abstract sealed class AbstractScrollable implements Scrollable permits ContinuousPatternScrollable, PatternScrollable, SingleScrollable {
+abstract sealed class AbstractScrollable implements Scrollable permits PatternScrollable, SingleScrollable {
 
     protected final ScrollableBuilderImpl builder;
 
@@ -125,6 +125,10 @@ abstract sealed class AbstractScrollable implements Scrollable permits Continuou
         }
 
         return true;
+    }
+
+    protected boolean isInsideMenu(int index) {
+        return index < this.showYAxis * this.showXAxis;
     }
 
     protected AbstractScrollable setNewPage(int newAxis, ScrollableDirection direction) {
