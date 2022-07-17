@@ -6,6 +6,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -17,7 +18,9 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
 
     @Override
     default @NotNull ScrollableDirectionPatternCache getCache() {
-        ScrollableDirectionPatternCache cache = this.initializeIndex();
+        ScrollableDirectionPatternCache cache = new PatternInitializer(this.getPattern(), this.direction())
+                .initializeIndex();
+
         if (cache == null) {
             throw new IllegalStateException("Could not initialize index of pattern: '" + this.getClass().getName() + "'");
         }
@@ -27,58 +30,6 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
 
     @Override
     default void handle(@NotNull MenuIterator menuIterator) {
-    }
-
-    default @Nullable ScrollableDirectionPatternCache initializeIndex() {
-        if (this.getPattern().isEmpty()) return null;
-
-        Direction direction = this.direction();
-
-        int currentIndex = 0;
-        int highestWidth = 0;
-
-        NavigableMap<Integer, Integer> index = new TreeMap<>();
-
-        if (direction == Direction.HORIZONTALLY) {
-            for (String patternLine : this.getPattern()) {
-                int width = 0;
-                for (String s : patternLine.split("\\|")) {
-                    if (s.equalsIgnoreCase("##")) {
-                        index.put(currentIndex++, -1);
-                        width++;
-                        continue;
-                    }
-
-                    if (NumberUtils.isDigits(s)) {
-                        index.put(currentIndex++, Integer.parseInt(s));
-                        width++;
-                    }
-                }
-
-                if (width > highestWidth) {
-                    highestWidth = width;
-                }
-            }
-        } else {
-            highestWidth = this.getPattern().get(0).split("\\|").length;
-            for (int column = 0; column < highestWidth; column++) {
-                for (int row = 0; row < this.getPattern().size(); row++) {
-                    String s = this.getPattern().get(row);
-                    String currentIndexValue = s.split("\\|")[column];
-
-                    if (currentIndexValue.equalsIgnoreCase("##")) {
-                        index.put(currentIndex++, -1);
-                        continue;
-                    }
-
-                    if (NumberUtils.isDigits(currentIndexValue)) {
-                        index.put(currentIndex++, Integer.parseInt(currentIndexValue));
-                    }
-                }
-            }
-        }
-
-        return new ScrollableDirectionPatternCache(direction, this.getPattern(), index, this.getPattern().size(), highestWidth, 0, 0);
     }
 
     enum Direction {
@@ -92,6 +43,74 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
             }
 
             return Direction.HORIZONTALLY;
+        }
+    }
+
+    record PatternInitializer(List<String> pattern, Direction direction) {
+
+        private @Nullable ScrollableDirectionPatternCache initializeIndex() {
+            if (this.pattern.isEmpty()) return null;
+
+            NavigableMap<Integer, Integer> index = new TreeMap<>();
+            int width = (this.direction == Direction.HORIZONTALLY)
+                    ? this.initializeHorizontal(index)
+                    : this.initializeVertical(index);
+
+            return new ScrollableDirectionPatternCache(this.direction, this.pattern, index, this.pattern.size(), width, 0, 0);
+        }
+
+        private int initializeHorizontal(NavigableMap<Integer, Integer> index) {
+            int currentIndex = 0;
+            int width = 0;
+
+            for (String patternLine : this.pattern) {
+                String[] splitArray = patternLine.split("\\|");
+
+                if (width == 0) width = splitArray.length;
+
+                if (splitArray.length != width) {
+                    throw new IllegalStateException("Pattern line '" + patternLine + "' has a different width than the previous lines.");
+                }
+
+                for (String currentIndexValue : splitArray) {
+                    currentIndex = this.handleCurrentIndexValue(index, currentIndexValue, currentIndex);
+                }
+            }
+
+            return width;
+        }
+
+        private int initializeVertical(NavigableMap<Integer, Integer> index) {
+            int currentIndex = 0;
+            int width = this.pattern.get(0).split("\\|").length;
+
+            for (int column = 0; column < width; column++) {
+                for (String patternLine : this.pattern) {
+                    String[] splitArray = patternLine.split("\\|");
+
+                    if (splitArray.length != width) {
+                        throw new IllegalStateException("Pattern line '" + patternLine + "' has a different width than the previous lines.");
+                    }
+
+                    String currentIndexValue = splitArray[column];
+                    currentIndex = this.handleCurrentIndexValue(index, currentIndexValue, currentIndex);
+                }
+            }
+
+            return width;
+        }
+
+        private int handleCurrentIndexValue(NavigableMap<Integer, Integer> index, String currentIndexValue, int currentIndex) {
+            if (currentIndexValue.equalsIgnoreCase("##")) {
+                index.put(currentIndex++, -1);
+                return currentIndex;
+            }
+
+            if (NumberUtils.isDigits(currentIndexValue)) {
+                index.put(currentIndex++, Integer.parseInt(currentIndexValue));
+            }
+
+            return currentIndex;
         }
     }
 }
