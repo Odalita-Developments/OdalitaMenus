@@ -125,7 +125,7 @@ public class Pagination {
             if (menuItemSupplier == null) {
                 int slot = iterator.getSlot();
                 reusableItems.add(slot);
-                iterator.setNext(new DisplayItem(new ItemStack(Material.AIR)));
+                iterator.setNext(DisplayItem.of(new ItemStack(Material.AIR)));
 
                 InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
                 continue;

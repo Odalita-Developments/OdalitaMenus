@@ -17,6 +17,7 @@ public final class InventoryUtils {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
             int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
+            if (windowId <= 0) return;
 
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
 
