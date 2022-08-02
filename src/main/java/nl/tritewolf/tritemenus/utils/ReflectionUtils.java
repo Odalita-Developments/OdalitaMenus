@@ -20,9 +20,6 @@ public final class ReflectionUtils {
 
     private static final String NM_PACKAGE = "net.minecraft";
     private static final String OBC_PACKAGE = "org.bukkit.craftbukkit";
-    private static final String NMS_PACKAGE = NM_PACKAGE + ".server";
-
-    private static final boolean NMS_REPACKAGED;
 
     public static Class<?> PACKET;
     public static Class<?> ENTITY_PLAYER;
@@ -41,7 +38,7 @@ public final class ReflectionUtils {
     public static Method GET_NMS_INVENTORY;
     public static Method GET_NMS_INVENTORY_CONTENTS;
     public static Method SET_LIST;
-    public static Method WINDOW_STATE_ID_118_METHOD;
+    public static Method WINDOW_STATE_ID_METHOD;
 
     public static Field ACTIVE_CONTAINER_FIELD;
     public static Field WINDOW_ID_FIELD;
@@ -53,8 +50,6 @@ public final class ReflectionUtils {
     public static MethodHandle SEND_PACKET_METHOD;
 
     static {
-        NMS_REPACKAGED = optionalClass(NM_PACKAGE + ".network.protocol.Packet").isPresent();
-
         try {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
 
@@ -76,15 +71,11 @@ public final class ReflectionUtils {
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
 
-            ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField((isRepackaged()) ? "bV" : "activeContainer");
-            WINDOW_ID_FIELD = CONTAINER.getField((isRepackaged()) ? "j" : "windowId");
+            ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField("bV");
+            WINDOW_ID_FIELD = CONTAINER.getField("j");
 
-            if (isRepackaged()) {
-                WINDOW_STATE_ID_118_METHOD = CONTAINER.getMethod("k");
-                PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, int.class, ITEM_STACK);
-            } else {
-                PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, ITEM_STACK);
-            }
+            WINDOW_STATE_ID_METHOD = CONTAINER.getMethod("k");
+            PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, int.class, ITEM_STACK);
 
             Field playerConnectionField = Arrays.stream(ENTITY_PLAYER.getFields())
                     .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))
@@ -97,13 +88,11 @@ public final class ReflectionUtils {
             GET_PLAYER_HANDLE_METHOD = lookup.findVirtual(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
             GET_PLAYER_CONNECTION_METHOD = lookup.unreflectGetter(playerConnectionField);
             SEND_PACKET_METHOD = lookup.unreflect(sendPacketMethod);
-        } catch (Exception exception) {
+        } catch (
+                Exception exception) {
             exception.printStackTrace();
         }
-    }
 
-    public static boolean isRepackaged() {
-        return NMS_REPACKAGED;
     }
 
     public static String getServerProtocolVersion() {
@@ -112,12 +101,8 @@ public final class ReflectionUtils {
     }
 
     private static String nmsClassName(String post1_17package, String className) {
-        if (isRepackaged()) {
-            String classPackage = post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package;
-            return classPackage + '.' + className;
-        }
-
-        return NMS_PACKAGE + '.' + getServerProtocolVersion() + '.' + className;
+        String classPackage = post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package;
+        return classPackage + '.' + className;
     }
 
     public static Class<?> nmsClass(String post1_17package, String className) throws ClassNotFoundException {

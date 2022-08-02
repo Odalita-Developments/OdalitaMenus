@@ -25,13 +25,9 @@ public final class InventoryUtils {
             Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
             SET_LIST.invoke(contents, slot, nmsItemStack);
 
-            Object packetPlayOutSetSlot;
-            if (isRepackaged()) {
-                Object stateId = WINDOW_STATE_ID_118_METHOD.invoke(activeContainer);
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, nmsItemStack);
-            } else {
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
-            }
+            Object stateId = WINDOW_STATE_ID_METHOD.invoke(activeContainer);
+            Object packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, nmsItemStack);
+
             sendPacket(player, packetPlayOutSetSlot);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
