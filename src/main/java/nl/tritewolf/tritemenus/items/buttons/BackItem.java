@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BackItem implements MenuItem {
 
     public static BackItem of(@NotNull ItemStack itemStack, @NotNull Inventory inventory) {
@@ -25,7 +26,7 @@ public final class BackItem implements MenuItem {
     private final @NotNull ItemStack itemStack;
     private final @NotNull Inventory inventory;
 
-    public BackItem(@NotNull Inventory inventory) {
+    private BackItem(@NotNull Inventory inventory) {
         this.inventory = inventory;
 
         this.itemStack = new ItemBuilder(Material.ARROW)

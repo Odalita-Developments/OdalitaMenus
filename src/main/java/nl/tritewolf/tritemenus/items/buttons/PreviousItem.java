@@ -51,7 +51,7 @@ public class PreviousItem implements MenuItem {
     @Getter
     private SlotPos slot;
 
-    public PreviousItem(MenuProvider provider, Pagination pagination, ItemStack itemStack, boolean showOnFirstPage) {
+    protected PreviousItem(MenuProvider provider, Pagination pagination, ItemStack itemStack, boolean showOnFirstPage) {
         this.provider = provider;
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
@@ -59,7 +59,7 @@ public class PreviousItem implements MenuItem {
         this.itemStack = itemStack;
     }
 
-    public PreviousItem(MenuProvider provider, Pagination pagination, boolean showOnFirstPage) {
+    protected PreviousItem(MenuProvider provider, Pagination pagination, boolean showOnFirstPage) {
         this.provider = provider;
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
@@ -71,11 +71,11 @@ public class PreviousItem implements MenuItem {
         this.itemStack.setItemMeta(itemMeta);
     }
 
-    public PreviousItem(MenuProvider provider, Pagination pagination, ItemStack itemStack) {
+    protected PreviousItem(MenuProvider provider, Pagination pagination, ItemStack itemStack) {
         this(provider, pagination, itemStack, false);
     }
 
-    public PreviousItem(MenuProvider provider, Pagination pagination) {
+    protected PreviousItem(MenuProvider provider, Pagination pagination) {
         this(provider, pagination, false);
     }
 

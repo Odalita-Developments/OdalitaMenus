@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CloseItem implements MenuItem {
 
     public static CloseItem of(@NotNull ItemStack itemStack) {
@@ -23,7 +24,7 @@ public final class CloseItem implements MenuItem {
 
     private final @NotNull ItemStack itemStack;
 
-    public CloseItem() {
+    private CloseItem() {
         this.itemStack = new ItemBuilder(Material.BARRIER)
                 .setLore("&cClose")
                 .build();
