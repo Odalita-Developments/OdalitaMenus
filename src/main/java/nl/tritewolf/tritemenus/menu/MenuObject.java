@@ -5,6 +5,7 @@ import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -30,6 +31,7 @@ public final class MenuObject {
 
     private final MenuItem[][] contents;
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
+    private final Map<String, Scrollable> scrollableMap = new ConcurrentHashMap<>();
     private final Map<String, String> searchQueries = new HashMap<>();
 
     private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = new HashMap<>();

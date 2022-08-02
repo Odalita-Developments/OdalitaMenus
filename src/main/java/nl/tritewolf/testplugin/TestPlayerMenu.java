@@ -1,11 +1,12 @@
 package nl.tritewolf.testplugin;
 
+import nl.tritewolf.testplugin.sb.TestExtraMenuProvider;
+import nl.tritewolf.testplugin.sb.ExtraPlayer;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
-import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
         rows = 6,
         displayName = "Test menu"
 )
-public class TestPlayerMenu implements PlayerMenuProvider {
+public class TestPlayerMenu implements TestExtraMenuProvider {
 
     private final int test;
 
@@ -32,7 +33,7 @@ public class TestPlayerMenu implements PlayerMenuProvider {
     }
 
     @Override
-    public void onLoad(@NotNull Player player, @NotNull InventoryContents contents) {
+    public void onLoad(@NotNull Player player, ExtraPlayer extraPlayer, @NotNull InventoryContents contents) {
         Scrollable scrollable = contents.scrollable("test", 5, 9)
                 .pattern(0, 0, TestScrollablePattern.class)
                 .vertically()

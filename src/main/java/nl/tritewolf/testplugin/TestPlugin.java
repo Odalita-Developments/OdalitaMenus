@@ -2,6 +2,7 @@ package nl.tritewolf.testplugin;
 
 import lombok.Getter;
 import nl.tritewolf.testplugin.commands.TestCommand;
+import nl.tritewolf.testplugin.sb.TestExtraMenuProvider;
 import nl.tritewolf.tritemenus.TriteMenus;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,6 +14,8 @@ public class TestPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         triteMenus = new TriteMenus(this);
+
+        triteMenus.getMenuProcessor().registerProviderLoader(TestExtraMenuProvider.class, TestExtraMenuProvider.loader());
 
         getCommand("TestCommand").setExecutor(new TestCommand());
     }

@@ -1,21 +1,14 @@
 package nl.tritewolf.tritemenus.menu;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import nl.tritewolf.tritejection.annotations.TriteJect;
-import nl.tritewolf.tritemenus.annotations.Menu;
-import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
-import nl.tritewolf.tritemenus.menu.providers.GlobalMenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
-import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
-import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,101 +16,51 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class MenuProcessor {
 
     @TriteJect
-    @Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.PACKAGE)
     private ItemProcessor itemProcessor;
 
+    private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
     private final Map<Player, MenuObject> openMenus = new ConcurrentHashMap<>();
+
+    public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
+        this.providerLoaders.put(providerClass, loader);
+    }
+
+    public <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader) {
+        this.openMenuBuilder(menuProvider, player, providerLoader)
+                .open();
+    }
 
     public void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player) {
         this.openMenuBuilder(menuProvider, player)
                 .open();
     }
 
-    @Contract("_, _ -> new")
-    public @NotNull MenuOpener openMenuBuilder(@NotNull MenuProvider menuProvider, @NotNull Player player) {
-        return new MenuOpener(this, this.itemProcessor, player, menuProvider);
+    public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
+                                                                               @NotNull MenuProviderLoader<P> providerLoader) {
+        return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, menuProvider, player, providerLoader);
     }
 
-    @AllArgsConstructor
-    public static class MenuOpener {
+    @SuppressWarnings("unchecked")
+    public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player) {
+        MenuProviderLoader<P> providerLoader = null;
 
-        private final MenuProcessor processor;
-        private final ItemProcessor itemProcessor;
-
-        private final Player player;
-        private final MenuProvider menuProvider;
-        private final Map<String, Integer> paginationPages = new HashMap<>();
-
-        public @NotNull MenuOpener paginationPages(@NotNull Map<@NotNull String, @NotNull Integer> paginationPages) {
-            this.paginationPages.putAll(paginationPages);
-            return this;
-        }
-
-        public @NotNull MenuOpener pagination(@NotNull String key, int page) {
-            this.paginationPages.put(key, page);
-            return this;
-        }
-
-        public void open() {
-            if (this.menuProvider instanceof GlobalMenuProvider) {
-                this.openGlobalMenu(this.player, (GlobalMenuProvider) this.menuProvider);
-                return;
+        try {
+            Class<?>[] interfaces = menuProvider.getClass().getInterfaces();
+            for (Class<?> menuInterface : interfaces) {
+                if (MenuProvider.class.isAssignableFrom(menuInterface)) {
+                    providerLoader = (MenuProviderLoader<P>) this.providerLoaders.get(menuInterface);
+                    break;
+                }
             }
-
-            if (this.menuProvider instanceof PlayerMenuProvider) {
-                this.openPlayerMenu(this.player, (PlayerMenuProvider) this.menuProvider);
-            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
-        private void openGlobalMenu(@NotNull Player player, @NotNull GlobalMenuProvider menuProvider) {
-            try {
-                Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
-                MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
-
-                menuProvider.onLoad(new InventoryContents(menuObject));
-
-                this.paginationPages.forEach((id, page) -> {
-                    Pagination pagination = menuObject.getPaginationMap().get(id);
-                    if (pagination == null) return;
-
-                    pagination.setCurrentPage(page);
-                });
-
-                this.itemProcessor.initializeItems(menuObject);
-
-                this.openInventory(player, menuObject);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                // TODO idk, something else
-            }
+        if (providerLoader == null) {
+            providerLoader = (MenuProviderLoader<P>) MenuProviderLoader.defaultLoader();
         }
 
-        private void openPlayerMenu(@NotNull Player player, @NotNull PlayerMenuProvider menuProvider) {
-            try {
-                Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
-                MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
-
-                menuProvider.onLoad(player, new InventoryContents(menuObject));
-
-                this.paginationPages.forEach((id, page) -> {
-                    Pagination pagination = menuObject.getPaginationMap().get(id);
-                    if (pagination == null) return;
-
-                    pagination.setCurrentPage(page);
-                });
-
-                this.itemProcessor.initializeItems(menuObject);
-
-                this.openInventory(player, menuObject);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                // TODO idk, something else
-            }
-        }
-
-        private void openInventory(@NotNull Player player, @NotNull MenuObject menuObject) {
-            player.openInventory(menuObject.getInventory());
-            this.processor.getOpenMenus().put(player, menuObject);
-        }
+        return this.openMenuBuilder(menuProvider, player, providerLoader);
     }
 }
