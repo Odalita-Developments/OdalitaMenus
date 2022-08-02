@@ -19,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,7 +97,7 @@ public class InventoryContents {
 
     public void setClickable(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName,
                              @NotNull Consumer<@NotNull InventoryClickEvent> event) {
-        this.setClickable(slotPos, this.getItemStack(material, displayName), event);
+        this.setClickable(slotPos, InventoryUtils.createItemStack(material, displayName), event);
     }
 
     public void setClickable(int row, int column, @NotNull Material material, @NotNull String displayName,
@@ -135,7 +134,7 @@ public class InventoryContents {
     }
 
     public void setDisplay(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName) {
-        this.setDisplay(slotPos, this.getItemStack(material, displayName));
+        this.setDisplay(slotPos, InventoryUtils.createItemStack(material, displayName));
     }
 
     public void setDisplay(int row, int column, @NotNull Material material, @NotNull String displayName) {
@@ -170,16 +169,6 @@ public class InventoryContents {
 
     public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event, int time) {
         this.setUpdatable(SlotPos.of(slot), itemStack, event, time);
-    }
-
-    @Deprecated
-    private ItemStack getItemStack(Material material, String displayName) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(displayName);
-        itemStack.setItemMeta(itemMeta);
-
-        return itemStack;
     }
 
     public void add(@NotNull MenuItem item) {

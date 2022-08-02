@@ -1,8 +1,10 @@
 package nl.tritewolf.tritemenus.utils;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.ApiStatus;
 
 import static nl.tritewolf.tritemenus.utils.ReflectionUtils.*;
@@ -34,5 +36,14 @@ public final class InventoryUtils {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+    }
+
+    public static ItemStack createItemStack(Material material, String displayName) {
+        ItemStack itemStack = new ItemStack(material);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
     }
 }
