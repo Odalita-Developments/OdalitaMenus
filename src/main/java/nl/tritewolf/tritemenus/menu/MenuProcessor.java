@@ -58,7 +58,7 @@ public final class MenuProcessor {
         }
 
         if (providerLoader == null) {
-            providerLoader = (MenuProviderLoader<P>) MenuProviderLoader.defaultLoader();
+            providerLoader = MenuProviderLoader.defaultLoader();
         }
 
         return this.openMenuBuilder(menuProvider, player, providerLoader);
