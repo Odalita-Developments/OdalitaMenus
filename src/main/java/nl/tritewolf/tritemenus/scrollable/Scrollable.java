@@ -9,6 +9,10 @@ public sealed interface Scrollable permits AbstractScrollable {
 
     @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier);
 
+    int currentVertical();
+
+    int currentHorizontal();
+
     int lastVertical();
 
     int lastHorizontal();

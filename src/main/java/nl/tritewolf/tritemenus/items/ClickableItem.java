@@ -11,12 +11,12 @@ import java.util.function.Consumer;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ClickableItem implements MenuItem {
 
-    public static ClickableItem of(@NotNull ItemStack itemStack, @NotNull Consumer<InventoryClickEvent> clickHandler) {
+    public static @NotNull ClickableItem of(@NotNull ItemStack itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> clickHandler) {
         return new ClickableItem(itemStack, clickHandler);
     }
 
-    private final @NotNull ItemStack itemStack;
-    private final @NotNull Consumer<InventoryClickEvent> clickHandler;
+    private final ItemStack itemStack;
+    private final Consumer<InventoryClickEvent> clickHandler;
 
     @Override
     public @NotNull ItemStack getItemStack() {

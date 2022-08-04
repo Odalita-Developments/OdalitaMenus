@@ -1,46 +1,71 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import nl.tritewolf.tritemenus.menu.MenuOpenerBuilder;
+import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
+import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BackItem implements MenuItem {
+public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
 
-    public static BackItem of(@NotNull ItemStack itemStack, @NotNull Inventory inventory) {
-        return new BackItem(itemStack, inventory);
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
+                                                                   @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction,
+                                                                   @NotNull MenuProviderLoader<P> menuProviderLoader) {
+        return new BackItem<>(itemStack, menuProvider, builderFunction, menuProviderLoader);
     }
 
-    public static BackItem of(@NotNull Inventory inventory) {
-        return new BackItem(inventory);
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
+                                                                   @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction) {
+        return new BackItem<>(itemStack, menuProvider, builderFunction);
     }
 
-    private final @NotNull ItemStack itemStack;
-    private final @NotNull Inventory inventory;
-
-    private BackItem(@NotNull Inventory inventory) {
-        this.inventory = inventory;
-
-        this.itemStack = new ItemBuilder(Material.ARROW)
-                .setLore("&7Go back")
-                .build();
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider, @NotNull MenuProviderLoader<P> menuProviderLoader) {
+        return new BackItem<>(itemStack, menuProvider, (builder) -> builder, menuProviderLoader);
     }
 
-    @Override
-    public @NotNull ItemStack getItemStack() {
-        return this.itemStack;
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider) {
+        return new BackItem<>(itemStack, menuProvider, (builder) -> builder);
     }
 
-    @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
-        return (event) -> event.getWhoClicked().openInventory(this.inventory);
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull P menuProvider,
+                                                                   @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction,
+                                                                   @NotNull MenuProviderLoader<P> menuProviderLoader) {
+        return new BackItem<>(menuProvider, builderFunction, menuProviderLoader);
+    }
+
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull P menuProvider,
+                                                                   @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction) {
+        return new BackItem<>(menuProvider, builderFunction);
+    }
+
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull P menuProvider, @NotNull MenuProviderLoader<P> menuProviderLoader) {
+        return new BackItem<>(menuProvider, (builder) -> builder, menuProviderLoader);
+    }
+
+    public static <P extends MenuProvider> @NotNull BackItem<P> of(@NotNull P menuProvider) {
+        return new BackItem<>(menuProvider, (builder) -> builder);
+    }
+
+    private BackItem(ItemStack itemStack, P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
+        super(itemStack, menuProvider, builderFunction, menuProviderLoader);
+    }
+
+    private BackItem(ItemStack itemStack, P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
+        super(itemStack, menuProvider, builderFunction);
+    }
+
+    private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
+        this(
+                InventoryUtils.createItemStack(Material.ARROW, "&cGo back"), // TODO
+                menuProvider, builderFunction, menuProviderLoader
+        );
+    }
+
+    private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
+        this(menuProvider, builderFunction, MenuProviderLoader.defaultLoader());
     }
 }

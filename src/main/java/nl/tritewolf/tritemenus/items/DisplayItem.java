@@ -11,11 +11,11 @@ import java.util.function.Consumer;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DisplayItem implements MenuItem {
 
-    public static DisplayItem of(@NotNull ItemStack itemStack) {
+    public static @NotNull DisplayItem of(@NotNull ItemStack itemStack) {
         return new DisplayItem(itemStack);
     }
 
-    private final @NotNull ItemStack itemStack;
+    private final ItemStack itemStack;
 
     @Override
     public @NotNull ItemStack getItemStack() {

@@ -1,17 +1,16 @@
 package nl.tritewolf.testplugin;
 
-import nl.tritewolf.testplugin.sb.TestExtraMenuProvider;
 import nl.tritewolf.testplugin.sb.ExtraPlayer;
+import nl.tritewolf.testplugin.sb.TestExtraMenuProvider;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.items.buttons.ScrollItem;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -48,28 +47,7 @@ public class TestPlayerMenu implements TestExtraMenuProvider {
                 .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
                 .build(), 5));
 
-        contents.set(45, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.previous();
-        }));
-
-        contents.set(53, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-            scrollable.next();
-        }));
-
-        //        contents.set(4, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
-        //            scrollable.previousVertical();
-        //        }));
-        //
-        //        contents.set(18, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-        //            scrollable.previousHorizontal();
-        //        }));
-        //
-        //        contents.set(26, ClickableItem.of(new ItemStack(Material.ARROW), event -> {
-        //            scrollable.nextHorizontal();
-        //        }));
-
-        //        contents.set(40, ClickableItem.of(new ItemStack(Material.ARROW), (event) -> {
-        //            scrollable.nextVertical();
-        //        }));
+        contents.set(45, ScrollItem.up(scrollable));
+        contents.set(53, ScrollItem.down(scrollable));
     }
 }

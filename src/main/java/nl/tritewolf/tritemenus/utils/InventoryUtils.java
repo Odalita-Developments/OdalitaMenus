@@ -1,11 +1,15 @@
 package nl.tritewolf.tritemenus.utils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static nl.tritewolf.tritemenus.utils.ReflectionUtils.*;
 
@@ -35,10 +39,20 @@ public final class InventoryUtils {
         }
     }
 
-    public static ItemStack createItemStack(Material material, String displayName) {
+    public static ItemStack createItemStack(Material material, String displayName, String... lore) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(displayName);
+        itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+
+        if (lore.length > 0) {
+            List<String> loreList = new ArrayList<>();
+            for (String loreLine : lore) {
+                loreList.add(ChatColor.translateAlternateColorCodes('&', loreLine));
+            }
+
+            itemMeta.setLore(loreList);
+        }
+
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;

@@ -14,15 +14,15 @@ import java.util.function.Consumer;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CloseItem implements MenuItem {
 
-    public static CloseItem of(@NotNull ItemStack itemStack) {
+    public static @NotNull CloseItem of(@NotNull ItemStack itemStack) {
         return new CloseItem(itemStack);
     }
 
-    public static CloseItem empty() {
+    public static @NotNull CloseItem empty() {
         return new CloseItem();
     }
 
-    private final @NotNull ItemStack itemStack;
+    private final ItemStack itemStack;
 
     private CloseItem() {
         this.itemStack = new ItemBuilder(Material.BARRIER)

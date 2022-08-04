@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,22 +18,25 @@ import java.util.function.Function;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SearchItem implements MenuItem {
 
-    public static SearchItem of(@NotNull String id, @NotNull ItemStack itemStack, @NotNull Function<InventoryClickEvent, String> searchHandler, @NotNull Consumer<InventoryClickEvent> newSearchQueryHandler) {
+    public static @NotNull SearchItem of(@NotNull String id, @NotNull ItemStack itemStack,
+                                         @NotNull Function<@NotNull InventoryClickEvent, @NotNull String> searchHandler,
+                                         @NotNull Consumer<@NotNull InventoryClickEvent> newSearchQueryHandler) {
         return new SearchItem(id, itemStack, searchHandler, newSearchQueryHandler);
     }
 
-    public static SearchItem of(@NotNull String id, @NotNull ItemStack itemStack, @NotNull Function<InventoryClickEvent, String> searchHandler) {
+    public static @NotNull SearchItem of(@NotNull String id, @NotNull ItemStack itemStack,
+                                         @NotNull Function<@NotNull InventoryClickEvent, @NotNull String> searchHandler) {
         return new SearchItem(id, itemStack, searchHandler);
     }
 
     @Getter
-    private final @NotNull String id;
-    private final @NotNull ItemStack itemStack;
+    private final String id;
+    private final ItemStack itemStack;
 
-    private final @NotNull Function<InventoryClickEvent, String> searchHandler;
-    private final @Nullable Consumer<InventoryClickEvent> newSearchQueryHandler;
+    private final Function<InventoryClickEvent, String> searchHandler;
+    private final Consumer<InventoryClickEvent> newSearchQueryHandler;
 
-    private SearchItem(@NotNull String id, @NotNull ItemStack itemStack, @NotNull Function<InventoryClickEvent, String> searchHandler) {
+    private SearchItem(String id, ItemStack itemStack, Function<InventoryClickEvent, String> searchHandler) {
         this(id, itemStack, searchHandler, null);
     }
 

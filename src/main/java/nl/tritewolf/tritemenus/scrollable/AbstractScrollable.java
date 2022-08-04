@@ -45,6 +45,16 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     }
 
     @Override
+    public int currentVertical() {
+        return this.currentYAxis;
+    }
+
+    @Override
+    public int currentHorizontal() {
+        return this.currentXAxis;
+    }
+
+    @Override
     public @NotNull Scrollable openVertical(int newYAxis) {
         return this.open(newYAxis, ScrollableDirection.VERTICALLY);
     }
