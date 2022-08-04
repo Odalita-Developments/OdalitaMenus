@@ -70,21 +70,15 @@ final class SingleScrollable extends AbstractScrollable {
         List<Supplier<MenuItem>> pageItems = this.getPageItems(newAxis, direction);
         if (pageItems.isEmpty()) return this;
 
-        boolean updatable = this.contents.getTriteMenu().isHasUpdatableItems();
-        if (updatable) {
+        this.cleanMenuGrid();
+
+        if (this.contents.getTriteMenu().isHasUpdatableItems()) {
             this.contents.getTriteMenu().setHasUpdatableItems(false);
         }
 
         int lastRow = this.startRow;
         int lastColumn = this.startColumn;
         for (Supplier<MenuItem> menuItemSupplier : pageItems) {
-            if (updatable) {
-                MenuItem menuItem = this.contents.getTriteMenu().getContents()[lastRow][lastColumn];
-                if (menuItem != null && menuItem.isUpdatable()) {
-                    this.contents.getTriteMenu().getContents()[lastRow][lastColumn] = null;
-                }
-            }
-
             this.updateItem(SlotPos.of(lastRow, lastColumn).getSlot(), menuItemSupplier);
 
             if (direction == ScrollableDirection.HORIZONTALLY) {

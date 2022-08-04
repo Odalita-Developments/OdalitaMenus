@@ -4,6 +4,7 @@ import nl.tritewolf.testplugin.sb.ExtraPlayer;
 import nl.tritewolf.testplugin.sb.TestExtraMenuProvider;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
+import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.items.buttons.ScrollItem;
@@ -11,6 +12,7 @@ import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -46,6 +48,10 @@ public class TestPlayerMenu implements TestExtraMenuProvider {
         scrollable.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEAD)
                 .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
                 .build(), 5));
+
+        scrollable.addItem(() -> ClickableItem.of(new ItemStack(Material.ACACIA_FENCE), (event) -> {
+            event.getWhoClicked().sendMessage("Clicked!");
+        }));
 
         contents.set(45, ScrollItem.up(scrollable));
         contents.set(53, ScrollItem.down(scrollable));

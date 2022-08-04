@@ -110,6 +110,14 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
     abstract @NotNull Scrollable open(int newAxis, @NotNull ScrollableDirection direction);
 
+    protected void cleanMenuGrid() {
+        for (int row = this.startRow; row < this.showYAxis; row++) {
+            for (int column = this.startColumn; column < this.showXAxis; column++) {
+                this.contents.getTriteMenu().getContents()[row][column] = null;
+            }
+        }
+    }
+
     protected void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
         MenuObject menuObject = this.contents.getTriteMenu();
 
@@ -120,11 +128,11 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
         MenuItem menuItem = menuItemSupplier.get();
         if (menuItem.isUpdatable()) {
-            SlotPos slotPos = SlotPos.of(slot);
-
-            menuObject.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
             menuObject.setHasUpdatableItems(true);
         }
+
+        SlotPos slotPos = SlotPos.of(slot);
+        menuObject.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
 
         InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItem.getItemStack(), menuObject.getInventory());
     }

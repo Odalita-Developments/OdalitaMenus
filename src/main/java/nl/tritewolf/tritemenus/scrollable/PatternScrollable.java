@@ -70,9 +70,11 @@ sealed class PatternScrollable extends AbstractScrollable permits ContinuousPatt
         newAxis = Math.max(0, newAxis);
 
         Map<Integer, Supplier<MenuItem>> pageItems = this.getPageItems(newAxis, direction);
+        if (pageItems.isEmpty()) return this;
 
-        boolean updatable = this.contents.getTriteMenu().isHasUpdatableItems();
-        if (updatable) {
+        this.cleanMenuGrid();
+
+        if (this.contents.getTriteMenu().isHasUpdatableItems()) {
             this.contents.getTriteMenu().setHasUpdatableItems(false);
         }
 
@@ -85,13 +87,6 @@ sealed class PatternScrollable extends AbstractScrollable permits ContinuousPatt
 
             if (row < this.startRow || column < this.startColumn || row > this.showYAxis || column > this.showXAxis) {
                 continue;
-            }
-
-            if (updatable) {
-                MenuItem menuItem = this.contents.getTriteMenu().getContents()[row][column];
-                if (menuItem != null && menuItem.isUpdatable()) {
-                    this.contents.getTriteMenu().getContents()[row][column] = null;
-                }
             }
 
             this.updateItem(SlotPos.of(row, column).getSlot(), entry.getValue());
