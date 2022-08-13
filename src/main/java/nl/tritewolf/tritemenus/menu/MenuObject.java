@@ -74,10 +74,6 @@ public final class MenuObject {
         return this.contents[slotPos.getRow()][slotPos.getColumn()];
     }
 
-    public int getColumns() {
-        return this.columns;
-    }
-
     public boolean fits(int slot) {
         return this.menuType.fitsInMenu(slot);
     }
