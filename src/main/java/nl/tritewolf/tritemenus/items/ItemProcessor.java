@@ -1,20 +1,22 @@
 package nl.tritewolf.tritemenus.items;
 
+import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class ItemProcessor {
 
-    public void initializeItems(MenuObject menuObject) {
+    public void initializeItems(MenuObject menuObject, InventoryContents inventoryContents) {
         MenuItem[][] contents = menuObject.getContents();
         Inventory inventory = menuObject.getInventory();
 
         for (Pagination pagination : menuObject.getPaginationMap().values()) {
-
             Supplier<MenuItem>[] itemsOnPage = pagination.getItemsOnPage();
             if (itemsOnPage == null) {
                 pagination.setInitialized(true);
@@ -30,10 +32,34 @@ public final class ItemProcessor {
                 int slot = pagination.getIterator().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
-                inventory.setItem(slot, menuItem.getItemStack());
+                inventoryContents.setAsync(slot, menuItem);
                 pagination.getIterator().next();
             }
+
             pagination.setInitialized(true);
+        }
+
+        for (Scrollable scrollable : menuObject.getScrollableMap().values()) {
+            Map<Integer, Supplier<MenuItem>> pageItems = scrollable.getPageItems();
+            if (pageItems.isEmpty()) {
+                scrollable.setInitialized(true);
+                continue;
+            }
+
+            for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
+                int slot = entry.getKey();
+                Supplier<MenuItem> menuItemSupplier = entry.getValue();
+                if (menuItemSupplier == null) continue;
+
+                MenuItem menuItem = menuItemSupplier.get();
+                if (menuItem == null) continue;
+
+                if (inventory.getItem(slot) != null) continue;
+
+                inventoryContents.setAsync(slot, menuItem);
+            }
+
+            scrollable.setInitialized(true);
         }
 
         for (int row = 0; row < contents.length; row++) {

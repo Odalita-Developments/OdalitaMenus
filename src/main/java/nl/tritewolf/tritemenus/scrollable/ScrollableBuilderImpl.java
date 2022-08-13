@@ -30,7 +30,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
     private boolean isSingle;
     private ScrollableDirection direction;
     private ScrollableDirectionPatternCache patternCache;
-    private boolean continuousPattern;
+    private boolean repeatedPattern;
 
     @Override
     public @NotNull ScrollableBuilder items(@NotNull List<@NotNull Supplier<@NotNull MenuItem>> items) {
@@ -63,20 +63,25 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
 
     @Override
     public @NotNull Scrollable create() {
+        AbstractScrollable scrollable;
         if (this.isSingle) {
-            return new SingleScrollable(this);
-        }
-
-        if (this.continuousPattern) {
+            scrollable = new SingleScrollable(this);
+        } else if (this.repeatedPattern) {
             if ((this.direction == ScrollableDirection.HORIZONTALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.VERTICALLY)
                     || (this.direction == ScrollableDirection.VERTICALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.HORIZONTALLY)) {
                 throw new IllegalArgumentException("Pattern direction does not match with scrollable direction.");
             }
 
-            return new ContinuousPatternScrollable(this);
+            scrollable = new RepeatedPatternScrollable(this);
         } else {
-            return new PatternScrollable(this);
+            scrollable = new PatternScrollable(this);
         }
+
+        this.contents.getTriteMenu().getScrollableMap().put(this.id, scrollable);
+
+        scrollable.initItems();
+
+        return scrollable;
     }
 
     @RequiredArgsConstructor
@@ -103,15 +108,15 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         private final ScrollableBuilderImpl builder;
 
         @Override
-        public @NotNull ScrollableContinuousPatternBuilder horizontally() {
+        public @NotNull ScrollableBuilder.ScrollableRepeatedPatternBuilder horizontally() {
             this.builder.direction = ScrollableDirection.HORIZONTALLY;
-            return new ScrollableContinuousPatternBuilderImpl(this.builder);
+            return new ScrollableRepeatedPatternBuilderImpl(this.builder);
         }
 
         @Override
-        public @NotNull ScrollableContinuousPatternBuilder vertically() {
+        public @NotNull ScrollableBuilder.ScrollableRepeatedPatternBuilder vertically() {
             this.builder.direction = ScrollableDirection.VERTICALLY;
-            return new ScrollableContinuousPatternBuilderImpl(this.builder);
+            return new ScrollableRepeatedPatternBuilderImpl(this.builder);
         }
 
         @Override
@@ -122,20 +127,31 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
     }
 
     @RequiredArgsConstructor
-    public static final class ScrollableContinuousPatternBuilderImpl implements ScrollableContinuousPatternBuilder {
+    public static final class ScrollableRepeatedPatternBuilderImpl implements ScrollableRepeatedPatternBuilder {
 
         private final ScrollableBuilderImpl builder;
 
         @Override
-        public @NotNull Scrollable continuous() {
-            this.builder.continuousPattern = true;
+        public @NotNull Scrollable repeated() {
+            this.builder.repeatedPattern = true;
             return this.builder.create();
         }
 
         @Override
-        public @NotNull Scrollable continuous(boolean continuous) {
-            this.builder.continuousPattern = continuous;
+        public @NotNull Scrollable once() {
+            this.builder.repeatedPattern = false;
             return this.builder.create();
+        }
+
+        @Override
+        public @NotNull Scrollable repeated(boolean repeated) {
+            this.builder.repeatedPattern = repeated;
+            return this.builder.create();
+        }
+
+        @Override
+        public @NotNull Scrollable once(boolean once) {
+            return this.repeated(!once);
         }
     }
 }

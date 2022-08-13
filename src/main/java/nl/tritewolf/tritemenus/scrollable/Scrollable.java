@@ -1,8 +1,10 @@
 package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.items.MenuItem;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public sealed interface Scrollable permits AbstractScrollable {
@@ -32,4 +34,13 @@ public sealed interface Scrollable permits AbstractScrollable {
     @NotNull Scrollable next();
 
     @NotNull Scrollable previous();
+
+    @ApiStatus.Internal
+    void setAxes(int xAxis, int yAxis);
+
+    @ApiStatus.Internal
+    void setInitialized(boolean initialized);
+
+    @ApiStatus.Internal
+    @NotNull Map<Integer, Supplier<MenuItem>> getPageItems();
 }

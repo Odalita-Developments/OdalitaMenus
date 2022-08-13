@@ -1,6 +1,6 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class NextItem implements MenuItem {
+public class NextItem implements PageUpdatableItem {
 
     public static NextItem of(Pagination pagination, ItemStack itemStack, boolean showOnLastPage) {
         return new NextItem(pagination, itemStack, showOnLastPage);

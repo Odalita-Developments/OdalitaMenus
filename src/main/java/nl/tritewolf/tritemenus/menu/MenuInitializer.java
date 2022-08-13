@@ -20,7 +20,8 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
             MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
 
-            this.builder.getProviderLoader().load(menuProvider, player, new InventoryContents(menuObject));
+            InventoryContents contents = new InventoryContents(menuObject);
+            this.builder.getProviderLoader().load(menuProvider, player, contents);
 
             this.builder.getPaginationPages().forEach((id, page) -> {
                 Pagination pagination = menuObject.getPaginationMap().get(id);
@@ -33,10 +34,10 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
                 Scrollable scrollable = menuObject.getScrollableMap().get(id);
                 if (scrollable == null) return;
 
-                // TODO
+                scrollable.setAxes(axes.getKey(), axes.getValue());
             });
 
-            this.itemProcessor.initializeItems(menuObject);
+            this.itemProcessor.initializeItems(menuObject, contents);
 
             this.openInventory(player, menuObject);
         } catch (Exception exception) {

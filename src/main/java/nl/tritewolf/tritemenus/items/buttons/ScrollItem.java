@@ -2,7 +2,7 @@ package nl.tritewolf.tritemenus.items.buttons;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ScrollItem implements MenuItem {
+public final class ScrollItem implements PageUpdatableItem {
 
     public static @NotNull ScrollItem up(@NotNull Scrollable scrollable, @NotNull ItemStack itemStack, boolean showOnLastPage) {
         return new ScrollItem(Direction.UP, scrollable, itemStack, showOnLastPage);

@@ -3,10 +3,7 @@ package nl.tritewolf.tritemenus.contents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
-import nl.tritewolf.tritemenus.items.ClickableItem;
-import nl.tritewolf.tritemenus.items.DisplayItem;
-import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuObject;
@@ -19,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +34,10 @@ public class InventoryContents {
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         if (!override && this.triteMenu.getContent(slotPos) != null) return;
 
+        if (item instanceof PageUpdatableItem) {
+            this.triteMenu.getPageSwitchUpdateItems().put(slotPos.getSlot(), () -> item);
+        }
+
         if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
             this.triteMenu.setHasUpdatableItems(true);
         }
@@ -50,6 +52,10 @@ public class InventoryContents {
     public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         if (!override && this.triteMenu.getContent(slotPos) != null) return;
 
+        if (item instanceof PageUpdatableItem) {
+            this.triteMenu.getPageSwitchUpdateItems().put(slotPos.getSlot(), () -> item);
+        }
+
         if (!this.triteMenu.isHasUpdatableItems() && item.isUpdatable()) {
             this.triteMenu.setHasUpdatableItems(true);
         }
@@ -61,6 +67,14 @@ public class InventoryContents {
 
     public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
         this.setAsync(slotPos, item, true);
+    }
+
+    public synchronized void setAsync(int slot, @NotNull MenuItem item, boolean override) {
+        this.setAsync(SlotPos.of(slot), item, override);
+    }
+
+    public synchronized void setAsync(int slot, @NotNull MenuItem item) {
+        this.setAsync(slot, item, true);
     }
 
     public void set(int row, int column, @NotNull MenuItem item) {
@@ -325,12 +339,21 @@ public class InventoryContents {
         return pagination;
     }
 
-    public void setPageSwitchUpdateItem(int slot, @NotNull MenuItem menuItem) {
-        this.triteMenu.getPageSwitchUpdateItems().put(slot, () -> menuItem);
-        this.set(SlotPos.of(slot), menuItem, true);
+    public void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull PageUpdatableItem menuItem) {
+        this.set(slotPos, menuItem, true);
     }
 
-    public @NotNull ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
+    public void setPageSwitchUpdateItem(int row, int column, @NotNull PageUpdatableItem menuItem) {
+        this.setPageSwitchUpdateItem(SlotPos.of(row, column), menuItem);
+    }
+
+    public void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem) {
+        this.setPageSwitchUpdateItem(SlotPos.of(slot), menuItem);
+    }
+
+    public @NotNull ScrollableBuilder scrollable(@NotNull String id,
+                                                 @MagicConstant(intValues = {1, 2, 3, 4, 5, 6}) int showYAxis,
+                                                 @MagicConstant(intValues = {1, 2, 3, 4, 5, 6, 7, 8, 9}) int showXAxis) {
         return ScrollableBuilder.builder(this, id, showYAxis, showXAxis);
     }
 

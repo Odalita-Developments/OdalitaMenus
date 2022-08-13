@@ -1,6 +1,6 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class PreviousItem implements MenuItem {
+public class PreviousItem implements PageUpdatableItem {
 
     public static PreviousItem of(Pagination pagination, ItemStack itemStack, boolean showOnFirstPage) {
         return new PreviousItem(pagination, itemStack, showOnFirstPage);

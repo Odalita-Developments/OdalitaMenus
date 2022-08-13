@@ -5,12 +5,13 @@ import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
+import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 abstract sealed class AbstractScrollable implements Scrollable permits PatternScrollable, SingleScrollable {
@@ -29,6 +30,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
     protected final NavigableMap<Integer, Supplier<MenuItem>> items = new TreeMap<>();
 
+    private boolean initialized = false;
+
     protected AbstractScrollable(@NotNull ScrollableBuilderImpl builder) {
         this.builder = builder;
 
@@ -40,52 +43,78 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
         this.startColumn = builder.getStartColumn();
 
         this.direction = builder.getDirection();
+    }
 
-        builder.getItems().forEach(this::addItem);
+    protected abstract int newItemIndex();
+
+    protected abstract @NotNull Pair<Integer, Integer> getStartEndIndexes();
+
+    protected abstract int getIndexOffset(int index, int axis, @NotNull ScrollableDirection direction);
+
+    protected abstract @NotNull ScrollableSlotPos createSlotPos(int index);
+
+    protected @NotNull Pair<@NotNull Integer, @NotNull Integer> rowColumnModifier(int row, int column) {
+        return new Pair<>(row, column);
     }
 
     @Override
-    public int currentVertical() {
+    public final synchronized @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier) {
+        int index = this.newItemIndex();
+        if (index < 0) return this;
+
+        this.items.put(index, menuItemSupplier);
+
+        if (this.initialized) {
+            this.calculateSlotPosWithoutOffset(index).ifPresent((slotPos) -> {
+                this.contents.setAsync(SlotPos.of(slotPos), menuItemSupplier.get());
+            });
+        }
+
+        return this;
+    }
+
+    @Override
+    public final int currentVertical() {
         return this.currentYAxis;
     }
 
     @Override
-    public int currentHorizontal() {
+    public final int currentHorizontal() {
         return this.currentXAxis;
     }
 
     @Override
-    public @NotNull Scrollable openVertical(int newYAxis) {
+    public final @NotNull Scrollable openVertical(int newYAxis) {
         return this.open(newYAxis, ScrollableDirection.VERTICALLY);
     }
 
     @Override
-    public @NotNull Scrollable openHorizontal(int newXAxis) {
+    public final @NotNull Scrollable openHorizontal(int newXAxis) {
         return this.open(newXAxis, ScrollableDirection.HORIZONTALLY);
     }
 
     @Override
-    public @NotNull Scrollable nextVertical() {
+    public final @NotNull Scrollable nextVertical() {
         return this.openVertical(this.currentYAxis + 1);
     }
 
     @Override
-    public @NotNull Scrollable previousVertical() {
+    public final @NotNull Scrollable previousVertical() {
         return this.openVertical(this.currentYAxis - 1);
     }
 
     @Override
-    public @NotNull Scrollable nextHorizontal() {
+    public final @NotNull Scrollable nextHorizontal() {
         return this.openHorizontal(this.currentXAxis + 1);
     }
 
     @Override
-    public @NotNull Scrollable previousHorizontal() {
+    public final @NotNull Scrollable previousHorizontal() {
         return this.openHorizontal(this.currentXAxis - 1);
     }
 
     @Override
-    public @NotNull Scrollable next() {
+    public final @NotNull Scrollable next() {
         return switch (this.direction) {
             case VERTICALLY:
                 yield this.nextVertical();
@@ -97,7 +126,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     }
 
     @Override
-    public @NotNull Scrollable previous() {
+    public final @NotNull Scrollable previous() {
         return switch (this.direction) {
             case VERTICALLY:
                 yield this.previousVertical();
@@ -108,17 +137,134 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
         };
     }
 
-    abstract @NotNull Scrollable open(int newAxis, @NotNull ScrollableDirection direction);
+    @ApiStatus.Internal
+    @Override
+    public final void setAxes(int xAxis, int yAxis) {
+        if (this.initialized) return;
 
-    protected void cleanMenuGrid() {
-        for (int row = this.startRow; row < this.showYAxis; row++) {
-            for (int column = this.startColumn; column < this.showXAxis; column++) {
+        this.currentXAxis = xAxis;
+        this.currentYAxis = yAxis;
+    }
+
+    @ApiStatus.Internal
+    @Override
+    public final void setInitialized(boolean initialized) {
+        if (this.initialized) return;
+
+        this.initialized = initialized;
+    }
+
+    @ApiStatus.Internal
+    @Override
+    public final @NotNull Map<Integer, Supplier<MenuItem>> getPageItems() {
+        if (this.initialized) return Map.of();
+
+        Map<Integer, Supplier<MenuItem>> itemsBySlot = new HashMap<>();
+        Map<Integer, Supplier<MenuItem>> itemsByIndex = this.getItems();
+
+        int axis;
+        if (this.direction == ScrollableDirection.HORIZONTALLY) {
+            axis = this.currentXAxis;
+        } else {
+            axis = this.currentYAxis;
+        }
+
+        for (Map.Entry<Integer, Supplier<MenuItem>> entry : itemsByIndex.entrySet()) {
+            this.calculateSlotPosWithOffset(entry.getKey(), axis, this.direction).ifPresent((slot) -> {
+                itemsBySlot.put(slot, entry.getValue());
+            });
+        }
+
+        return itemsBySlot;
+    }
+
+    protected final @NotNull Optional<@NotNull Integer> calculateSlotPosWithoutOffset(int index) {
+        return this.calculateSlotPos(index, 0, this.direction, false);
+    }
+
+    protected final @NotNull Optional<@NotNull Integer> calculateSlotPosWithOffset(int index, int axis, @NotNull ScrollableDirection direction) {
+        return this.calculateSlotPos(index, axis, direction, true);
+    }
+
+    private @NotNull Scrollable open(int newAxis, @NotNull ScrollableDirection direction) {
+        if (this.direction != ScrollableDirection.ALL && this.direction != direction) {
+            throw new IllegalArgumentException("Cannot open a scrollable in the wrong direction.");
+        }
+
+        int lastAxis = (direction == ScrollableDirection.HORIZONTALLY) ? this.lastHorizontal() : this.lastVertical();
+        if (newAxis > lastAxis) return this;
+
+        newAxis = Math.max(0, newAxis);
+
+        int oldAxis = this.updateCurrentAxis(newAxis, direction);
+
+        Map<Integer, Supplier<MenuItem>> pageItems = this.getItems();
+        if (pageItems.isEmpty()) {
+            this.updateCurrentAxis(oldAxis, direction);
+            return this;
+        }
+
+        this.cleanMenuGrid();
+
+        if (this.contents.getTriteMenu().isHasUpdatableItems()) {
+            this.contents.getTriteMenu().setHasUpdatableItems(false);
+        }
+
+        for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
+            this.calculateSlotPosWithOffset(entry.getKey(), newAxis, direction).ifPresent((slot) -> {
+                this.updateItem(slot, entry.getValue());
+            });
+        }
+
+        this.contents.getTriteMenu().getPageSwitchUpdateItems().forEach((slot, item) -> {
+            this.contents.setAsync(slot, item.get());
+        });
+
+        return this;
+    }
+
+    private Map<Integer, Supplier<MenuItem>> getItems() {
+        Pair<Integer, Integer> startEndIndexes = this.getStartEndIndexes();
+
+        int startIndex = startEndIndexes.getKey();
+        int endIndex = startEndIndexes.getValue();
+
+        Map<Integer, Supplier<MenuItem>> items = new HashMap<>(
+                this.items.subMap(startIndex, endIndex)
+        );
+
+        for (int i = startIndex; i < endIndex; i++) {
+            items.putIfAbsent(i, null);
+        }
+
+        return items;
+    }
+
+    private @NotNull Optional<@NotNull Integer> calculateSlotPos(int index, int axis, @NotNull ScrollableDirection direction, boolean offsetPresent) {
+        int offset = (offsetPresent) ? this.getIndexOffset(index, axis, direction) : 0;
+
+        ScrollableSlotPos slotPos = this.createSlotPos(index - offset);
+        Pair<Integer, Integer> rowColumnModifier = this.rowColumnModifier(slotPos.getRow(), slotPos.getColumn());
+
+        int row = this.startRow + rowColumnModifier.getKey();
+        int column = this.startColumn + rowColumnModifier.getValue();
+
+        if (row < this.startRow || column < this.startColumn || row >= this.startRow + this.showYAxis || column >= this.startColumn + this.showXAxis) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SlotPos.of(row, column).getSlot());
+    }
+
+    private void cleanMenuGrid() {
+        for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
+            for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
                 this.contents.getTriteMenu().getContents()[row][column] = null;
             }
         }
     }
 
-    protected void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
+    private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
         MenuObject menuObject = this.contents.getTriteMenu();
 
         if (menuItemSupplier == null) {
@@ -137,25 +283,21 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
         InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItem.getItemStack(), menuObject.getInventory());
     }
 
-    protected boolean isValidDirection(@NotNull ScrollableDirection direction) {
-        if (this.direction != ScrollableDirection.ALL && this.direction != direction) {
-            throw new IllegalArgumentException("Cannot open a single scrollable in a different direction.");
-        }
+    private int updateCurrentAxis(int newAxis, ScrollableDirection direction) {
+        int oldAxis;
 
-        return true;
-    }
-
-    protected boolean isInsideMenu(int index) {
-        return index < this.showYAxis * this.showXAxis;
-    }
-
-    protected AbstractScrollable setNewPage(int newAxis, ScrollableDirection direction) {
-        if (direction == ScrollableDirection.HORIZONTALLY) {
-            this.currentXAxis = newAxis;
-        } else {
+        if (direction == ScrollableDirection.VERTICALLY) {
+            oldAxis = this.currentYAxis;
             this.currentYAxis = newAxis;
+        } else {
+            oldAxis = this.currentXAxis;
+            this.currentXAxis = newAxis;
         }
 
-        return this;
+        return oldAxis;
+    }
+
+    final void initItems() {
+        this.builder.getItems().forEach(this::addItem);
     }
 }
