@@ -20,7 +20,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
             MenuObject menuObject = new MenuObject(player, annotation.rows(), annotation.displayName());
 
-            InventoryContents contents = new InventoryContents(menuObject);
+            InventoryContents contents = InventoryContents.create(menuObject);
             this.builder.getProviderLoader().load(menuProvider, player, contents);
 
             this.builder.getPaginationPages().forEach((id, page) -> {

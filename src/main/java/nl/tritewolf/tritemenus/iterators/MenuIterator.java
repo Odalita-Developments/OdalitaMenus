@@ -38,12 +38,8 @@ public class MenuIterator {
 
     public void init(@NotNull MenuIteratorType menuIteratorType) {
         switch (menuIteratorType) {
-            case HORIZONTAL:
-                horizontalInitialization();
-                break;
-            case VERTICAL:
-                verticalInitialization();
-                break;
+            case HORIZONTAL -> horizontalInitialization();
+            case VERTICAL -> verticalInitialization();
         }
     }
 
@@ -151,11 +147,11 @@ public class MenuIterator {
     }
 
     private Inventory getInventory() {
-        return this.inventoryContents.getTriteMenu().getInventory();
+        return this.inventoryContents.getMenuSession().getInventory();
     }
 
     private void horizontalInitialization() {
-        int inventorySize = this.inventoryContents.getTriteMenu().getRows() * 9;
+        int inventorySize = this.inventoryContents.getMenuSession().getRows() * 9;
         Inventory inventory = getInventory();
 
         int slotStart = SlotPos.of(this.row, this.column).getSlot();
@@ -173,7 +169,7 @@ public class MenuIterator {
         Inventory inventory = getInventory();
 
         for (int column = this.column; column < 9; column++) {
-            for (int row = this.row; row < this.inventoryContents.getTriteMenu().getRows(); row++) {
+            for (int row = this.row; row < this.inventoryContents.getMenuSession().getRows(); row++) {
                 int currentSlot = SlotPos.of(row, column).getSlot();
                 if (blacklist.contains(currentSlot)) continue;
 

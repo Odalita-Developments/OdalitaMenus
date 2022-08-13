@@ -77,7 +77,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
             scrollable = new PatternScrollable(this);
         }
 
-        this.contents.getTriteMenu().getScrollableMap().put(this.id, scrollable);
+        this.contents.getMenuSession().getScrollableMap().put(this.id, scrollable);
 
         scrollable.initItems();
 

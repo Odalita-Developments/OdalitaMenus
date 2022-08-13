@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
+import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
@@ -32,10 +33,11 @@ public final class MenuObject {
     private final MenuItem[][] contents;
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
     private final Map<String, Scrollable> scrollableMap = new ConcurrentHashMap<>();
+    private final Map<String, MenuIterator> iterators = new HashMap<>();
     private final Map<String, String> searchQueries = new HashMap<>();
 
     private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = new HashMap<>();
-    private List<Integer> placeableItems = new ArrayList<>();
+    private final List<Integer> placeableItems = new ArrayList<>();
     private PlaceableItemsCloseAction placeableItemsCloseAction;
 
     private int slot;
@@ -44,7 +46,7 @@ public final class MenuObject {
 
     public MenuObject(Player player, byte rows, String displayName) {
         this.player = player;
-        this.contents = new MenuItem[rows][9];
+        this.contents = new MenuItem[rows][this.getColumns()];
 
         this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
         this.rows = rows;
@@ -54,5 +56,13 @@ public final class MenuObject {
     public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {
         if (slotPos.getSlot() < 0 || slotPos.getSlot() > this.inventory.getSize()) return null;
         return this.contents[slotPos.getRow()][slotPos.getColumn()];
+    }
+
+    public int getColumns() {
+        return 9;
+    }
+
+    public int getSize() {
+        return this.inventory.getSize();
     }
 }

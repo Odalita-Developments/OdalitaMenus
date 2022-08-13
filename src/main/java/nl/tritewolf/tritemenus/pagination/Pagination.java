@@ -79,7 +79,7 @@ public class Pagination {
         index++;
 
         if (this.itemIndex.get(currentPage + 1) != null) {
-            MenuObject menuObject = contents.getTriteMenu();
+            MenuObject menuObject = contents.getMenuSession();
             Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = menuObject.getPageSwitchUpdateItems();
 
             pageSwitchUpdateItems.forEach((slot, item) -> {
@@ -115,7 +115,7 @@ public class Pagination {
 
     public void openPage(int page, Callback callback) {
         currentPage = page;
-        MenuObject menuObject = this.contents.getTriteMenu();
+        MenuObject menuObject = this.contents.getMenuSession();
         MenuIterator iterator = this.iterator.reset();
 
         Supplier<MenuItem>[] itemsOnPage = getItemsOnPage();
@@ -141,7 +141,7 @@ public class Pagination {
         }
         reusableItems.forEach(iterator::addReusableSlot);
 
-        Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = this.contents.getTriteMenu().getPageSwitchUpdateItems();
+        Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = this.contents.getMenuSession().getPageSwitchUpdateItems();
         pageSwitchUpdateItems.forEach((slot, item) -> {
             this.contents.set(slot, item.get());
             InventoryUtils.updateItem(menuObject.getPlayer(), slot, item.get().getItemStack(), menuObject.getInventory());

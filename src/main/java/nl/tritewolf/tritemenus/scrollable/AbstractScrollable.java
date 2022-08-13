@@ -206,8 +206,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
         this.cleanMenuGrid();
 
-        if (this.contents.getTriteMenu().isHasUpdatableItems()) {
-            this.contents.getTriteMenu().setHasUpdatableItems(false);
+        if (this.contents.getMenuSession().isHasUpdatableItems()) {
+            this.contents.getMenuSession().setHasUpdatableItems(false);
         }
 
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
@@ -216,7 +216,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
             });
         }
 
-        this.contents.getTriteMenu().getPageSwitchUpdateItems().forEach((slot, item) -> {
+        this.contents.getMenuSession().getPageSwitchUpdateItems().forEach((slot, item) -> {
             this.contents.setAsync(slot, item.get());
         });
 
@@ -259,13 +259,13 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     private void cleanMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
-                this.contents.getTriteMenu().getContents()[row][column] = null;
+                this.contents.getMenuSession().getContents()[row][column] = null;
             }
         }
     }
 
     private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
-        MenuObject menuObject = this.contents.getTriteMenu();
+        MenuObject menuObject = this.contents.getMenuSession();
 
         if (menuItemSupplier == null) {
             InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
