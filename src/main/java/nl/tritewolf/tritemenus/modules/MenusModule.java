@@ -7,6 +7,7 @@ import nl.tritewolf.tritemenus.annotations.AnnotationBinding;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.modules.multibindings.ListenerBinding;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
@@ -26,6 +27,7 @@ public final class MenusModule extends TriteJectionModule {
     public void bindings() {
         this.bind(MenuProcessor.class).asEagerSingleton();
         this.bind(ItemProcessor.class).asEagerSingleton();
+        this.bind(SupportedMenuTypes.class).asEagerSingleton();
         this.bind(AnnotationBinding.class).asEagerSingleton();
         this.bind(MenuUpdateTask.class).asEagerSingleton();
         this.bind(PatternContainer.class).asEagerSingleton();

@@ -5,6 +5,7 @@ import lombok.Getter;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
+import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.utils.Pair;
 import nl.tritewolf.tritemenus.utils.Triple;
 import org.bukkit.entity.Player;
@@ -22,6 +23,8 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
     private final MenuProcessor menuProcessor;
     @Getter(AccessLevel.NONE)
     private final ItemProcessor itemProcessor;
+    @Getter(AccessLevel.NONE)
+    private final SupportedMenuTypes supportedMenuTypes;
 
     private final P provider;
     private final Player player;
@@ -30,9 +33,11 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
     private final Map<String, Integer> paginationPages = new HashMap<>();
     private final Map<String, Pair<Integer, Integer>> scrollableAxes = new HashMap<>();
 
-    MenuOpenerBuilderImpl(MenuProcessor menuProcessor, ItemProcessor itemProcessor, P provider, Player player, MenuProviderLoader<P> providerLoader) {
+    MenuOpenerBuilderImpl(MenuProcessor menuProcessor, ItemProcessor itemProcessor, SupportedMenuTypes supportedMenuTypes,
+                          P provider, Player player, MenuProviderLoader<P> providerLoader) {
         this.menuProcessor = menuProcessor;
         this.itemProcessor = itemProcessor;
+        this.supportedMenuTypes = supportedMenuTypes;
         this.provider = provider;
         this.player = player;
         this.providerLoader = providerLoader;
@@ -80,6 +85,7 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
 
     @Override
     public void open() {
-        new MenuInitializer<>(this.menuProcessor, this.itemProcessor, this).initializeMenu();
+        new MenuInitializer<>(this.menuProcessor, this.itemProcessor, this.supportedMenuTypes, this)
+                .initializeMenu();
     }
 }

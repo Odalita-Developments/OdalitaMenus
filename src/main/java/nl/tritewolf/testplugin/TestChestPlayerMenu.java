@@ -25,15 +25,15 @@ import java.util.function.Supplier;
         rows = 6,
         displayName = "Test menu"
 )
-public class TestPlayerMenu implements TestExtraMenuProvider {
+public class TestChestPlayerMenu implements TestExtraMenuProvider {
 
     private final int test;
 
-    public TestPlayerMenu(int test) {
+    public TestChestPlayerMenu(int test) {
         this.test = test;
     }
 
-    public TestPlayerMenu() {
+    public TestChestPlayerMenu() {
         this(1);
     }
 

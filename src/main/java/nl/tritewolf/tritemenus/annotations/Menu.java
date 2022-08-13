@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.annotations;
 
 import org.bukkit.event.inventory.InventoryType;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,5 +16,6 @@ public @interface Menu {
 
     byte rows() default 3;
 
+    @ApiStatus.Experimental
     InventoryType inventoryType() default InventoryType.CHEST;
 }

@@ -3,6 +3,7 @@ package nl.tritewolf.tritemenus.items;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.type.MenuType;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
@@ -13,8 +14,10 @@ import java.util.function.Supplier;
 public final class ItemProcessor {
 
     public void initializeItems(MenuObject menuObject, InventoryContents inventoryContents) {
-        MenuItem[][] contents = menuObject.getContents();
+        MenuType menuType = menuObject.getMenuType();
         Inventory inventory = menuObject.getInventory();
+
+        MenuItem[][] contents = menuObject.getContents();
 
         for (Pagination pagination : menuObject.getPaginationMap().values()) {
             Supplier<MenuItem>[] itemsOnPage = pagination.getItemsOnPage();
@@ -62,12 +65,12 @@ public final class ItemProcessor {
             scrollable.setInitialized(true);
         }
 
-        for (int row = 0; row < contents.length; row++) {
-            for (int column = 0; column < contents[0].length; column++) {
+        for (int row = 0; row < menuObject.getRows(); row++) {
+            for (int column = 0; column < menuObject.getColumns(); column++) {
                 MenuItem menuItem = contents[row][column];
                 if (menuItem == null) continue;
 
-                int slot = SlotPos.of(row, column).getSlot();
+                int slot = SlotPos.of(menuType.maxRows(), menuType.maxColumns(), row, column).getSlot();
                 inventory.setItem(slot, menuItem.getItemStack());
 
                 if (!menuObject.isHasUpdatableItems() && menuItem.isUpdatable()) {

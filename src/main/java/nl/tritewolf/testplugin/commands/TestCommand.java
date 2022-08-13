@@ -1,6 +1,7 @@
 package nl.tritewolf.testplugin.commands;
 
-import nl.tritewolf.testplugin.TestPlayerMenu;
+import nl.tritewolf.testplugin.TestChestPlayerMenu;
+import nl.tritewolf.testplugin.TestDropperPlayerMenu;
 import nl.tritewolf.testplugin.TestPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,13 +19,19 @@ public class TestCommand implements CommandExecutor {
             int xAxis = (strings.length > 1) ? Integer.parseInt(strings[1]) : 0;
             int yAxis = (strings.length > 2) ? Integer.parseInt(strings[2]) : 0;
 
-            TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestPlayerMenu(44), player)
+            TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestChestPlayerMenu(44), player)
                     .scrollable("test", xAxis, yAxis)
                     .open();
             return false;
         }
 
-        TestPlugin.getTriteMenus().getMenuProcessor().openMenu(new TestPlayerMenu(), player);
+        if (strings.length > 0 && strings[0].equalsIgnoreCase("dropper")) {
+            TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestDropperPlayerMenu(), player)
+                    .open();
+            return false;
+        }
+
+        TestPlugin.getTriteMenus().getMenuProcessor().openMenu(new TestChestPlayerMenu(), player);
         return false;
     }
 }

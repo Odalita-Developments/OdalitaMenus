@@ -6,6 +6,7 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
+import nl.tritewolf.tritemenus.menu.type.MenuType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,6 +32,7 @@ public final class InventoryListener implements Listener {
         MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuObject == null) return;
 
+        MenuType menuType = openMenuObject.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
         if (event.getView().getTopInventory().equals(openMenuObject.getInventory())) {
@@ -45,7 +47,7 @@ public final class InventoryListener implements Listener {
 
             event.setCancelled(true);
 
-            MenuItem menuItem = openMenuObject.getContent(SlotPos.of(event.getSlot()));
+            MenuItem menuItem = openMenuObject.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()));
             if (menuItem != null) {
                 menuItem.onClick().accept(event);
             }

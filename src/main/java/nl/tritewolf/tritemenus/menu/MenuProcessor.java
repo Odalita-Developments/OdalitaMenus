@@ -6,6 +6,7 @@ import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
+import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,10 @@ public final class MenuProcessor {
     @TriteJect
     @Getter(AccessLevel.PACKAGE)
     private ItemProcessor itemProcessor;
+
+    @TriteJect
+    @Getter(AccessLevel.PACKAGE)
+    private SupportedMenuTypes supportedMenuTypes;
 
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
     private final Map<Player, MenuObject> openMenus = new ConcurrentHashMap<>();
@@ -38,7 +43,7 @@ public final class MenuProcessor {
 
     public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
                                                                                @NotNull MenuProviderLoader<P> providerLoader) {
-        return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, menuProvider, player, providerLoader);
+        return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, this.supportedMenuTypes, menuProvider, player, providerLoader);
     }
 
     @SuppressWarnings("unchecked")

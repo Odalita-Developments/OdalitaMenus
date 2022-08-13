@@ -5,10 +5,12 @@ import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
+import nl.tritewolf.tritemenus.menu.type.MenuType;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +28,10 @@ public final class MenuObject {
 
     private final Player player;
 
+    private MenuType menuType;
     private Inventory inventory;
     private byte rows;
+    private byte columns;
     private String displayName;
 
     private final MenuItem[][] contents;
@@ -44,12 +48,24 @@ public final class MenuObject {
 
     private volatile boolean hasUpdatableItems = false;
 
-    public MenuObject(Player player, byte rows, String displayName) {
+    public MenuObject(Player player, MenuType menuType, byte rows, String displayName) {
         this.player = player;
-        this.contents = new MenuItem[rows][this.getColumns()];
+        this.menuType = menuType;
 
-        this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
         this.rows = rows;
+        this.columns = 9;
+
+        if (menuType.type() == InventoryType.CHEST) {
+            this.contents = new MenuItem[rows][9];
+            this.inventory = Bukkit.createInventory(null, rows * 9, displayName);
+        } else {
+            this.rows = (byte) Math.max(menuType.maxRows(), 1);
+            this.columns = (byte) (menuType.maxColumns() + menuType.otherSlots().size());
+
+            this.contents = new MenuItem[this.rows][this.columns];
+            this.inventory = Bukkit.createInventory(null, menuType.type(), displayName);
+        }
+
         this.displayName = displayName;
     }
 
@@ -59,10 +75,10 @@ public final class MenuObject {
     }
 
     public int getColumns() {
-        return 9;
+        return this.columns;
     }
 
-    public int getSize() {
-        return this.inventory.getSize();
+    public boolean fits(int slot) {
+        return this.menuType.fitsInMenu(slot);
     }
 }
