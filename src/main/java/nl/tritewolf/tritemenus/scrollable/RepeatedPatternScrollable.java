@@ -10,36 +10,34 @@ final class RepeatedPatternScrollable extends PatternScrollable {
 
     private final ScrollableDirectionPatternCache patternCache;
 
-    private int lastPatternIndex;
-    private int lastIndex;
+    private int lastPatternIndex = -1;
+    private int lastIndex = 0;
+
+    private int lastVertical = -1;
+    private int lastHorizontal = -1;
 
     RepeatedPatternScrollable(@NotNull ScrollableBuilderImpl builder) {
         super(builder);
 
         this.patternCache = builder.getPatternCache();
-
-        this.lastPatternIndex = -1;
-        this.lastIndex = 0;
     }
 
     @Override
-    public int lastVertical() { // TODO performance updated needed :)
-        LastPageData lastPageData = this.calculateLastPageData();
-        int usedPatternAmount = lastPageData.usedPatternAmount();
-        int offsetIndex = lastPageData.offsetIndex();
+    public int lastVertical() {
+        if (this.lastVertical == -1) {
+            this.calculateLastVertical();
+        }
 
-        int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getRow() + 1;
-        return Math.max(0, usedPatternAmount * this.patternCache.height() - this.showYAxis + offset);
+        return this.lastVertical;
     }
 
     @Override
-    public int lastHorizontal() { // TODO performance updated needed :)
-        LastPageData lastPageData = this.calculateLastPageData();
-        int usedPatternAmount = lastPageData.usedPatternAmount();
-        int offsetIndex = lastPageData.offsetIndex();
+    public int lastHorizontal() {
+        if (this.lastHorizontal == -1) {
+            this.calculateLastHorizontal();
+        }
 
-        int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getColumn() + 1;
-        return Math.max(0, usedPatternAmount * this.patternCache.width() - this.showXAxis + offset);
+        return this.lastHorizontal;
     }
 
     @Override
@@ -67,6 +65,13 @@ final class RepeatedPatternScrollable extends PatternScrollable {
         if (index <= -1) return -1;
 
         this.lastPatternIndex = newIndexEntry.getValue();
+
+        if (this.direction == ScrollableDirection.HORIZONTALLY && this.lastHorizontal != -1) {
+            this.lastHorizontal = -1;
+        } else if (this.direction == ScrollableDirection.VERTICALLY && this.lastVertical != -1) {
+            this.lastVertical = -1;
+        }
+
         return index;
     }
 
@@ -101,6 +106,24 @@ final class RepeatedPatternScrollable extends PatternScrollable {
     @Override
     protected @NotNull Pair<@NotNull Integer, @NotNull Integer> rowColumnModifier(int row, int column) {
         return new Pair<>(row, column);
+    }
+
+    private void calculateLastVertical() {
+        LastPageData lastPageData = this.calculateLastPageData();
+        int usedPatternAmount = lastPageData.usedPatternAmount();
+        int offsetIndex = lastPageData.offsetIndex();
+
+        int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getRow() + 1;
+        this.lastVertical = Math.max(0, usedPatternAmount * this.patternCache.height() - this.showYAxis + offset);
+    }
+
+    private void calculateLastHorizontal() {
+        LastPageData lastPageData = this.calculateLastPageData();
+        int usedPatternAmount = lastPageData.usedPatternAmount();
+        int offsetIndex = lastPageData.offsetIndex();
+
+        int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getColumn() + 1;
+        this.lastHorizontal = Math.max(0, usedPatternAmount * this.patternCache.width() - this.showXAxis + offset);
     }
 
     private LastPageData calculateLastPageData() {

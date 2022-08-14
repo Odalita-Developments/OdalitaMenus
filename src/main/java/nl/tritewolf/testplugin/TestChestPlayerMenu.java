@@ -47,10 +47,11 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
             items.add(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
         }
 
-        Scrollable scrollable = contents.scrollable("test", 5, 5)
+        Scrollable scrollable = contents.scrollable("test", 4, 9)
                 .items(items)
-                .single(0, 2)
-                .vertically();
+                .pattern(0, 0, TestScrollablePattern.class)
+                .horizontally()
+                .repeated();
 
         //                Scrollable scrollable = contents.scrollable("test", 4, 7)
         //                        .items(items)
