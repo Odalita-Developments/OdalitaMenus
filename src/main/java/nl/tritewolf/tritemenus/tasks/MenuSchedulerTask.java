@@ -34,25 +34,16 @@ public final class MenuSchedulerTask implements Runnable {
             if (player == null || !player.isOnline()) continue;
 
             for (MenuTask task : menuSession.getCache().getTasks().values()) {
-                if (task.getTicksDelay() <= 0) {
-                    task.setStarted(true);
+                if (!task.isStarted() && task.getTicksDelay() <= 0) {
+                    if (this.runAfterDelay(task, ticks)) continue;
                 }
 
-                if (!task.isStarted() && task.getUpdatedAtTick() == -1) {
+                if (task.getUpdatedAtTick() == -1) {
                     task.setUpdatedAtTick(ticks);
-                    continue;
                 }
 
-                if (!task.isStarted() && task.getUpdatedAtTick() + ticks >= task.getTicksDelay()) {
-                    task.setUpdatedAtTick(ticks);
-                    task.setStarted(true);
-
-                    task.getRunnable().run();
-
-                    if (task.getRunTimes() == 1) {
-                        task.cancel();
-                        continue;
-                    }
+                if (!task.isStarted() && ticks - task.getUpdatedAtTick() >= task.getTicksDelay()) {
+                    if (this.runAfterDelay(task, ticks)) continue;
                 }
 
                 if (ticks - task.getUpdatedAtTick() == task.getTicksPeriod()) {
@@ -67,5 +58,19 @@ public final class MenuSchedulerTask implements Runnable {
                 }
             }
         }
+    }
+
+    private boolean runAfterDelay(MenuTask task, int ticks) {
+        task.setUpdatedAtTick(ticks);
+        task.setStarted(true);
+
+        task.getRunnable().run();
+
+        if (task.getRunTimes() == 1) {
+            task.cancel();
+            return true;
+        }
+
+        return false;
     }
 }
