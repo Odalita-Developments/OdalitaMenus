@@ -34,18 +34,20 @@ public final class MenuSchedulerTask implements Runnable {
             if (player == null || !player.isOnline()) continue;
 
             for (MenuTask task : menuSession.getCache().getTasks().values()) {
-                if (task.getTicksDelay() == 0) {
+                if (task.getTicksDelay() <= 0) {
                     task.setStarted(true);
                 }
 
-                if (!task.isStarted() && task.getStartedAtTick() == -1 && task.getTicksDelay() > 0) {
-                    task.setStartedAtTick(ticks);
+                if (!task.isStarted() && task.getUpdatedAtTick() == -1) {
+                    task.setUpdatedAtTick(ticks);
                     continue;
                 }
 
-                if (!task.isStarted() && task.getStartedAtTick() + ticks >= task.getTicksDelay()) {
-                    task.getRunnable().run();
+                if (!task.isStarted() && task.getUpdatedAtTick() + ticks >= task.getTicksDelay()) {
+                    task.setUpdatedAtTick(ticks);
                     task.setStarted(true);
+
+                    task.getRunnable().run();
 
                     if (task.getRunTimes() == 1) {
                         task.cancel();
@@ -53,7 +55,9 @@ public final class MenuSchedulerTask implements Runnable {
                     }
                 }
 
-                if (ticks % task.getTicksPeriod() == 0) {
+                if (ticks - task.getUpdatedAtTick() == task.getTicksPeriod()) {
+                    task.setUpdatedAtTick(ticks);
+
                     task.getRunnable().run();
                     task.setRanTimes(task.getRanTimes() + 1);
                 }

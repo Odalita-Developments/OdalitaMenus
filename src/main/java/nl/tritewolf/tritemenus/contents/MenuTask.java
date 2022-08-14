@@ -17,7 +17,7 @@ public final class MenuTask {
     private final int runTimes;
 
     private boolean started = false;
-    private int startedAtTick = -1;
+    private int updatedAtTick = -1;
     private int ranTimes = 0;
 
     MenuTask(InventoryContentsScheduler scheduler, String id, Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
