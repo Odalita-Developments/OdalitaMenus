@@ -7,7 +7,7 @@ import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
-import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
@@ -17,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -161,20 +160,11 @@ public interface InventoryContents {
 
 
     /* PAGINATION & SCROLLABLE */
-    @NotNull
-    Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator,
-                          @NotNull List<@NotNull Supplier<@NotNull MenuItem>> items);
+    @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
 
-    @NotNull
-    Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator,
-                          @NotNull Supplier<@NotNull List<@NotNull Supplier<@NotNull MenuItem>>> itemsSupplier);
+    @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage);
 
-    @NotNull
-    Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
-
-    @NotNull ScrollableBuilder scrollable(@NotNull String id,
-                                          @MagicConstant(intValues = {1, 2, 3, 4, 5, 6}) int showYAxis,
-                                          @MagicConstant(intValues = {1, 2, 3, 4, 5, 6, 7, 8, 9}) int showXAxis);
+    @NotNull ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis);
 
     void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull PageUpdatableItem menuItem);
 

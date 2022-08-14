@@ -36,7 +36,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
                 Pagination pagination = menuSession.getCache().getPaginationMap().get(id);
                 if (pagination == null) return;
 
-                pagination.setCurrentPage(page);
+                pagination.setPage(page);
             });
 
             this.builder.getScrollableAxes().forEach((id, axes) -> {

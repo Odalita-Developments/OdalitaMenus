@@ -2,6 +2,7 @@ package nl.tritewolf.testplugin.commands;
 
 import nl.tritewolf.testplugin.TestChestPlayerMenu;
 import nl.tritewolf.testplugin.TestDropperPlayerMenu;
+import nl.tritewolf.testplugin.TestPaginationMenu;
 import nl.tritewolf.testplugin.TestPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +28,15 @@ public class TestCommand implements CommandExecutor {
 
         if (strings.length > 0 && strings[0].equalsIgnoreCase("dropper")) {
             TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestDropperPlayerMenu(), player)
+                    .open();
+            return false;
+        }
+
+        if (strings.length > 0 && strings[0].equalsIgnoreCase("page")) {
+            int page = (strings.length > 1) ? Integer.parseInt(strings[1]) : 0;
+
+            TestPlugin.getTriteMenus().getMenuProcessor().openMenuBuilder(new TestPaginationMenu(), player)
+                    .pagination("test", page)
                     .open();
             return false;
         }

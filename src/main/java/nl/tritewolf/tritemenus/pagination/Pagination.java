@@ -1,152 +1,45 @@
 package nl.tritewolf.tritemenus.pagination;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
-import nl.tritewolf.tritemenus.menu.MenuSession;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
-import nl.tritewolf.tritemenus.utils.callback.Callback;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
-@Getter
-@RequiredArgsConstructor
-public class Pagination {
+public interface Pagination {
 
-    private final String id;
-    private final InventoryContents contents;
-    private final int itemsPerPage;
-    private final MenuIterator iterator;
+    @NotNull String getId();
 
-    private final Map<Integer, Supplier<MenuItem>[]> itemIndex = new HashMap<>();
-    private int index = 0;
-    private int pageIndex = 0;
+    int getItemsPerPage();
 
-    @Setter
-    private int currentPage = 0;
+    @NotNull MenuIterator getIterator();
 
-    @Setter
-    private volatile boolean initialized = false;
+    int getCurrentPage();
 
-    public Pagination(String id, InventoryContents contents, int itemsPerPage, MenuIterator iterator, @NotNull List<Supplier<MenuItem>> items) {
-        this.id = id;
-        this.contents = contents;
-        this.itemsPerPage = itemsPerPage;
-        this.iterator = iterator;
+    int firstPage();
 
-        items.forEach(this::addItem);
-    }
+    int lastPage();
 
-    private boolean isOnPage() {
-        return index < itemsPerPage;
-    }
+    boolean isFirstPage();
 
-    public boolean isFirst() {
-        return this.currentPage == 0;
-    }
+    boolean isLastPage();
 
-    public boolean isLast() {
-        return itemIndex.get(currentPage + 1) == null;
-    }
+    @NotNull Pagination addItem(@NotNull Supplier<@NotNull MenuItem> item);
 
-    public Supplier<MenuItem>[] getItemsOnPage() {
-        return itemIndex.get(currentPage);
-    }
+    @NotNull Pagination nextPage();
 
-    public synchronized Pagination addItem(Supplier<MenuItem> menuItemSupplier) {
-        if (this.initialized && this.isOnPage() && pageIndex == currentPage) {
-            this.iterator.setNextAsync(menuItemSupplier.get());
-        }
+    @NotNull Pagination previousPage();
 
-        if (!isOnPage()) {
-            index = 0;
-            pageIndex++;
-        }
+    @NotNull Pagination open(int page);
 
-        Supplier<MenuItem>[] items = this.itemIndex.computeIfAbsent(pageIndex, integer -> new Supplier[itemsPerPage]);
-        items[index] = menuItemSupplier;
-        index++;
+    @ApiStatus.Internal
+    void setPage(int page);
 
-        if (this.itemIndex.get(currentPage + 1) != null) {
-            MenuSession menuSession = contents.menuSession();
-            Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = menuSession.getCache().getPageSwitchUpdateItems();
+    @ApiStatus.Internal
+    void setInitialized(boolean initialized);
 
-            pageSwitchUpdateItems.forEach((slot, item) -> {
-                this.contents.set(slot, item.get());
-                InventoryUtils.updateItem(menuSession.getPlayer(), slot, item.get().getItemStack(), menuSession.getInventory());
-            });
-        }
-
-        return this;
-    }
-
-    public Pagination nextPage(Callback callback) {
-        openPage(++currentPage, callback);
-        return this;
-    }
-
-    public Pagination nextPage() {
-        this.nextPage(() -> {
-        });
-        return this;
-    }
-
-    public Pagination previousPage(Callback callback) {
-        openPage(--currentPage, callback);
-        return this;
-    }
-
-    public Pagination previousPage() {
-        previousPage(() -> {
-        });
-        return this;
-    }
-
-    public void openPage(int page, Callback callback) {
-        currentPage = page;
-        MenuSession menuSession = this.contents.menuSession();
-        MenuIterator iterator = this.iterator.reset();
-
-        Supplier<MenuItem>[] itemsOnPage = getItemsOnPage();
-        List<Integer> reusableItems = new ArrayList<>();
-        for (Supplier<MenuItem> menuItemSupplier : itemsOnPage) {
-
-            if (menuItemSupplier == null) {
-                int slot = iterator.getSlot();
-                reusableItems.add(slot);
-                iterator.setNext(DisplayItem.of(new ItemStack(Material.AIR)));
-
-                InventoryUtils.updateItem(menuSession.getPlayer(), slot, new ItemStack(Material.AIR), menuSession.getInventory());
-                continue;
-            }
-
-
-            MenuItem menuItem = menuItemSupplier.get();
-            int slot = iterator.getSlot();
-            iterator.setNext(menuItem);
-
-            InventoryUtils.updateItem(menuSession.getPlayer(), slot, menuItem.getItemStack(), menuSession.getInventory());
-
-        }
-        reusableItems.forEach(iterator::addReusableSlot);
-
-        Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = this.contents.menuSession().getCache().getPageSwitchUpdateItems();
-        pageSwitchUpdateItems.forEach((slot, item) -> {
-            this.contents.set(slot, item.get());
-            InventoryUtils.updateItem(menuSession.getPlayer(), slot, item.get().getItemStack(), menuSession.getInventory());
-        });
-
-        callback.callback();
-    }
+    @ApiStatus.Internal
+    @NotNull List<Supplier<MenuItem>> getItemsOnPage();
 }

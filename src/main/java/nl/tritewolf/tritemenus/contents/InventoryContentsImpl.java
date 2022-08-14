@@ -8,7 +8,7 @@ import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.menu.type.SupportedFeatures;
-import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.*;
 import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
@@ -361,30 +361,18 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
-    public @NotNull Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator, @NotNull List<@NotNull Supplier<@NotNull MenuItem>> items) {
+    public @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator) {
+        return this.pagination(id, itemsPerPage)
+                .iterator(iterator);
+    }
+
+    @Override
+    public @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage) {
         if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
             throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination!");
         }
 
-        Pagination pagination = new Pagination(id, this, itemsPerPage, iterator, items);
-        this.menuSession.getCache().getPaginationMap().put(id, pagination);
-        return pagination;
-    }
-
-    @Override
-    public @NotNull Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator, @NotNull Supplier<@NotNull List<@NotNull Supplier<@NotNull MenuItem>>> itemsSupplier) {
-        return this.pagination(id, itemsPerPage, iterator, itemsSupplier.get());
-    }
-
-    @Override
-    public @NotNull Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator) {
-        if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
-            throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination!");
-        }
-
-        Pagination pagination = new Pagination(id, this, itemsPerPage, iterator);
-        this.menuSession.getCache().getPaginationMap().put(id, pagination);
-        return pagination;
+        return PaginationBuilder.builder(this, id, itemsPerPage);
     }
 
     @Override

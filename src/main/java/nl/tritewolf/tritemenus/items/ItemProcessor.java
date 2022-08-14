@@ -8,6 +8,7 @@ import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -20,8 +21,8 @@ public final class ItemProcessor {
         MenuItem[][] contents = menuSession.getContents();
 
         for (Pagination pagination : menuSession.getCache().getPaginationMap().values()) {
-            Supplier<MenuItem>[] itemsOnPage = pagination.getItemsOnPage();
-            if (itemsOnPage == null) {
+            List<Supplier<MenuItem>> itemsOnPage = pagination.getItemsOnPage();
+            if (itemsOnPage.isEmpty()) {
                 pagination.setInitialized(true);
                 continue;
             }

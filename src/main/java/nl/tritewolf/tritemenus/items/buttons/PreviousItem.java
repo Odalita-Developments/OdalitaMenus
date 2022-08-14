@@ -63,7 +63,7 @@ public class PreviousItem implements PageUpdatableItem {
 
     @Override
     public @NotNull ItemStack getItemStack() {
-        if (!this.showOnFirstPage && pagination.isFirst()) {
+        if (!this.showOnFirstPage && pagination.isFirstPage()) {
             return new ItemStack(Material.AIR);
         }
         return this.itemStack;
@@ -73,7 +73,7 @@ public class PreviousItem implements PageUpdatableItem {
     public @NotNull Consumer<InventoryClickEvent> onClick() {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player)) return;
-            if (this.pagination.isFirst()) return;
+            if (this.pagination.isFirstPage()) return;
 
             pagination.previousPage();
         };
