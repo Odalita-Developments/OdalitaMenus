@@ -2,9 +2,8 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
+import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuSession;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -263,22 +262,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     }
 
     private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
-        MenuSession menuSession = this.contents.menuSession();
-
-        if (menuItemSupplier == null) {
-            InventoryUtils.updateItem(menuSession.getPlayer(), slot, new ItemStack(Material.AIR), menuSession.getInventory());
-            return;
-        }
-
-        MenuItem menuItem = menuItemSupplier.get();
-        if (menuItem.isUpdatable()) {
-            menuSession.setHasUpdatableItems(true);
-        }
-
-        SlotPos slotPos = SlotPos.of(slot);
-        menuSession.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
-
-        InventoryUtils.updateItem(menuSession.getPlayer(), slot, menuItem.getItemStack(), menuSession.getInventory());
+        MenuItem menuItem = (menuItemSupplier == null) ? DisplayItem.of(new ItemStack(Material.AIR)) : menuItemSupplier.get();
+        this.contents.setAsync(slot, menuItem);
     }
 
     private int updateCurrentAxis(int newAxis, ScrollableDirection direction) {
