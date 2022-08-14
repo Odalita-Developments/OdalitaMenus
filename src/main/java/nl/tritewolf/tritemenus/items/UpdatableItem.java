@@ -12,19 +12,21 @@ import java.util.function.Supplier;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UpdatableItem implements MenuItem {
 
-    public static @NotNull UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler, int updateTicks) {
+    public static @NotNull UpdatableItem of(@NotNull Supplier<@NotNull ItemStack> itemStackSupplier,
+                                            @NotNull Consumer<@NotNull InventoryClickEvent> clickHandler, int updateTicks) {
         return new UpdatableItem(itemStackSupplier, clickHandler, updateTicks);
     }
 
-    public static @NotNull UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, @NotNull Consumer<InventoryClickEvent> clickHandler) {
+    public static @NotNull UpdatableItem of(@NotNull Supplier<@NotNull ItemStack> itemStackSupplier,
+                                            @NotNull Consumer<@NotNull InventoryClickEvent> clickHandler) {
         return new UpdatableItem(itemStackSupplier, clickHandler);
     }
 
-    public static @NotNull UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier, int updateTicks) {
+    public static @NotNull UpdatableItem of(@NotNull Supplier<@NotNull ItemStack> itemStackSupplier, int updateTicks) {
         return new UpdatableItem(itemStackSupplier, updateTicks);
     }
 
-    public static @NotNull UpdatableItem of(@NotNull Supplier<ItemStack> itemStackSupplier) {
+    public static @NotNull UpdatableItem of(@NotNull Supplier<@NotNull ItemStack> itemStackSupplier) {
         return new UpdatableItem(itemStackSupplier);
     }
 

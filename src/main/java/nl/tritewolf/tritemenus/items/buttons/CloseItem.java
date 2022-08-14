@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.items.buttons;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -25,9 +25,7 @@ public final class CloseItem implements MenuItem {
     private final ItemStack itemStack;
 
     private CloseItem() {
-        this.itemStack = new ItemBuilder(Material.BARRIER)
-                .setLore("&cClose")
-                .build();
+        this.itemStack = InventoryUtils.createItemStack(Material.BARRIER, "&cClose");
     }
 
     @Override

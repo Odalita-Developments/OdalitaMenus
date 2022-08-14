@@ -60,7 +60,7 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
         this(
-                InventoryUtils.createItemStack(Material.ARROW, "&cGo back"), // TODO
+                InventoryUtils.createItemStack(Material.ARROW, "&cGo back"),
                 menuProvider, builderFunction, menuProviderLoader
         );
     }

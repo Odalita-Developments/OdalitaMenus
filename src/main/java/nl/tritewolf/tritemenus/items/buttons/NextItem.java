@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class NextItem implements PageUpdatableItem {
+public final class NextItem implements PageUpdatableItem {
 
-    public static NextItem of(Pagination pagination, ItemStack itemStack, boolean showOnLastPage) {
+    public static @NotNull NextItem of(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnLastPage) {
         return new NextItem(pagination, itemStack, showOnLastPage);
     }
 
-    public static NextItem of(Pagination pagination, boolean showOnLastPage) {
+    public static @NotNull NextItem of(@NotNull Pagination pagination, boolean showOnLastPage) {
         return new NextItem(pagination, showOnLastPage);
     }
 
-    public static NextItem of(Pagination pagination, ItemStack itemStack) {
+    public static @NotNull NextItem of(@NotNull Pagination pagination, @NotNull ItemStack itemStack) {
         return new NextItem(pagination, itemStack);
     }
 
-    public static NextItem of(Pagination pagination) {
+    public static @NotNull NextItem of(@NotNull Pagination pagination) {
         return new NextItem(pagination);
     }
 
@@ -33,33 +33,30 @@ public class NextItem implements PageUpdatableItem {
     private final ItemStack itemStack;
     private final boolean showOnLastPage;
 
-    protected NextItem(Pagination pagination, ItemStack itemStack, boolean showOnLastPage) {
+    private NextItem(Pagination pagination, ItemStack itemStack, boolean showOnLastPage) {
         this.pagination = pagination;
         this.showOnLastPage = showOnLastPage;
         this.itemStack = itemStack;
     }
 
-    protected NextItem(Pagination pagination, boolean showOnLastPage) {
+    private NextItem(Pagination pagination, boolean showOnLastPage) {
         this.pagination = pagination;
         this.showOnLastPage = showOnLastPage;
 
-        this.itemStack = InventoryUtils.createItemStack(Material.ARROW,
-                "&bNext page &8(&f" + this.pagination.getCurrentPage() + 1 + "&7/&f" + this.pagination.getCurrentPage() + "&8)", // TODO
-                "&7Go to the next page."
-        );
+        this.itemStack = InventoryUtils.createItemStack(Material.ARROW, "&bNext page");
     }
 
-    protected NextItem(Pagination pagination, ItemStack itemStack) {
+    private NextItem(Pagination pagination, ItemStack itemStack) {
         this(pagination, itemStack, false);
     }
 
-    protected NextItem(Pagination pagination) {
+    private NextItem(Pagination pagination) {
         this(pagination, false);
     }
 
     @Override
     public @NotNull ItemStack getItemStack() {
-        if (!showOnLastPage && this.pagination.isLastPage()) {
+        if (!this.showOnLastPage && this.pagination.isLastPage()) {
             return new ItemStack(Material.AIR);
         }
 

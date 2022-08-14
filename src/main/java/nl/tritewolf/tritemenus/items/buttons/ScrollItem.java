@@ -90,7 +90,7 @@ public final class ScrollItem implements PageUpdatableItem {
         this.scrollable = scrollable;
         this.showOnLastPage = showOnLastPage;
 
-        this.itemStack = switch (this.direction) { // TODO
+        this.itemStack = switch (this.direction) {
             case UP -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll up");
             case DOWN -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll down");
             case LEFT -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll left");
