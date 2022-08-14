@@ -6,19 +6,13 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirectionPatternCache> {
 
-    default @NotNull Direction direction() {
-        return Direction.HORIZONTALLY;
-    }
-
     @Override
     default @NotNull ScrollableDirectionPatternCache getCache() {
-        ScrollableDirectionPatternCache cache = new PatternInitializer(this.getPattern(), this.direction())
+        ScrollableDirectionPatternCache cache = new PatternInitializer(this.getPattern())
                 .initializeIndex();
 
         if (cache == null) {
@@ -32,31 +26,21 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
     default void handle(@NotNull MenuIterator menuIterator) {
     }
 
-    enum Direction {
-
-        HORIZONTALLY,
-        VERTICALLY;
-
-        public static @NotNull Direction fromScrollableDirection(@NotNull Direction direction) {
-            if (direction == Direction.HORIZONTALLY) {
-                return Direction.VERTICALLY;
-            }
-
-            return Direction.HORIZONTALLY;
-        }
-    }
-
-    record PatternInitializer(List<String> pattern, Direction direction) {
+    record PatternInitializer(List<String> pattern) {
 
         private @Nullable ScrollableDirectionPatternCache initializeIndex() {
             if (this.pattern.isEmpty()) return null;
 
-            NavigableMap<Integer, Integer> index = new TreeMap<>();
-            int width = (this.direction == Direction.HORIZONTALLY)
-                    ? this.initializeHorizontal(index)
-                    : this.initializeVertical(index);
+            Map<ScrollableDirection, NavigableMap<Integer, Integer>> directionIndex = new HashMap<>();
+            Map<ScrollableDirection, Integer> directionWidth = new HashMap<>();
 
-            return new ScrollableDirectionPatternCache(this.direction, this.pattern, index, this.pattern.size(), width, 0, 0);
+            NavigableMap<Integer, Integer> horizontalIndex = directionIndex.computeIfAbsent(ScrollableDirection.HORIZONTALLY, direction -> new TreeMap<>());
+            NavigableMap<Integer, Integer> verticalIndex = directionIndex.computeIfAbsent(ScrollableDirection.VERTICALLY, direction -> new TreeMap<>());
+
+            directionWidth.computeIfAbsent(ScrollableDirection.HORIZONTALLY, direction -> this.initializeHorizontal(horizontalIndex));
+            directionWidth.computeIfAbsent(ScrollableDirection.VERTICALLY, direction -> this.initializeVertical(verticalIndex));
+
+            return new ScrollableDirectionPatternCache(this.pattern, this.pattern.size(), directionIndex, directionWidth);
         }
 
         private int initializeHorizontal(NavigableMap<Integer, Integer> index) {

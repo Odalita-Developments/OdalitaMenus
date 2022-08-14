@@ -8,7 +8,7 @@ import java.util.Map;
 
 sealed class PatternScrollable extends AbstractScrollable permits RepeatedPatternScrollable {
 
-    private final ScrollableDirectionPatternCache patternCache;
+    private final ScrollableDirectionPatternCache.Cache patternCache;
 
     private int lastPatternIndex;
 

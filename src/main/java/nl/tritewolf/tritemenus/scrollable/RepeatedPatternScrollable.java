@@ -8,7 +8,7 @@ import java.util.Map;
 
 final class RepeatedPatternScrollable extends PatternScrollable {
 
-    private final ScrollableDirectionPatternCache patternCache;
+    private final ScrollableDirectionPatternCache.Cache patternCache;
 
     private int lastPatternIndex = -1;
     private int lastIndex = 0;
@@ -96,7 +96,7 @@ final class RepeatedPatternScrollable extends PatternScrollable {
     @Override
     protected @NotNull ScrollableSlotPos createSlotPos(int index) {
         return ScrollableSlotPos.of(
-                ScrollableDirection.valueOf(this.patternCache.patternDirection().name()),
+                this.direction.getCacheInitializationDirection(),
                 this.showYAxis,
                 this.showXAxis,
                 index

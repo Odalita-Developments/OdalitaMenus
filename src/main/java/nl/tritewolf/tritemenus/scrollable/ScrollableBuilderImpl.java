@@ -29,8 +29,11 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
 
     private boolean isSingle;
     private ScrollableDirection direction;
-    private ScrollableDirectionPatternCache patternCache;
+    private ScrollableDirectionPatternCache.Cache patternCache;
     private boolean repeatedPattern;
+
+    @Getter(AccessLevel.NONE)
+    private ScrollableDirectionPatternCache tempPatternCache;
 
     @Override
     public @NotNull ScrollableBuilder items(@NotNull List<@NotNull Supplier<@NotNull MenuItem>> items) {
@@ -57,7 +60,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.isSingle = false;
-        this.patternCache = patternCache;
+        this.tempPatternCache = patternCache;
         return new ScrollablePatternBuilderImpl(this);
     }
 
@@ -67,13 +70,12 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         if (this.isSingle) {
             scrollable = new SingleScrollable(this);
         } else if (this.repeatedPattern) {
-            if ((this.direction == ScrollableDirection.HORIZONTALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.VERTICALLY)
-                    || (this.direction == ScrollableDirection.VERTICALLY && this.patternCache.patternDirection() != ScrollableDirectionPattern.Direction.HORIZONTALLY)) {
-                throw new IllegalArgumentException("Pattern direction does not match with scrollable direction.");
-            }
+            this.patternCache = this.tempPatternCache.initialize(this.direction.getCacheInitializationDirection());
 
             scrollable = new RepeatedPatternScrollable(this);
         } else {
+            this.patternCache = this.tempPatternCache.initialize(this.direction.getCacheInitializationDirection());
+
             scrollable = new PatternScrollable(this);
         }
 

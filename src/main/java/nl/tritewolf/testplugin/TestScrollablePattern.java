@@ -10,11 +10,6 @@ import java.util.List;
 public class TestScrollablePattern implements ScrollableDirectionPattern {
 
     @Override
-    public @NotNull Direction direction() {
-        return Direction.fromScrollableDirection(Direction.HORIZONTALLY);
-    }
-
-    @Override
     public @NotNull List<@NotNull String> getPattern() {
         //        return List.of(
         //                "01|03|04|##|05|06|10|11|12|##|##|##|14",
