@@ -10,7 +10,7 @@ import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.providers.PlayerMenuProvider;
 import nl.tritewolf.tritemenus.pagination.Pagination;
-import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,12 +33,12 @@ public class TestPaginationMenu implements PlayerMenuProvider {
 
         for (int i = 0; i < 200; i++) {
             int finalI = i;
-            pagination.addItem(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
+            pagination.addItem(() -> DisplayItem.of(InventoryUtils.createItemStack((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99))));
         }
 
-        pagination.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEAD)
-                .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
-                .build(), 5));
+        pagination.addItem(() -> UpdatableItem.of(() -> InventoryUtils.createItemStack(Material.LEAD, "UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99)),
+                5
+        ));
 
         pagination.addItem(() -> ClickableItem.of(new ItemStack(Material.ACACIA_FENCE), (event) -> {
             event.getWhoClicked().sendMessage("Clicked!");

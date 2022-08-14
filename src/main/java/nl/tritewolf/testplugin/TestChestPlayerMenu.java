@@ -10,7 +10,7 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.items.buttons.ScrollItem;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
-import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
 
         for (int i = 0; i < 74; i++) {
             int finalI = i;
-            items.add(() -> DisplayItem.of(new ItemBuilder((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99)).build()));
+            items.add(() -> DisplayItem.of(InventoryUtils.createItemStack((finalI % 7 == 0) ? Material.LEATHER : Material.COOKED_BEEF, "ITEM: " + finalI + " / " + ThreadLocalRandom.current().nextInt(99))));
         }
 
         Scrollable scrollable = contents.scrollable("test", 4, 9)
@@ -58,9 +58,8 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
         //                        .single(1, 1)
         //                        .horizontally();
 
-        scrollable.addItem(() -> UpdatableItem.of(() -> new ItemBuilder(Material.LEAD)
-                .setDisplayName("UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99))
-                .build(), 5));
+        scrollable.addItem(() -> UpdatableItem.of(() -> InventoryUtils.createItemStack(Material.LEAD, "UPDATABLE ITEM: " + ThreadLocalRandom.current().nextInt(99)),
+                5));
 
         scrollable.addItem(() -> ClickableItem.of(new ItemStack(Material.ACACIA_FENCE), (event) -> {
             event.getWhoClicked().sendMessage("Clicked!");
