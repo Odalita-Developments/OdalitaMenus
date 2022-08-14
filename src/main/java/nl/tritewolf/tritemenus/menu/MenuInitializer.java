@@ -23,40 +23,40 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
 
             MenuType menuType;
-            if ((menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.inventoryType())) == null) {
-                throw new IllegalArgumentException("Inventory type not supported: '" + annotation.inventoryType() + "'");
+            if ((menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type())) == null) {
+                throw new IllegalArgumentException("Inventory type not supported: '" + annotation.type() + "'");
             }
 
-            MenuObject menuObject = new MenuObject(player, menuType, annotation.rows(), annotation.displayName());
+            MenuSession menuSession = new MenuSession(player, menuType, annotation.rows(), annotation.title());
 
-            InventoryContents contents = InventoryContents.create(menuObject);
+            InventoryContents contents = InventoryContents.create(menuSession);
             this.builder.getProviderLoader().load(menuProvider, player, contents);
 
             this.builder.getPaginationPages().forEach((id, page) -> {
-                Pagination pagination = menuObject.getPaginationMap().get(id);
+                Pagination pagination = menuSession.getCache().getPaginationMap().get(id);
                 if (pagination == null) return;
 
                 pagination.setCurrentPage(page);
             });
 
             this.builder.getScrollableAxes().forEach((id, axes) -> {
-                Scrollable scrollable = menuObject.getScrollableMap().get(id);
+                Scrollable scrollable = menuSession.getCache().getScrollableMap().get(id);
                 if (scrollable == null) return;
 
                 scrollable.setAxes(axes.getKey(), axes.getValue());
             });
 
-            this.itemProcessor.initializeItems(menuObject, contents);
+            this.itemProcessor.initializeItems(menuSession, contents);
 
-            this.openInventory(player, menuObject);
+            this.openInventory(player, menuSession);
         } catch (Exception exception) {
             exception.printStackTrace();
             // TODO idk, something else
         }
     }
 
-    private void openInventory(@NotNull Player player, @NotNull MenuObject menuObject) {
-        player.openInventory(menuObject.getInventory());
-        this.menuProcessor.getOpenMenus().put(player, menuObject);
+    private void openInventory(@NotNull Player player, @NotNull MenuSession menuSession) {
+        player.openInventory(menuSession.getInventory());
+        this.menuProcessor.getOpenMenus().put(player, menuSession);
     }
 }

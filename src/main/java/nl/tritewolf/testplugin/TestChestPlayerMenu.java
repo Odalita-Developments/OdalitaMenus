@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 @Menu(
         rows = 6,
-        displayName = "Test menu"
+        title = "Test menu"
 )
 public class TestChestPlayerMenu implements TestExtraMenuProvider {
 

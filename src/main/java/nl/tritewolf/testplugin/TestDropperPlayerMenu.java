@@ -9,8 +9,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
 @Menu(
-        displayName = "Test dropper",
-        inventoryType = InventoryType.DROPPER
+        title = "Test dropper",
+        type = InventoryType.DROPPER
 )
 public class TestDropperPlayerMenu implements PlayerMenuProvider {
 

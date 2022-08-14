@@ -4,7 +4,7 @@ import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
-import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.menu.type.SupportedFeatures;
 import nl.tritewolf.tritemenus.pagination.Pagination;
@@ -23,17 +23,17 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents {
+record InventoryContentsImpl(MenuSession menuSession) implements InventoryContents {
 
     @Override
-    public @NotNull MenuObject getMenuSession() {
-        return this.menuObject;
+    public @NotNull MenuSession getMenuSession() {
+        return this.menuSession;
     }
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         this.set(slotPos, item, override, (slot) -> {
-            this.menuObject.getContents()[slot.getRow()][slot.getColumn()] = item;
+            this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
         });
     }
 
@@ -71,11 +71,11 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public @NotNull Optional<@NotNull SlotPos> firstEmptySlot() {
-        for (int row = 0; row < this.menuObject.getRows(); row++) {
-            for (int column = 0; column < this.menuObject.getColumns(); column++) {
+        for (int row = 0; row < this.menuSession.getRows(); row++) {
+            for (int column = 0; column < this.menuSession.getColumns(); column++) {
                 SlotPos slotPos = SlotPos.of(row, column);
 
-                if (this.menuObject.getContent(slotPos) == null) {
+                if (this.menuSession.getContent(slotPos) == null) {
                     return Optional.of(slotPos);
                 }
             }
@@ -86,22 +86,22 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public void fillRow(int row, @NotNull MenuItem item) {
-        if (row < 0 || row >= this.menuObject.getRows()) {
-            throw new IllegalArgumentException("Row must be between '0' and '" + this.menuObject.getRows() + "'");
+        if (row < 0 || row >= this.menuSession.getRows()) {
+            throw new IllegalArgumentException("Row must be between '0' and '" + this.menuSession.getRows() + "'");
         }
 
-        for (int column = 0; column < this.menuObject.getColumns(); column++) {
+        for (int column = 0; column < this.menuSession.getColumns(); column++) {
             this.set(row, column, item);
         }
     }
 
     @Override
     public void fillColumn(int column, @NotNull MenuItem item) {
-        if (column < 0 || column >= this.menuObject.getColumns()) {
-            throw new IllegalArgumentException("Column must be between '0' and '" + this.menuObject.getColumns() + "'");
+        if (column < 0 || column >= this.menuSession.getColumns()) {
+            throw new IllegalArgumentException("Column must be between '0' and '" + this.menuSession.getColumns() + "'");
         }
 
-        for (int row = 0; row < this.menuObject.getRows(); row++) {
+        for (int row = 0; row < this.menuSession.getRows(); row++) {
             this.set(SlotPos.of(row, column), item);
         }
     }
@@ -129,15 +129,15 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public void fillBorders(@NotNull MenuItem item) {
-        this.fillRectangle(0, 0, this.menuObject.getRows() - 1, this.menuObject.getColumns() - 1, item);
+        this.fillRectangle(0, 0, this.menuSession.getRows() - 1, this.menuSession.getColumns() - 1, item);
     }
 
     @Override
     public void fill(@NotNull MenuItem item) {
-        for (int row = 0; row < this.menuObject.getRows(); row++) {
-            for (int column = 0; column < this.menuObject.getColumns(); column++) {
+        for (int row = 0; row < this.menuSession.getRows(); row++) {
+            for (int column = 0; column < this.menuSession.getColumns(); column++) {
                 SlotPos slotPos = SlotPos.of(row, column);
-                if (this.menuObject.getContent(slotPos) != null) continue;
+                if (this.menuSession.getContent(slotPos) != null) continue;
 
                 this.set(slotPos, item);
             }
@@ -147,8 +147,8 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
     @Override
     public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         this.set(slotPos, item, override, (slot) -> {
-            this.menuObject.getContents()[slot.getRow()][slot.getColumn()] = item;
-            InventoryUtils.updateItem(this.menuObject.getPlayer(), slot.getSlot(), item.getItemStack(), this.menuObject.getInventory());
+            this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
+            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(), this.menuSession.getInventory());
         });
     }
 
@@ -300,7 +300,7 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
     @Override
     public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
         MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
-        this.menuObject.getIterators().put(iterator, menuIterator);
+        this.menuSession.getCache().getIterators().put(iterator, menuIterator);
         return menuIterator;
     }
 
@@ -346,7 +346,7 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
         }
 
         for (int i = 0; i < menuItems.size(); i++) {
-            if (i >= directionsPattern.size() || directionsPattern.get(i).getRow() > this.menuObject.getRows()) break;
+            if (i >= directionsPattern.size() || directionsPattern.get(i).getRow() > this.menuSession.getRows()) break;
             this.set(directionsPattern.get(i), menuItems.get(i));
         }
     }
@@ -354,23 +354,23 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
     @Override
     public void registerPlaceableItemSlots(int... slots) {
         for (int slot : slots) {
-            this.menuObject.getPlaceableItems().add(slot);
+            this.menuSession.getCache().getPlaceableItems().add(slot);
         }
     }
 
     @Override
     public void removePlaceableItems(@NotNull PlaceableItemsCloseAction action) {
-        this.menuObject.setPlaceableItemsCloseAction(action);
+        this.menuSession.getCache().setPlaceableItemsCloseAction(action);
     }
 
     @Override
     public @NotNull Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator, @NotNull List<@NotNull Supplier<@NotNull MenuItem>> items) {
-        if (!this.menuObject.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
-            throw new IllegalStateException("The menu type '" + this.menuObject.getMenuType().type() + "' does not support pagination!");
+        if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
+            throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination!");
         }
 
         Pagination pagination = new Pagination(id, this, itemsPerPage, iterator, items);
-        this.menuObject.getPaginationMap().put(id, pagination);
+        this.menuSession.getCache().getPaginationMap().put(id, pagination);
         return pagination;
     }
 
@@ -381,19 +381,19 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public @NotNull Pagination pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator) {
-        if (!this.menuObject.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
-            throw new IllegalStateException("The menu type '" + this.menuObject.getMenuType().type() + "' does not support pagination!");
+        if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)) {
+            throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination!");
         }
 
         Pagination pagination = new Pagination(id, this, itemsPerPage, iterator);
-        this.menuObject.getPaginationMap().put(id, pagination);
+        this.menuSession.getCache().getPaginationMap().put(id, pagination);
         return pagination;
     }
 
     @Override
     public @NotNull ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis) {
-        if (!this.menuObject.getMenuType().isFeatureAllowed(SupportedFeatures.SCROLLABLE)) {
-            throw new IllegalStateException("The menu type '" + this.menuObject.getMenuType().type() + "' does not support scrollable!");
+        if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.SCROLLABLE)) {
+            throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support scrollable!");
         }
 
         return ScrollableBuilder.builder(this, id, showYAxis, showXAxis);
@@ -401,9 +401,9 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull PageUpdatableItem menuItem) {
-        if (!this.menuObject.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)
-                && !this.menuObject.getMenuType().isFeatureAllowed(SupportedFeatures.SCROLLABLE)) {
-            throw new IllegalStateException("The menu type '" + this.menuObject.getMenuType().type() + "' does not support pagination and scrollable!");
+        if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)
+                && !this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.SCROLLABLE)) {
+            throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination and scrollable!");
         }
 
         this.set(slotPos, menuItem, true);
@@ -421,36 +421,36 @@ record InventoryContentsImpl(MenuObject menuObject) implements InventoryContents
 
     @Override
     public void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action) {
-        this.menuObject.setPlaceableItemsCloseAction(action);
+        this.menuSession.getCache().setPlaceableItemsCloseAction(action);
         player.closeInventory();
     }
 
     @Override
     public @Nullable String getSearchQuery(@NotNull String id) {
-        return this.menuObject.getSearchQueries().get(id);
+        return this.menuSession.getCache().getSearchQueries().get(id);
     }
 
     private void set(SlotPos slotPos, MenuItem item, boolean override, Consumer<SlotPos> setter) {
         slotPos = this.createSlotPos(slotPos);
 
-        if (!this.menuObject.fits(slotPos.getSlot())) {
+        if (!this.menuSession.fits(slotPos.getSlot())) {
             throw new IllegalArgumentException("The slot '" + slotPos.getSlot() + "' is out of bounds for this menu");
         }
 
-        if (!override && this.menuObject.getContent(slotPos) != null) return;
+        if (!override && this.menuSession.getContent(slotPos) != null) return;
 
         if (item instanceof PageUpdatableItem) {
-            this.menuObject.getPageSwitchUpdateItems().put(slotPos.getSlot(), () -> item);
+            this.menuSession.getCache().getPageSwitchUpdateItems().put(slotPos.getSlot(), () -> item);
         }
 
-        if (!this.menuObject.isHasUpdatableItems() && item.isUpdatable()) {
-            this.menuObject.setHasUpdatableItems(true);
+        if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
+            this.menuSession.setHasUpdatableItems(true);
         }
 
         setter.accept(slotPos);
     }
 
     private SlotPos createSlotPos(SlotPos slotPos) {
-        return SlotPos.of(this.menuObject.getMenuType().maxRows(), this.menuObject.getMenuType().maxColumns(), slotPos.getSlot());
+        return SlotPos.of(this.menuSession.getMenuType().maxRows(), this.menuSession.getMenuType().maxColumns(), slotPos.getSlot());
     }
 }

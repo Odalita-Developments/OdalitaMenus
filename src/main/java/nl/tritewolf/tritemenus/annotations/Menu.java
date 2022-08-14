@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Menu {
 
-    String displayName();
+    String title();
 
     byte rows() default 3;
 
     @ApiStatus.Experimental
-    InventoryType inventoryType() default InventoryType.CHEST;
+    InventoryType type() default InventoryType.CHEST;
 }

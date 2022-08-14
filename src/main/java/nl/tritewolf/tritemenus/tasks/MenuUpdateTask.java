@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.tasks;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public final class MenuUpdateTask implements Runnable {
 
     @Override
     public void run() {
-        Map<Player, MenuObject> openMenus = this.menuProcessor.getOpenMenus();
+        Map<Player, MenuSession> openMenus = this.menuProcessor.getOpenMenus();
         if (openMenus.isEmpty()) {
             TICKS.set(0);
             return;
@@ -29,16 +29,16 @@ public final class MenuUpdateTask implements Runnable {
 
         int ticks = TICKS.incrementAndGet();
 
-        for (Map.Entry<Player, MenuObject> entry : openMenus.entrySet()) {
-            MenuObject menuObject = entry.getValue();
-            if (menuObject == null || !menuObject.isHasUpdatableItems()) continue;
+        for (Map.Entry<Player, MenuSession> entry : openMenus.entrySet()) {
+            MenuSession menuSession = entry.getValue();
+            if (menuSession == null || !menuSession.isHasUpdatableItems()) continue;
 
             Player player = entry.getKey();
             if (player == null || !player.isOnline()) continue;
 
             int updatableItems = 0;
 
-            MenuItem[][] contents = menuObject.getContents();
+            MenuItem[][] contents = menuSession.getContents();
             for (int row = 0; row < contents.length; row++) {
                 for (int column = 0; column < contents[0].length; column++) {
                     MenuItem menuItem = contents[row][column];
@@ -51,13 +51,13 @@ public final class MenuUpdateTask implements Runnable {
                         ItemStack item = menuItem.getItemStack();
                         int slot = SlotPos.of(row, column).getSlot();
 
-                        InventoryUtils.updateItem(player, slot, item, menuObject.getInventory());
+                        InventoryUtils.updateItem(player, slot, item, menuSession.getInventory());
                     }
                 }
             }
 
             if (updatableItems == 0) {
-                menuObject.setHasUpdatableItems(false);
+                menuSession.setHasUpdatableItems(false);
             }
         }
     }

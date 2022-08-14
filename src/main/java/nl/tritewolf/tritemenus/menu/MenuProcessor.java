@@ -25,7 +25,7 @@ public final class MenuProcessor {
     private SupportedMenuTypes supportedMenuTypes;
 
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
-    private final Map<Player, MenuObject> openMenus = new ConcurrentHashMap<>();
+    private final Map<Player, MenuSession> openMenus = new ConcurrentHashMap<>();
 
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
         this.providerLoaders.put(providerClass, loader);

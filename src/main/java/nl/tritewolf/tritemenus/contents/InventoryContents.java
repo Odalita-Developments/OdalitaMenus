@@ -4,7 +4,7 @@ import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
-import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
@@ -30,12 +30,12 @@ public interface InventoryContents {
 
     // Temporary
     @ApiStatus.Internal
-    static InventoryContents create(@NotNull MenuObject menuSession) {
+    static InventoryContents create(@NotNull MenuSession menuSession) {
         return new InventoryContentsImpl(menuSession);
     }
 
     @NotNull
-    MenuObject getMenuSession();
+    MenuSession getMenuSession();
 
     /* DEFAULT */
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);

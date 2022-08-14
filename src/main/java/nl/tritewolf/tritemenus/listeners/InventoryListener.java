@@ -3,8 +3,8 @@ package nl.tritewolf.tritemenus.listeners;
 import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.menu.type.MenuType;
 import org.bukkit.entity.Player;
@@ -29,14 +29,14 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuObject == null) return;
+        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
+        if (openMenuSession == null) return;
 
-        MenuType menuType = openMenuObject.getMenuType();
+        MenuType menuType = openMenuSession.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (event.getView().getTopInventory().equals(openMenuObject.getInventory())) {
-            List<Integer> placeableItems = openMenuObject.getPlaceableItems();
+        if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
+            List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
             if (event.getClick().isShiftClick() && !event.getView().getTopInventory().equals(clickedInventory)) {
                 event.setCancelled(true);
                 return;
@@ -47,7 +47,7 @@ public final class InventoryListener implements Listener {
 
             event.setCancelled(true);
 
-            MenuItem menuItem = openMenuObject.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()));
+            MenuItem menuItem = openMenuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()));
             if (menuItem != null) {
                 menuItem.onClick().accept(event);
             }
@@ -57,15 +57,15 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuObject == null) return;
+        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
+        if (openMenuSession == null) return;
 
-        List<Integer> placeableItems = openMenuObject.getPlaceableItems();
+        List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
-        if (event.getView().getTopInventory().equals(openMenuObject.getInventory())) {
+        if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
             Set<Integer> inventorySlots = event.getInventorySlots();
 
-            boolean b = event.getRawSlots().stream().allMatch(integer -> integer > (openMenuObject.getInventory().getSize() - 1));
+            boolean b = event.getRawSlots().stream().allMatch(integer -> integer > (openMenuSession.getInventory().getSize() - 1));
             if (!placeableItems.isEmpty() && b) return;
 
             boolean matchAllSlots = new HashSet<>(placeableItems).containsAll(inventorySlots);
@@ -79,15 +79,16 @@ public final class InventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        MenuObject openMenuObject = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuObject == null) return;
+        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
+        if (openMenuSession == null) return;
 
         Inventory inventory = event.getInventory();
-        if (openMenuObject.getInventory().equals(inventory)) {
-            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuObject.getPlaceableItemsCloseAction();
+        if (openMenuSession.getInventory().equals(inventory)) {
+            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuSession.getCache().getPlaceableItemsCloseAction();
 
             if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
-                List<Integer> placeableItems = openMenuObject.getPlaceableItems();
+                List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+
                 placeableItems.forEach(integer -> {
                     ItemStack item = inventory.getItem(integer);
                     if (item != null) player.getInventory().addItem(item);

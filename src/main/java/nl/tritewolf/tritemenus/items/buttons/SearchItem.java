@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuObject;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -54,10 +54,10 @@ public final class SearchItem implements MenuItem {
             if (query.isBlank() || query.isEmpty()) query = null;
 
             MenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(MenuProcessor.class);
-            MenuObject openMenuObject = menuProcessor.getOpenMenus().get(player);
+            MenuSession openMenuSession = menuProcessor.getOpenMenus().get(player);
 
-            if (openMenuObject != null) {
-                openMenuObject.getSearchQueries().put(this.id, query);
+            if (openMenuSession != null) {
+                openMenuSession.getCache().getSearchQueries().put(this.id, query);
             }
 
             if (this.newSearchQueryHandler != null) {

@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.scrollable;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuObject;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import nl.tritewolf.tritemenus.utils.Pair;
 import org.bukkit.Material;
@@ -216,7 +216,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
             });
         }
 
-        this.contents.getMenuSession().getPageSwitchUpdateItems().forEach((slot, item) -> {
+        this.contents.getMenuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
             this.contents.setAsync(slot, item.get());
         });
 
@@ -265,22 +265,22 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     }
 
     private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
-        MenuObject menuObject = this.contents.getMenuSession();
+        MenuSession menuSession = this.contents.getMenuSession();
 
         if (menuItemSupplier == null) {
-            InventoryUtils.updateItem(menuObject.getPlayer(), slot, new ItemStack(Material.AIR), menuObject.getInventory());
+            InventoryUtils.updateItem(menuSession.getPlayer(), slot, new ItemStack(Material.AIR), menuSession.getInventory());
             return;
         }
 
         MenuItem menuItem = menuItemSupplier.get();
         if (menuItem.isUpdatable()) {
-            menuObject.setHasUpdatableItems(true);
+            menuSession.setHasUpdatableItems(true);
         }
 
         SlotPos slotPos = SlotPos.of(slot);
-        menuObject.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
+        menuSession.getContents()[slotPos.getRow()][slotPos.getColumn()] = menuItem;
 
-        InventoryUtils.updateItem(menuObject.getPlayer(), slot, menuItem.getItemStack(), menuObject.getInventory());
+        InventoryUtils.updateItem(menuSession.getPlayer(), slot, menuItem.getItemStack(), menuSession.getInventory());
     }
 
     private int updateCurrentAxis(int newAxis, ScrollableDirection direction) {
