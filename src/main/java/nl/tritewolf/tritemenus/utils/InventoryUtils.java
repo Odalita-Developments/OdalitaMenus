@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -65,9 +64,7 @@ public final class InventoryUtils {
                 TITLE_FIELD.set(activeContainer, titleComponent);
                 TITLE_FIELD.setAccessible(false);
 
-                if (!Bukkit.isPrimaryThread()) {
-                    REFRESH_INVENTORY.invoke(activeContainer);
-                }
+                REFRESH_INVENTORY.invoke(activeContainer);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }

@@ -66,8 +66,6 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
         }));
 
         contents.setClickable(49, Material.STONE_BUTTON, "Klik op mij om de titel te veranderen!", (event) -> {
-            System.out.println("CLICKED");
-
             if (contents.scheduler().isRunning("close-task")) {
                 event.getWhoClicked().sendMessage("Task is already running!");
                 return;
@@ -87,7 +85,7 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
                     return;
                 }
 
-                contents.menuSession().setTitle("Menu sluit in " + seconds);
+                contents.setTitle("Menu sluit in " + seconds);
                 contents.setCache("seconds", seconds - 1);
             }, 20, 6);
         });

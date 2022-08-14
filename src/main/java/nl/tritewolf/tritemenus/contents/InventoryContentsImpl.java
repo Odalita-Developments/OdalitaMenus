@@ -24,7 +24,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-record InventoryContentsImpl(MenuSession menuSession, InventoryContentsScheduler scheduler) implements InventoryContents {
+record InventoryContentsImpl(MenuSession menuSession,
+                             InventoryContentsScheduler scheduler) implements InventoryContents {
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
@@ -435,6 +436,11 @@ record InventoryContentsImpl(MenuSession menuSession, InventoryContentsScheduler
     public synchronized @NotNull InventoryContents pruneCache(@NotNull String key) {
         this.menuSession.getCache().pruneCache(key);
         return this;
+    }
+
+    @Override
+    public synchronized void setTitle(@NotNull String title) {
+        this.menuSession.setTitle(title);
     }
 
     @Override

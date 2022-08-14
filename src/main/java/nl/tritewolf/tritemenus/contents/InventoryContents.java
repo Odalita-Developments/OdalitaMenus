@@ -200,6 +200,8 @@ public interface InventoryContents {
 
 
     /* OTHER */
+    void setTitle(@NotNull String title);
+
     void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action);
 
     @Nullable
