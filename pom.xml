@@ -20,20 +20,13 @@
     </repositories>
 
     <dependencies>
-        <!--Compiled Dependencies-->
-        <dependency>
-            <groupId>com.github.TryDev07</groupId>
-            <artifactId>TriteJection</artifactId>
-            <version>v1.2.2</version>
-        </dependency>
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
             <scope>provided</scope>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
         </dependency>
 
-        <!--Provided Dependencies-->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -47,13 +40,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--Test Dependencies-->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.junit.jupiter</groupId>-->
+<!--            <artifactId>junit-jupiter-engine</artifactId>-->
+<!--            <version>5.8.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -102,6 +94,5 @@
                 </executions>
             </plugin>
         </plugins>
-
     </build>
 </project>

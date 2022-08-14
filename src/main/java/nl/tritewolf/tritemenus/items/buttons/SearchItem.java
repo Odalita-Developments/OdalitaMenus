@@ -53,7 +53,7 @@ public final class SearchItem implements MenuItem {
             String query = this.searchHandler.apply(event);
             if (query.isBlank() || query.isEmpty()) query = null;
 
-            MenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(MenuProcessor.class);
+            MenuProcessor menuProcessor = TriteMenus.getInstance().getMenuProcessor();
             MenuSession openMenuSession = menuProcessor.getOpenMenus().get(player);
 
             if (openMenuSession != null) {

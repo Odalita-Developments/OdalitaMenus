@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.tasks;
 
-import nl.tritewolf.tritejection.annotations.TriteJect;
 import nl.tritewolf.tritemenus.contents.MenuTask;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.MenuSession;
@@ -9,10 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class MenuSchedulerTask implements Runnable {
-
-    @TriteJect
-    private MenuProcessor menuProcessor;
+public record MenuSchedulerTask(MenuProcessor menuProcessor) implements Runnable {
 
     private static final AtomicInteger TICKS = new AtomicInteger(0);
 

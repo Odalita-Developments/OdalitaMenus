@@ -57,7 +57,7 @@ public sealed class OpenMenuItem<P extends MenuProvider> implements MenuItem per
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            MenuProcessor menuProcessor = TriteMenus.getTriteMenus().getTriteJection(MenuProcessor.class);
+            MenuProcessor menuProcessor = TriteMenus.getInstance().getMenuProcessor();
             this.builderFunction.apply(menuProcessor.openMenuBuilder(this.menuProvider, player, this.menuProviderLoader))
                     .open();
         };

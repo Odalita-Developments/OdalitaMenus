@@ -1,45 +1,53 @@
 package nl.tritewolf.tritemenus;
 
 import lombok.Getter;
-import nl.tritewolf.tritejection.TriteJection;
-import nl.tritewolf.tritejection.utils.AnnotationDetector;
-import nl.tritewolf.tritemenus.annotations.AnnotationBinding;
+import nl.tritewolf.tritemenus.items.ItemProcessor;
+import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
-import nl.tritewolf.tritemenus.modules.MenusModule;
+import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
+import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class TriteMenus {
 
-    @Getter
-    private static TriteJection triteMenus;
+    private static TriteMenus INSTANCE;
 
     private final JavaPlugin javaPlugin;
+
+    private final SupportedMenuTypes supportedMenuTypes;
+
+    private final ItemProcessor itemProcessor;
     private final MenuProcessor menuProcessor;
 
+    private final PatternContainer patternContainer;
+
     public TriteMenus(JavaPlugin javaPlugin) {
+        INSTANCE = this;
+
         this.javaPlugin = javaPlugin;
 
-        triteMenus = TriteJection.createTriteJection(new MenusModule(javaPlugin));
-        this.menuProcessor = triteMenus.getTriteJection(MenuProcessor.class);
+        this.supportedMenuTypes = new SupportedMenuTypes();
 
-        try {
-            AnnotationDetector menuDetector = new AnnotationDetector(triteMenus.getTriteJection(AnnotationBinding.class));
+        this.itemProcessor = new ItemProcessor();
+        this.menuProcessor = new MenuProcessor(this.itemProcessor, this.supportedMenuTypes);
 
-            ClassLoader classLoader = javaPlugin.getClass().getClassLoader();
-            String[] objects = Arrays.stream(Package.getPackages()).map(Package::getName).toArray(String[]::new);
-            menuDetector.detect(classLoader, objects);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.patternContainer = new PatternContainer();
 
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(triteMenus.getTriteJection(MenuUpdateTask.class), 0, 50, TimeUnit.MILLISECONDS);
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(triteMenus.getTriteJection(MenuSchedulerTask.class), 0, 50, TimeUnit.MILLISECONDS);
+        javaPlugin.getServer().getPluginManager().registerEvents(new InventoryListener(this.menuProcessor), javaPlugin);
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuUpdateTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuSchedulerTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+    }
+
+    @ApiStatus.Internal
+    public static TriteMenus getInstance() {
+        return INSTANCE;
     }
 }

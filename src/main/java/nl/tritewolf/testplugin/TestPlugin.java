@@ -17,6 +17,8 @@ public class TestPlugin extends JavaPlugin {
 
         triteMenus.getMenuProcessor().registerProviderLoader(TestExtraMenuProvider.class, TestExtraMenuProvider.loader());
 
+        triteMenus.getPatternContainer().registerPattern(new TestScrollablePattern());
+
         getCommand("TestCommand").setExecutor(new TestCommand());
     }
 }

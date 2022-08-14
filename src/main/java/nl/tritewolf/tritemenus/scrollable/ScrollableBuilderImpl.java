@@ -48,7 +48,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
 
     @Override
     public @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass) {
-        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        PatternContainer patternContainer = TriteMenus.getInstance().getPatternContainer();
         ScrollableDirectionPatternCache patternCache = patternContainer.getPattern(patternClass);
         if (patternCache == null) {
             throw new IllegalArgumentException("No scrollable pattern found for class: '" + patternClass.getName() + "'");

@@ -324,7 +324,7 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public void createPatternIterator(@NotNull Class<? extends IteratorPattern> clazz, @NotNull List<@NotNull MenuItem> menuItems) {
-        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        PatternContainer patternContainer = TriteMenus.getInstance().getPatternContainer();
         IteratorPattern iteratorPatternByClass = patternContainer.getPattern(clazz);
 
         if (iteratorPatternByClass == null) {
@@ -336,7 +336,7 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public void createDirectionsPatternIterator(@NotNull Class<? extends DirectionPattern> clazz, @NotNull List<@NotNull MenuItem> menuItems) {
-        PatternContainer patternContainer = TriteMenus.getTriteMenus().getTriteJection(PatternContainer.class);
+        PatternContainer patternContainer = TriteMenus.getInstance().getPatternContainer();
         List<SlotPos> directionsPattern = patternContainer.getPattern(clazz);
         if (directionsPattern == null) {
             throw new IllegalArgumentException("The pattern class '" + clazz.getName() + "' is not registered!");
