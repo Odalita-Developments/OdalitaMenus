@@ -1,10 +1,9 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
+import nl.tritewolf.tritemenus.items.def.DefaultItem;
 import nl.tritewolf.tritemenus.menu.MenuOpenerBuilder;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,10 +58,7 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
     }
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
-        this(
-                InventoryUtils.createItemStack(Material.ARROW, "&cGo back"),
-                menuProvider, builderFunction, menuProviderLoader
-        );
+        this(DefaultItem.getItemStack(DefaultItem.BACK), menuProvider, builderFunction, menuProviderLoader);
     }
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {

@@ -3,8 +3,8 @@ package nl.tritewolf.tritemenus.items.buttons;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
+import nl.tritewolf.tritemenus.items.def.DefaultItem;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -91,10 +91,10 @@ public final class ScrollItem implements PageUpdatableItem {
         this.showOnLastPage = showOnLastPage;
 
         this.itemStack = switch (this.direction) {
-            case UP -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll up");
-            case DOWN -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll down");
-            case LEFT -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll left");
-            case RIGHT -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll right");
+            case UP -> DefaultItem.getItemStack(DefaultItem.SCROLL_UP);
+            case DOWN -> DefaultItem.getItemStack(DefaultItem.SCROLL_DOWN);
+            case LEFT -> DefaultItem.getItemStack(DefaultItem.SCROLL_LEFT);
+            case RIGHT -> DefaultItem.getItemStack(DefaultItem.SCROLL_RIGHT);
         };
     }
 

@@ -1,8 +1,8 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
+import nl.tritewolf.tritemenus.items.def.DefaultItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -44,7 +44,7 @@ public final class PreviousItem implements PageUpdatableItem {
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
 
-        this.itemStack = InventoryUtils.createItemStack(Material.ARROW, "&bPrevious page");
+        this.itemStack = DefaultItem.getItemStack(DefaultItem.PREVIOUS);
     }
 
     private PreviousItem(Pagination pagination, ItemStack itemStack) {
