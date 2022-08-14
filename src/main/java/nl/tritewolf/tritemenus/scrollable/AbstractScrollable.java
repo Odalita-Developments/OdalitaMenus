@@ -192,9 +192,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
         }
 
         int lastAxis = (direction == ScrollableDirection.HORIZONTALLY) ? this.lastHorizontal() : this.lastVertical();
-        if (newAxis > lastAxis) return this;
-
-        newAxis = Math.max(0, newAxis);
+        if (newAxis < 0 || newAxis > lastAxis) return this;
 
         int oldAxis = this.updateCurrentAxis(newAxis, direction);
 
