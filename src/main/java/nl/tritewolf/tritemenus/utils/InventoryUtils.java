@@ -2,6 +2,7 @@ package nl.tritewolf.tritemenus.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,9 @@ import static nl.tritewolf.tritemenus.utils.ReflectionUtils.*;
 
 @ApiStatus.Internal
 public final class InventoryUtils {
+
+    private InventoryUtils() {
+    }
 
     public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {
@@ -36,6 +40,28 @@ public final class InventoryUtils {
             sendPacket(player, packetPlayOutSetSlot);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+        }
+    }
+
+    public static synchronized void changeTitle(Inventory inventory, String newTitle) {
+        for (HumanEntity viewer : inventory.getViewers()) {
+            if (!(viewer instanceof Player player)) continue;
+
+            try {
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+                Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+                int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
+                if (windowId <= 0) return;
+
+                Object nmsInventoryType = GET_NOTCH_INVENTORY_TYPE.invoke(null, inventory);
+                Object titleComponent = createChatBaseComponent(newTitle);
+
+                Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, titleComponent);
+
+                sendPacket(player, packetPlayOutOpenWindow);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
         }
     }
 

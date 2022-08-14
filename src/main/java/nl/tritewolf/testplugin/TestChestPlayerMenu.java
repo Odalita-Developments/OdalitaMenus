@@ -64,6 +64,10 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
             event.getWhoClicked().sendMessage("Clicked!");
         }));
 
+        contents.setClickable(49, Material.STONE_BUTTON, "Klik op mij om de titel te veranderen!", (event) -> {
+            contents.getMenuSession().setTitle("Nieuwe titel");
+        });
+
         contents.set(45, ScrollItem.up(scrollable));
         contents.set(46, ScrollItem.left(scrollable));
         contents.set(52, ScrollItem.right(scrollable));

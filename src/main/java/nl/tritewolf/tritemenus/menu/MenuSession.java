@@ -52,6 +52,13 @@ public final class MenuSession {
         this.cache = new MenuSessionCache();
     }
 
+    public void setTitle(@NotNull String title) {
+        if (this.title.equals(title)) return;
+
+        this.title = title;
+        InventoryUtils.changeTitle(this.inventory, title);
+    }
+
     public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {
         if (slotPos.getSlot() < 0 || slotPos.getSlot() > this.inventory.getSize()) return null;
         return this.contents[slotPos.getRow()][slotPos.getColumn()];
