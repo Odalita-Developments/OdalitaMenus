@@ -51,7 +51,6 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             this.openInventory(player, menuSession);
         } catch (Exception exception) {
             exception.printStackTrace();
-            // TODO idk, something else
         }
     }
 
