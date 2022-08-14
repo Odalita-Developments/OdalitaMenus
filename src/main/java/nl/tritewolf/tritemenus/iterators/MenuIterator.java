@@ -3,7 +3,7 @@ package nl.tritewolf.tritemenus.iterators;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -147,11 +147,11 @@ public class MenuIterator {
     }
 
     private Inventory getInventory() {
-        return this.inventoryContents.getMenuSession().getInventory();
+        return this.inventoryContents.menuSession().getInventory();
     }
 
     private void horizontalInitialization() {
-        int inventorySize = this.inventoryContents.getMenuSession().getRows() * 9;
+        int inventorySize = this.inventoryContents.menuSession().getRows() * 9;
         Inventory inventory = getInventory();
 
         int slotStart = SlotPos.of(this.row, this.column).getSlot();
@@ -169,7 +169,7 @@ public class MenuIterator {
         Inventory inventory = getInventory();
 
         for (int column = this.column; column < 9; column++) {
-            for (int row = this.row; row < this.inventoryContents.getMenuSession().getRows(); row++) {
+            for (int row = this.row; row < this.inventoryContents.menuSession().getRows(); row++) {
                 int currentSlot = SlotPos.of(row, column).getSlot();
                 if (blacklist.contains(currentSlot)) continue;
 

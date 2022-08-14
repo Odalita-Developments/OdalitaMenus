@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -53,12 +54,20 @@ public final class InventoryUtils {
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
                 if (windowId <= 0) return;
 
-                Object nmsInventoryType = GET_NOTCH_INVENTORY_TYPE.invoke(null, inventory);
+                Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(activeContainer);
                 Object titleComponent = createChatBaseComponent(newTitle);
 
                 Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, titleComponent);
 
                 sendPacket(player, packetPlayOutOpenWindow);
+
+                TITLE_FIELD.setAccessible(true);
+                TITLE_FIELD.set(activeContainer, titleComponent);
+                TITLE_FIELD.setAccessible(false);
+
+                if (!Bukkit.isPrimaryThread()) {
+                    REFRESH_INVENTORY.invoke(activeContainer);
+                }
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }

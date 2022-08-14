@@ -1,7 +1,7 @@
 package nl.tritewolf.tritemenus.items;
 
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.type.MenuType;
 import nl.tritewolf.tritemenus.pagination.Pagination;

@@ -1,6 +1,6 @@
 package nl.tritewolf.tritemenus.patterns;
 
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import org.jetbrains.annotations.NotNull;
 

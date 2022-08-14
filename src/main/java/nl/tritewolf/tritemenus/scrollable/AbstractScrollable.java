@@ -1,7 +1,7 @@
 package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.contents.InventoryContents;
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
@@ -206,8 +206,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
         this.cleanMenuGrid();
 
-        if (this.contents.getMenuSession().isHasUpdatableItems()) {
-            this.contents.getMenuSession().setHasUpdatableItems(false);
+        if (this.contents.menuSession().isHasUpdatableItems()) {
+            this.contents.menuSession().setHasUpdatableItems(false);
         }
 
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
@@ -216,7 +216,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
             });
         }
 
-        this.contents.getMenuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+        this.contents.menuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
             this.contents.setAsync(slot, item.get());
         });
 
@@ -259,13 +259,13 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     private void cleanMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
-                this.contents.getMenuSession().getContents()[row][column] = null;
+                this.contents.menuSession().getContents()[row][column] = null;
             }
         }
     }
 
     private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
-        MenuSession menuSession = this.contents.getMenuSession();
+        MenuSession menuSession = this.contents.menuSession();
 
         if (menuItemSupplier == null) {
             InventoryUtils.updateItem(menuSession.getPlayer(), slot, new ItemStack(Material.AIR), menuSession.getInventory());

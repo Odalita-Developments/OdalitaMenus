@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.contents;
 
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
@@ -31,11 +32,11 @@ public interface InventoryContents {
     // Temporary
     @ApiStatus.Internal
     static InventoryContents create(@NotNull MenuSession menuSession) {
-        return new InventoryContentsImpl(menuSession);
+        return new InventoryContentsImpl(menuSession, new InventoryContentsSchedulerImpl(menuSession));
     }
 
     @NotNull
-    MenuSession getMenuSession();
+    MenuSession menuSession();
 
     /* DEFAULT */
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
@@ -180,6 +181,22 @@ public interface InventoryContents {
     void setPageSwitchUpdateItem(int row, int column, @NotNull PageUpdatableItem menuItem);
 
     void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem);
+
+
+    /* SCHEDULER */
+    @NotNull InventoryContentsScheduler scheduler();
+
+
+    /* CACHE */
+    <T> T cache(@NotNull String key, T def);
+
+    <T> T cache(@NotNull String key);
+
+    @NotNull
+    InventoryContents setCache(@NotNull String key, @NotNull Object value);
+
+    @NotNull
+    InventoryContents pruneCache(@NotNull String key);
 
 
     /* OTHER */

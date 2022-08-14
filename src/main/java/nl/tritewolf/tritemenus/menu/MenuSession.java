@@ -2,7 +2,7 @@ package nl.tritewolf.tritemenus.menu;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.type.MenuType;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
@@ -52,7 +52,7 @@ public final class MenuSession {
         this.cache = new MenuSessionCache();
     }
 
-    public void setTitle(@NotNull String title) {
+    public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
         this.title = title;

@@ -6,6 +6,7 @@ import nl.tritewolf.tritejection.utils.AnnotationDetector;
 import nl.tritewolf.tritemenus.annotations.AnnotationBinding;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.modules.MenusModule;
+import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,5 +40,6 @@ public final class TriteMenus {
         }
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(triteMenus.getTriteJection(MenuUpdateTask.class), 0, 50, TimeUnit.MILLISECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(triteMenus.getTriteJection(MenuSchedulerTask.class), 0, 50, TimeUnit.MILLISECONDS);
     }
 }

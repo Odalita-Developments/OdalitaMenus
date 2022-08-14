@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.contents;
 
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
@@ -23,12 +24,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-record InventoryContentsImpl(MenuSession menuSession) implements InventoryContents {
-
-    @Override
-    public @NotNull MenuSession getMenuSession() {
-        return this.menuSession;
-    }
+record InventoryContentsImpl(MenuSession menuSession, InventoryContentsScheduler scheduler) implements InventoryContents {
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
@@ -417,6 +413,28 @@ record InventoryContentsImpl(MenuSession menuSession) implements InventoryConten
     @Override
     public void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem) {
         this.setPageSwitchUpdateItem(SlotPos.of(slot), menuItem);
+    }
+
+    @Override
+    public synchronized <T> T cache(@NotNull String key, T def) {
+        return this.menuSession.getCache().cache(key, def);
+    }
+
+    @Override
+    public synchronized <T> T cache(@NotNull String key) {
+        return this.menuSession.getCache().cache(key);
+    }
+
+    @Override
+    public synchronized @NotNull InventoryContents setCache(@NotNull String key, @NotNull Object value) {
+        this.menuSession.getCache().setCache(key, value);
+        return this;
+    }
+
+    @Override
+    public synchronized @NotNull InventoryContents pruneCache(@NotNull String key) {
+        this.menuSession.getCache().pruneCache(key);
+        return this;
     }
 
     @Override

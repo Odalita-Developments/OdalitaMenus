@@ -1,7 +1,7 @@
 package nl.tritewolf.tritemenus.scrollable;
 
-import nl.tritewolf.tritemenus.contents.SlotPos;
-import nl.tritewolf.tritemenus.contents.SlotPosition;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPosition;
 import org.jetbrains.annotations.NotNull;
 
 sealed class ScrollableSlotPos extends SlotPosition permits ScrollableSlotPos.SingleScrollableSlotPos {

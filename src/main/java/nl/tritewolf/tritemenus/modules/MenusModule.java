@@ -10,6 +10,7 @@ import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.modules.multibindings.ListenerBinding;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
+import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +31,7 @@ public final class MenusModule extends TriteJectionModule {
         this.bind(SupportedMenuTypes.class).asEagerSingleton();
         this.bind(AnnotationBinding.class).asEagerSingleton();
         this.bind(MenuUpdateTask.class).asEagerSingleton();
+        this.bind(MenuSchedulerTask.class).asEagerSingleton();
         this.bind(PatternContainer.class).asEagerSingleton();
 
         this.bindListeners(new InventoryListener());

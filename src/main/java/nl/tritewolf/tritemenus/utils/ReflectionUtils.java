@@ -2,7 +2,6 @@ package nl.tritewolf.tritemenus.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -39,20 +38,21 @@ public final class ReflectionUtils {
     public static Class<?> CRAFT_INVENTORY;
     public static Class<?> ITEM_STACK;
     public static Class<?> CRAFT_ITEM_STACK;
-    public static Class<?> CRAFT_CONTAINER;
 
     public static Class<?> PACKET_PLAY_OUT_SET_SLOT;
     public static Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
 
     public static Method GET_NMS_ITEM_STACK;
     public static Method GET_NMS_INVENTORY;
+    public static Method GET_NMS_INVENTORY_TYPE;
     public static Method GET_NMS_INVENTORY_CONTENTS;
     public static Method SET_LIST;
+    public static Method REFRESH_INVENTORY;
     public static Method WINDOW_STATE_ID_METHOD;
-    public static Method GET_NOTCH_INVENTORY_TYPE;
 
     public static Field ACTIVE_CONTAINER_FIELD;
     public static Field WINDOW_ID_FIELD;
+    public static Field TITLE_FIELD;
 
     public static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
     public static Constructor<?> PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR;
@@ -78,17 +78,18 @@ public final class ReflectionUtils {
             CRAFT_INVENTORY = obcClass("inventory.CraftInventory");
             ITEM_STACK = nmsClass("world.item", "ItemStack");
             CRAFT_ITEM_STACK = obcClass("inventory.CraftItemStack");
-            CRAFT_CONTAINER = obcClass("inventory.CraftContainer");
 
             PACKET_PLAY_OUT_SET_SLOT = nmsClass("network.protocol.game", "PacketPlayOutSetSlot");
             PACKET_PLAY_OUT_OPEN_WINDOW = nmsClass("network.protocol.game", "PacketPlayOutOpenWindow");
 
             GET_NMS_ITEM_STACK = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
             GET_NMS_INVENTORY = CRAFT_INVENTORY.getMethod("getInventory");
+            GET_NMS_INVENTORY_TYPE = CONTAINER.getMethod("a");
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
+            TITLE_FIELD = CONTAINER.getDeclaredField("title");
+            REFRESH_INVENTORY = CONTAINER.getMethod("b");
             WINDOW_STATE_ID_METHOD = CONTAINER.getMethod("k");
-            GET_NOTCH_INVENTORY_TYPE = CRAFT_CONTAINER.getMethod("getNotchInventoryType", Inventory.class);
 
             ACTIVE_CONTAINER_FIELD = ENTITY_PLAYER.getField("bV");
             WINDOW_ID_FIELD = CONTAINER.getField("j");
@@ -142,7 +143,7 @@ public final class ReflectionUtils {
         }
     }
 
-    public static void sendPacket(Player player, Object packet) {
+    public static synchronized void sendPacket(Player player, Object packet) {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object playerConnection = GET_PLAYER_CONNECTION_METHOD.invoke(entityPlayer);

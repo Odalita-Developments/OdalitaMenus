@@ -1,7 +1,7 @@
 package nl.tritewolf.tritemenus.listeners;
 
 import nl.tritewolf.tritejection.annotations.TriteJect;
-import nl.tritewolf.tritemenus.contents.SlotPos;
+import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.MenuSession;

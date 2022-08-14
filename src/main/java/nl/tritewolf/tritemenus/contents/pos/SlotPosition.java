@@ -1,4 +1,4 @@
-package nl.tritewolf.tritemenus.contents;
+package nl.tritewolf.tritemenus.contents.pos;
 
 import lombok.Getter;
 

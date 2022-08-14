@@ -11,6 +11,7 @@ import nl.tritewolf.tritemenus.items.UpdatableItem;
 import nl.tritewolf.tritemenus.items.buttons.ScrollItem;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import nl.tritewolf.tritemenus.utils.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +66,30 @@ public class TestChestPlayerMenu implements TestExtraMenuProvider {
         }));
 
         contents.setClickable(49, Material.STONE_BUTTON, "Klik op mij om de titel te veranderen!", (event) -> {
-            contents.getMenuSession().setTitle("Nieuwe titel");
+            System.out.println("CLICKED");
+
+            if (contents.scheduler().isRunning("close-task")) {
+                event.getWhoClicked().sendMessage("Task is already running!");
+                return;
+            }
+
+            contents.scheduler().schedule("close-task", () -> {
+                int seconds = contents.cache("seconds", 5);
+
+                if (seconds <= 0) {
+                    event.getWhoClicked().sendMessage("closing inventory");
+
+                    Bukkit.getScheduler().runTask(TestPlugin.getPlugin(TestPlugin.class), () -> {
+                        event.getWhoClicked().closeInventory();
+                    });
+
+                    contents.pruneCache("seconds");
+                    return;
+                }
+
+                contents.menuSession().setTitle("Menu sluit in " + seconds);
+                contents.setCache("seconds", seconds - 1);
+            }, 20, 6);
         });
 
         contents.set(45, ScrollItem.up(scrollable));
