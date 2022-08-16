@@ -5,7 +5,7 @@ import nl.tritewolf.tritemenus.providers.providers.ColorProvider;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-final class ColorProcessor implements ColorProvider {
+public final class ColorProcessor implements ColorProvider {
 
     @Override
     public @NotNull String handle(@NotNull String input) {

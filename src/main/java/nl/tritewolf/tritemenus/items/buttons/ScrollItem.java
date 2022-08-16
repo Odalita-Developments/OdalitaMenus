@@ -2,9 +2,10 @@ package nl.tritewolf.tritemenus.items.buttons;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
+import nl.tritewolf.tritemenus.providers.providers.DefaultItemProvider;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
-import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -90,11 +91,12 @@ public final class ScrollItem implements PageUpdatableItem {
         this.scrollable = scrollable;
         this.showOnLastPage = showOnLastPage;
 
+        DefaultItemProvider defaultItemProvider = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider();
         this.itemStack = switch (this.direction) {
-            case UP -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll up");
-            case DOWN -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll down");
-            case LEFT -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll left");
-            case RIGHT -> InventoryUtils.createItemStack(Material.ARROW, "&bScroll right");
+            case UP -> defaultItemProvider.scrollUpItem(scrollable);
+            case DOWN -> defaultItemProvider.scrollDownItem(scrollable);
+            case LEFT -> defaultItemProvider.scrollLeftItem(scrollable);
+            case RIGHT -> defaultItemProvider.scrollRightItem(scrollable);
         };
     }
 
