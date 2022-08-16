@@ -1,12 +1,10 @@
 package nl.tritewolf.testplugin;
 
-import nl.tritewolf.tritemenus.annotations.Pattern;
 import nl.tritewolf.tritemenus.scrollable.ScrollableDirectionPattern;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@Pattern
 public class TestScrollablePattern implements ScrollableDirectionPattern {
 
     @Override
