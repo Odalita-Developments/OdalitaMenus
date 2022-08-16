@@ -1,6 +1,7 @@
 package nl.tritewolf.tritemenus.contents;
 
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;

@@ -30,22 +30,19 @@ public final class MenuSession {
 
     private final MenuSessionCache cache;
 
-    MenuSession(Player player, MenuType menuType, byte rows, String title) {
+    MenuSession(Player player, MenuType menuType, byte rows, Inventory inventory, String title) {
         this.player = player;
         this.menuType = menuType;
 
         if (menuType.type() == InventoryType.CHEST) {
             this.rows = rows;
             this.columns = 9;
-
-            this.inventory = Bukkit.createInventory(null, rows * 9, title);
         } else {
             this.rows = Math.max(menuType.maxRows(), 1);
             this.columns = menuType.maxColumns() + menuType.otherSlots().size();
-
-            this.inventory = Bukkit.createInventory(null, menuType.type(), title);
         }
 
+        this.inventory = inventory;
         this.contents = new MenuItem[this.rows][this.columns];
         this.title = title;
 

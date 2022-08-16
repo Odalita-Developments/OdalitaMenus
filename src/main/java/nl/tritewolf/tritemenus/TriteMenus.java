@@ -6,6 +6,7 @@ import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
+import nl.tritewolf.tritemenus.providers.ProvidersContainer;
 import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +29,8 @@ public final class TriteMenus {
 
     private final PatternContainer patternContainer;
 
+    private final ProvidersContainer providersContainer;
+
     public TriteMenus(JavaPlugin javaPlugin) {
         INSTANCE = this;
 
@@ -39,6 +42,8 @@ public final class TriteMenus {
         this.menuProcessor = new MenuProcessor(this.itemProcessor, this.supportedMenuTypes);
 
         this.patternContainer = new PatternContainer();
+
+        this.providersContainer = new ProvidersContainer();
 
         javaPlugin.getServer().getPluginManager().registerEvents(new InventoryListener(this.menuProcessor), javaPlugin);
 
