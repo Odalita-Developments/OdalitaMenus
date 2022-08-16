@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public interface PaginationBuilder {
 
-    static PaginationBuilder builder(InventoryContents contents, String id, int itemsPerPage) {
+    static @NotNull PaginationBuilder builder(@NotNull InventoryContents contents, @NotNull String id, int itemsPerPage) {
         return new PaginationBuilderImpl(contents, id, itemsPerPage);
     }
 
