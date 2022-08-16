@@ -5,6 +5,7 @@ import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.ClickableItem;
 import nl.tritewolf.tritemenus.items.DisplayItem;
 import nl.tritewolf.tritemenus.items.UpdatableItem;
+import nl.tritewolf.tritemenus.items.buttons.BackItem;
 import nl.tritewolf.tritemenus.items.buttons.NextItem;
 import nl.tritewolf.tritemenus.items.buttons.PreviousItem;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Menu(
-        title = "Test Pagination Menu",
+        title = "&aTest &cPagination &eMenu",
         rows = 6
 )
 public class TestPaginationMenu implements PlayerMenuProvider {
