@@ -7,6 +7,7 @@ import nl.tritewolf.tritemenus.menu.type.MenuType;
 import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 
 public final class ItemProcessor {
 
+    @ApiStatus.Internal
     public void initializeItems(MenuSession menuSession, InventoryContents inventoryContents) {
         MenuType menuType = menuSession.getMenuType();
         Inventory inventory = menuSession.getInventory();

@@ -1,14 +1,9 @@
 package nl.tritewolf.tritemenus.contents;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.menu.MenuSession;
 import org.jetbrains.annotations.NotNull;
 
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class InventoryContentsSchedulerImpl implements InventoryContentsScheduler {
-
-    private final MenuSession menuSession;
+record InventoryContentsSchedulerImpl(MenuSession menuSession) implements InventoryContentsScheduler {
 
     @Override
     public @NotNull MenuTask schedule(@NotNull String id, @NotNull Runnable runnable, int ticksPeriod, int runTimes) {
