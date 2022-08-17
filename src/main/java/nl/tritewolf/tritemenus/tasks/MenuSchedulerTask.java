@@ -49,7 +49,7 @@ public record MenuSchedulerTask(MenuProcessor menuProcessor) implements Runnable
                     task.setRanTimes(task.getRanTimes() + 1);
                 }
 
-                if (task.getRanTimes() >= task.getRunTimes()) {
+                if (task.getRunTimes() > 0 && task.getRanTimes() >= task.getRunTimes()) {
                     task.cancel();
                 }
             }

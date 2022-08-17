@@ -16,9 +16,7 @@ record InventoryContentsSchedulerImpl(MenuSession menuSession) implements Invent
             throw new IllegalArgumentException("Delay, period must be positive");
         }
 
-        if (runTimes <= 0) {
-            throw new IllegalArgumentException("You can't start a task you don't want to run");
-        }
+        runTimes = Math.max(runTimes, 0);
 
         if (this.menuSession.getCache().getTasks().containsKey(id)) {
             throw new IllegalArgumentException("Task with id '" + id + "' already exists");
@@ -27,6 +25,16 @@ record InventoryContentsSchedulerImpl(MenuSession menuSession) implements Invent
         MenuTask task = new MenuTask(this, id, runnable, ticksDelay, ticksPeriod, runTimes);
         this.menuSession.getCache().getTasks().put(task.getId(), task);
         return task;
+    }
+
+    @Override
+    public @NotNull MenuTask schedule(@NotNull String id, @NotNull Runnable runnable, int ticksPeriod) {
+        return this.schedule(id, runnable, ticksPeriod, 0);
+    }
+
+    @Override
+    public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod) {
+        return this.delay(id, runnable, ticksDelay, ticksPeriod, 0);
     }
 
     @Override
