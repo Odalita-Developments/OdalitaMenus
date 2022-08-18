@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.menu;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
@@ -12,6 +13,9 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +33,12 @@ public final class MenuSession {
     private volatile boolean hasUpdatableItems = false;
 
     private final MenuSessionCache cache;
+
+    @Setter(AccessLevel.PACKAGE)
+    @Getter(AccessLevel.PACKAGE)
+    private boolean opened = false;
+    @Getter(AccessLevel.PACKAGE)
+    private final List<Runnable> actionsAfterOpening = new ArrayList<>();
 
     MenuSession(Player player, MenuType menuType, byte rows, Inventory inventory, String title) {
         this.player = player;
@@ -53,7 +63,12 @@ public final class MenuSession {
         if (this.title.equals(title)) return;
 
         this.title = title;
-        InventoryUtils.changeTitle(this.inventory, title);
+
+        if (!this.opened) {
+            this.actionsAfterOpening.add(() -> InventoryUtils.changeTitle(this.inventory, title));
+        } else {
+            InventoryUtils.changeTitle(this.inventory, title);
+        }
     }
 
     public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {

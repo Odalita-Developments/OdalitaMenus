@@ -63,6 +63,12 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             this.itemProcessor.initializeItems(menuSession, contents);
 
             this.openInventory(player, menuSession);
+            menuSession.setOpened(true);
+
+            menuSession.getActionsAfterOpening().removeIf((action) -> {
+                action.run();
+                return true;
+            });
         } catch (Exception exception) {
             exception.printStackTrace();
         }
