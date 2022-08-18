@@ -20,13 +20,13 @@ import java.util.function.Function;
 public sealed class OpenMenuItem<P extends MenuProvider> implements MenuItem permits BackItem {
 
     public static <P extends MenuProvider> @NotNull OpenMenuItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
-                                                              @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction,
-                                                              @NotNull MenuProviderLoader<P> menuProviderLoader) {
+                                                                       @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction,
+                                                                       @NotNull MenuProviderLoader<P> menuProviderLoader) {
         return new OpenMenuItem<>(itemStack, menuProvider, builderFunction, menuProviderLoader);
     }
 
     public static <P extends MenuProvider> @NotNull OpenMenuItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
-                                                              @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction) {
+                                                                       @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction) {
         return new OpenMenuItem<>(itemStack, menuProvider, builderFunction);
     }
 
@@ -44,7 +44,7 @@ public sealed class OpenMenuItem<P extends MenuProvider> implements MenuItem per
     protected final MenuProviderLoader<P> menuProviderLoader;
 
     protected OpenMenuItem(ItemStack itemStack, P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
-        this(itemStack, menuProvider, builderFunction, MenuProviderLoader.defaultLoader());
+        this(itemStack, menuProvider, builderFunction, null);
     }
 
     @Override
@@ -58,7 +58,11 @@ public sealed class OpenMenuItem<P extends MenuProvider> implements MenuItem per
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
             MenuProcessor menuProcessor = TriteMenus.getInstance().getMenuProcessor();
-            this.builderFunction.apply(menuProcessor.openMenuBuilder(this.menuProvider, player, this.menuProviderLoader))
+            MenuOpenerBuilder builder = (this.menuProviderLoader == null)
+                    ? menuProcessor.openMenuBuilder(this.menuProvider, player)
+                    : menuProcessor.openMenuBuilder(this.menuProvider, player, this.menuProviderLoader);
+
+            this.builderFunction.apply(builder)
                     .open();
         };
     }
