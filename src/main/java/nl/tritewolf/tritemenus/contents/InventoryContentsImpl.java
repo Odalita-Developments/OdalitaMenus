@@ -7,6 +7,7 @@ import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
+import nl.tritewolf.tritemenus.menu.PlaceableItemAction;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.menu.type.SupportedFeatures;
 import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
@@ -354,6 +355,11 @@ record InventoryContentsImpl(MenuSession menuSession,
         for (int slot : slots) {
             this.menuSession.getCache().getPlaceableItems().add(slot);
         }
+    }
+
+    @Override
+    public void onPlaceableItemClick(@NotNull PlaceableItemAction action) {
+        this.menuSession.getCache().setPlaceableItemAction(action);
     }
 
     @Override

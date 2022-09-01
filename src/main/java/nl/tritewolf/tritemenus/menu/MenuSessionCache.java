@@ -30,6 +30,7 @@ public final class MenuSessionCache {
 
     private final List<Integer> placeableItems = new ArrayList<>();
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
+    private PlaceableItemAction placeableItemAction = null;
 
     private final Map<String, MenuTask> tasks = new ConcurrentHashMap<>();
 

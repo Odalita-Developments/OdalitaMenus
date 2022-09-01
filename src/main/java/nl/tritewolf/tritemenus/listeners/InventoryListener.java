@@ -4,6 +4,7 @@ import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.MenuSession;
+import nl.tritewolf.tritemenus.menu.PlaceableItemAction;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.menu.type.MenuType;
 import org.bukkit.entity.Player;
@@ -40,6 +41,17 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
 
             if (!placeableItems.isEmpty() && event.getView().getBottomInventory().equals(clickedInventory)) return;
             if (placeableItems.contains(event.getSlot())) return;
+            if (placeableItems.contains(event.getSlot())) {
+                PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
+                if (placeableItemAction != null && !placeableItemAction.shouldPlace(
+                        SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()),
+                        event.getCurrentItem(),
+                        event.getCursor())) {
+                    event.setCancelled(true);
+                }
+
+                return;
+            }
 
             event.setCancelled(true);
 
@@ -56,6 +68,7 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
         MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuSession == null) return;
 
+        MenuType menuType = openMenuSession.getMenuType();
         List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
         if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
@@ -67,10 +80,24 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
             boolean matchAllSlots = new HashSet<>(placeableItems).containsAll(inventorySlots);
             if (!matchAllSlots) {
                 event.setCancelled(true);
+            } else {
+                PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
+                if (placeableItemAction == null) return;
+
+                for (int slot : inventorySlots) {
+                    ItemStack clickedItem = event.getInventory().getItem(slot);
+
+                    if (!placeableItemAction.shouldPlace(
+                            SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot),
+                            clickedItem,
+                            event.getCursor())) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
             }
         }
     }
-
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {

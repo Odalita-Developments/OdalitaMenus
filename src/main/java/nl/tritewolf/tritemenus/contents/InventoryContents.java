@@ -6,6 +6,7 @@ import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
+import nl.tritewolf.tritemenus.menu.PlaceableItemAction;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
 import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
@@ -155,6 +156,8 @@ public interface InventoryContents {
 
     /* PLACEABLE ITEMS */
     void registerPlaceableItemSlots(int... slots);
+
+    void onPlaceableItemClick(@NotNull PlaceableItemAction action);
 
     void removePlaceableItems(@NotNull PlaceableItemsCloseAction action);
 
