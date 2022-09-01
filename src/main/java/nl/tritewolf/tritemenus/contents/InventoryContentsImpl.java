@@ -136,7 +136,9 @@ record InventoryContentsImpl(MenuSession menuSession,
         for (int row = 0; row < this.menuSession.getRows(); row++) {
             for (int column = 0; column < this.menuSession.getColumns(); column++) {
                 SlotPos slotPos = SlotPos.of(row, column);
-                if (this.menuSession.getContent(slotPos) != null) continue;
+                if (this.menuSession.getContent(slotPos) != null || this.menuSession.getCache().getPlaceableItems().contains(slotPos.getSlot())) {
+                    continue;
+                }
 
                 this.set(slotPos, item);
             }
