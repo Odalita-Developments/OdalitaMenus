@@ -22,6 +22,7 @@ public final class MenuSessionCache {
 
     private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
     private final Map<String, Scrollable> scrollableMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Supplier<MenuItem>> refreshableItems = new HashMap<>();
     private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = new HashMap<>();
 
     private final Map<String, MenuIterator> iterators = new HashMap<>();

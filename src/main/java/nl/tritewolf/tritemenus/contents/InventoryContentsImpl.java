@@ -177,6 +177,61 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
+    public void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item, boolean override) {
+        MenuItem menuItem = item.get();
+        if (menuItem instanceof UpdatableItem) {
+            throw new IllegalArgumentException("Updatable item cannot be set as refreshable");
+        }
+
+        this.set(slotPos, menuItem, override);
+        this.menuSession.getCache().getRefreshableItems().put(slotPos.getSlot(), item);
+    }
+
+    @Override
+    public void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item) {
+        this.setRefreshable(slotPos, item, true);
+    }
+
+    @Override
+    public void setRefreshable(int row, int column, @NotNull Supplier<@NotNull MenuItem> item, boolean override) {
+        this.setRefreshable(SlotPos.of(row, column), item, override);
+    }
+
+    @Override
+    public void setRefreshable(int row, int column, @NotNull Supplier<@NotNull MenuItem> item) {
+        this.setRefreshable(row, column, item, true);
+    }
+
+    @Override
+    public void setRefreshable(int slot, @NotNull Supplier<@NotNull MenuItem> item, boolean override) {
+        this.setRefreshable(SlotPos.of(slot), item, override);
+    }
+
+    @Override
+    public void setRefreshable(int slot, @NotNull Supplier<@NotNull MenuItem> item) {
+        this.setRefreshable(slot, item, true);
+    }
+
+    @Override
+    public void refreshItem(@NotNull SlotPos slotPos) {
+        this.refreshItem(slotPos.getSlot());
+    }
+
+    @Override
+    public void refreshItem(int row, int column) {
+        this.refreshItem(SlotPos.of(row, column));
+    }
+
+    @Override
+    public void refreshItem(int slot) {
+        Supplier<MenuItem> menuItemSupplier = this.menuSession.getCache().getRefreshableItems().get(slot);
+        if (menuItemSupplier == null) return;
+
+        this.setAsync(slot, menuItemSupplier.get());
+    }
+
+
+    @Override
     public void setDisplay(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {
         this.set(slotPos, DisplayItem.of(itemStack));
     }

@@ -84,6 +84,26 @@ public interface InventoryContents {
     void setAsync(int slot, @NotNull MenuItem item);
 
 
+    /* DEFAULT REFRESHABLE */
+    void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item, boolean override);
+
+    void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item);
+
+    void setRefreshable(int row, int column, @NotNull Supplier<@NotNull MenuItem> item, boolean override);
+
+    void setRefreshable(int row, int column, @NotNull Supplier<@NotNull MenuItem> item);
+
+    void setRefreshable(int slot, @NotNull Supplier<@NotNull MenuItem> item, boolean override);
+
+    void setRefreshable(int slot, @NotNull Supplier<@NotNull MenuItem> item);
+
+    void refreshItem(@NotNull SlotPos slotPos);
+
+    void refreshItem(int row, int column);
+
+    void refreshItem(int slot);
+
+
     /* DEFAULT DISPLAY */
     void setDisplay(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack);
 
