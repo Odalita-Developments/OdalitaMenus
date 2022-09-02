@@ -40,7 +40,6 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
             }
 
             if (!placeableItems.isEmpty() && event.getView().getBottomInventory().equals(clickedInventory)) return;
-            if (placeableItems.contains(event.getSlot())) return;
             if (placeableItems.contains(event.getSlot())) {
                 PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
                 if (placeableItemAction != null && !placeableItemAction.shouldPlace(
