@@ -103,6 +103,10 @@ public interface InventoryContents {
 
     void refreshItem(int slot);
 
+    void refreshItems(SlotPos @NotNull ... slotPosses);
+
+    void refreshItems(int @NotNull ... slots);
+
 
     /* DEFAULT DISPLAY */
     void setDisplay(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack);

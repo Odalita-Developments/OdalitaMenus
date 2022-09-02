@@ -1,7 +1,6 @@
 package nl.tritewolf.tritemenus.contents;
 
 import nl.tritewolf.tritemenus.TriteMenus;
-import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
@@ -215,23 +214,36 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
-    public void refreshItem(@NotNull SlotPos slotPos) {
+    public synchronized void refreshItem(@NotNull SlotPos slotPos) {
         this.refreshItem(slotPos.getSlot());
     }
 
     @Override
-    public void refreshItem(int row, int column) {
+    public synchronized void refreshItem(int row, int column) {
         this.refreshItem(SlotPos.of(row, column));
     }
 
     @Override
-    public void refreshItem(int slot) {
+    public synchronized void refreshItem(int slot) {
         Supplier<MenuItem> menuItemSupplier = this.menuSession.getCache().getRefreshableItems().get(slot);
         if (menuItemSupplier == null) return;
 
         this.setAsync(slot, menuItemSupplier.get());
     }
 
+    @Override
+    public synchronized void refreshItems(SlotPos @NotNull ... slotPosses) {
+        for (SlotPos slotPos : slotPosses) {
+            this.refreshItem(slotPos.getSlot());
+        }
+    }
+
+    @Override
+    public synchronized void refreshItems(int @NotNull ... slots) {
+        for (int slot : slots) {
+            this.refreshItem(slot);
+        }
+    }
 
     @Override
     public void setDisplay(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {

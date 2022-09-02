@@ -1,5 +1,7 @@
 package nl.tritewolf.tritemenus.menu;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tritewolf.tritemenus.contents.MenuTask;
@@ -9,33 +11,30 @@ import nl.tritewolf.tritemenus.pagination.Pagination;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.function.Supplier;
 
 @Getter
 @Setter
 public final class MenuSessionCache {
 
-    private final Map<String, Pagination> paginationMap = new ConcurrentHashMap<>();
-    private final Map<String, Scrollable> scrollableMap = new ConcurrentHashMap<>();
-    private final Map<Integer, Supplier<MenuItem>> refreshableItems = new HashMap<>();
-    private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = new HashMap<>();
+    private final Map<String, Pagination> paginationMap = Maps.newConcurrentMap();
+    private final Map<String, Scrollable> scrollableMap = Maps.newConcurrentMap();
+    private final Map<Integer, Supplier<MenuItem>> refreshableItems = Maps.newConcurrentMap();
+    private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = Maps.newConcurrentMap();
 
-    private final Map<String, MenuIterator> iterators = new HashMap<>();
+    private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
-    private final Map<String, String> searchQueries = new HashMap<>();
+    private final Map<String, String> searchQueries = Maps.newConcurrentMap();
 
-    private final List<Integer> placeableItems = new ArrayList<>();
+    private final Set<Integer> placeableItems = Sets.newConcurrentHashSet();
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
     private PlaceableItemAction placeableItemAction = null;
 
-    private final Map<String, MenuTask> tasks = new ConcurrentHashMap<>();
+    private final Map<String, MenuTask> tasks = Maps.newConcurrentMap();
 
-    private final Map<String, Object> cache = new ConcurrentHashMap<>();
+    private final Map<String, Object> cache = Maps.newConcurrentMap();
 
     MenuSessionCache() {
     }
