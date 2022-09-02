@@ -43,7 +43,7 @@ public final class UpdatableItem implements MenuItem {
     }
 
     private UpdatableItem(Supplier<ItemStack> itemStackSupplier) {
-        this(itemStackSupplier, null, 20); // 20 update ticks = 1 second
+        this(itemStackSupplier, null);
     }
 
     @Override
