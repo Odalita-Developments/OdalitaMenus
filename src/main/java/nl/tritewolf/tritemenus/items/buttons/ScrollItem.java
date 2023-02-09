@@ -120,7 +120,7 @@ public final class ScrollItem implements PageUpdatableItem {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().pageCooldown();
+            Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().scrollCooldown();
             if (cooldown != null && instance.getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
                 return;
             }
