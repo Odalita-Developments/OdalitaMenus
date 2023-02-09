@@ -32,7 +32,6 @@ import java.util.function.Supplier;
 
 public interface InventoryContents {
 
-    // Temporary
     @ApiStatus.Internal
     static InventoryContents create(@NotNull MenuSession menuSession) {
         return new InventoryContentsImpl(menuSession, new InventoryContentsSchedulerImpl(menuSession));
@@ -43,6 +42,7 @@ public interface InventoryContents {
 
     @Nullable
     MenuFrameData menuFrameData();
+
 
     /* DEFAULT */
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
@@ -138,6 +138,7 @@ public interface InventoryContents {
     void setDisplay(int row, int column, @NotNull Material material, @NotNull String displayName);
 
     void setDisplay(int slot, @NotNull Material material, @NotNull String displayName);
+
 
     /* DEFAULT CLICKABLE */
     void setClickable(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event);

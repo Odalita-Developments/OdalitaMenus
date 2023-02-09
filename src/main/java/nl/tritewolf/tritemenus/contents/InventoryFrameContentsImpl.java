@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-class InventoryFrameContentsImpl extends InventoryContentsImpl {
+final class InventoryFrameContentsImpl extends InventoryContentsImpl {
 
     private final MenuFrameData frameData;
 

@@ -14,10 +14,10 @@ public abstract class SlotPosition {
     protected boolean createdFromSlot;
 
     protected SlotPosition(int height, int width, int row, int column) {
-        Preconditions.checkArgument(height >= 0, "Height must be greater than 0");
-        Preconditions.checkArgument(width >= 0, "Width must be greater than 0");
-        Preconditions.checkArgument(row >= 0, "Row must be greater than 0");
-        Preconditions.checkArgument(column >= 0, "Column must be greater than 0");
+        Preconditions.checkArgument(height >= 0, "height must be greater than 0");
+        Preconditions.checkArgument(width >= 0, "width must be greater than 0");
+        Preconditions.checkArgument(row >= 0, "row must be greater than 0");
+        Preconditions.checkArgument(column >= 0, "column must be greater than 0");
 
         this.height = height;
         this.width = width;
@@ -28,9 +28,9 @@ public abstract class SlotPosition {
     }
 
     protected SlotPosition(int height, int width, int slot) {
-        Preconditions.checkArgument(height >= 0, "Height must be greater than 0");
-        Preconditions.checkArgument(width >= 0, "Width must be greater than 0");
-        Preconditions.checkArgument(slot >= 0, "Slot must be greater than 0");
+        Preconditions.checkArgument(height >= 0, "height must be greater than 0");
+        Preconditions.checkArgument(width >= 0, "awaidth must be greater than 0");
+        Preconditions.checkArgument(slot >= 0, "slot must be greater than 0");
 
         this.height = height;
         this.width = width;

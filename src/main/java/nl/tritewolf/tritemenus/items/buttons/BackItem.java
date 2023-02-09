@@ -62,7 +62,7 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
     }
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
-        super(menuProvider, builderFunction, null);
+        super(menuProvider, builderFunction);
     }
 
     @Override

@@ -4,7 +4,7 @@ import nl.tritewolf.tritemenus.contents.MenuFrameData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class SlotPos extends SlotPosition {
+public class SlotPos extends SlotPosition {
 
     public static @NotNull SlotPos of(int row, int column) {
         return new SlotPos(row, column);

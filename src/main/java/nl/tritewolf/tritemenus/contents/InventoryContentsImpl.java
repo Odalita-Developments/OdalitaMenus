@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.contents;
 
-import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.annotations.MenuFrame;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.*;
@@ -31,7 +30,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class InventoryContentsImpl implements InventoryContents {
+class InventoryContentsImpl implements InventoryContents {
 
     protected final MenuSession menuSession;
     protected final MenuSessionCache cache;

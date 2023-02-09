@@ -14,7 +14,7 @@ public final class CloseItem implements MenuItem {
         return new CloseItem(itemStack);
     }
 
-    public static @NotNull CloseItem empty() {
+    public static @NotNull CloseItem get() {
         return new CloseItem();
     }
 
