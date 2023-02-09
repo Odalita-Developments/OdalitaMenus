@@ -18,4 +18,6 @@ public @interface Menu {
 
     @ApiStatus.Experimental
     InventoryType type() default InventoryType.CHEST;
+
+    String globalCacheKey() default "";
 }

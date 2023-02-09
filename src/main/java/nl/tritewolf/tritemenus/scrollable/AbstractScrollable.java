@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-abstract sealed class AbstractScrollable implements Scrollable permits PatternScrollable, SingleScrollable {
+abstract class AbstractScrollable implements Scrollable {
 
     protected final ScrollableBuilderImpl builder;
 
@@ -141,8 +141,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     public final void setAxes(int xAxis, int yAxis) {
         if (this.initialized) return;
 
-        this.currentXAxis = xAxis;
-        this.currentYAxis = yAxis;
+        this.currentXAxis = Math.max(0, Math.min(this.lastHorizontal(), xAxis));
+        this.currentYAxis = Math.max(0, Math.min(this.lastVertical(), yAxis));
     }
 
     @ApiStatus.Internal
@@ -203,10 +203,6 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
 
         this.cleanMenuGrid();
 
-        if (this.contents.menuSession().isHasUpdatableItems()) {
-            this.contents.menuSession().setHasUpdatableItems(false);
-        }
-
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
             this.calculateSlotPosWithOffset(entry.getKey(), newAxis, direction).ifPresent((slot) -> {
                 this.updateItem(slot, entry.getValue());
@@ -256,6 +252,11 @@ abstract sealed class AbstractScrollable implements Scrollable permits PatternSc
     private void cleanMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
+                MenuItem menuItem = this.contents.menuSession().getContents()[row][column];
+                if (this.contents.menuSession().isHasUpdatableItems() && menuItem != null && menuItem.isUpdatable()) {
+                    this.contents.menuSession().setHasUpdatableItems(false);
+                }
+
                 this.contents.menuSession().getContents()[row][column] = null;
             }
         }

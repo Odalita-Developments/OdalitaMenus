@@ -110,7 +110,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
         private final ScrollableBuilderImpl builder;
 
         @Override
-        public @NotNull ScrollableBuilder.ScrollableRepeatedPatternBuilder horizontally() {
+        public @NotNull ScrollableRepeatedPatternBuilder horizontally() {
             this.builder.direction = ScrollableDirection.HORIZONTALLY;
             return new ScrollableRepeatedPatternBuilderImpl(this.builder);
         }

@@ -15,6 +15,14 @@ public interface DirectionPattern extends MenuPattern<List<SlotPos>> {
 
     MenuIteratorType menuIteratorType();
 
+    default int startingRow(){
+        return 0;
+    }
+
+    default int startingColumn(){
+        return 0;
+    }
+
     @Override
     default @NotNull List<SlotPos> getCache() {
         TreeMap<Integer, SlotPos> slots = new TreeMap<>();
@@ -26,7 +34,7 @@ public interface DirectionPattern extends MenuPattern<List<SlotPos>> {
                 String string = getPattern().get(row).substring(lastIndex, lastIndex += 2);
                 if (string.equalsIgnoreCase("##")) continue;
                 if (NumberUtils.isDigits(string)) {
-                    slots.put(Integer.parseInt(string), SlotPos.of(row, column));
+                    slots.put(Integer.parseInt(string), SlotPos.of((row + startingRow()), (column + startingColumn())));
                 }
             }
             lastIndex = 0;

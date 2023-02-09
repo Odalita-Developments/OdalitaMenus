@@ -20,7 +20,6 @@ public final class SupportedMenuTypes {
         this.register(new BrewingMenuType());
         this.register(new CartographyMenuType());
         this.register(new ChestMenuType());
-        this.register(new ComposterMenuType());
         this.register(new DispenserMenuType());
         this.register(new DropperMenuType());
         this.register(new EnchantingMenuType());

@@ -63,7 +63,7 @@ final class PaginationImpl implements Pagination {
         int pageIndex = Math.max(this.items.size() - 1, 0);
         int index = this.items.getOrDefault(pageIndex, new ArrayList<>()).size();
 
-        if (this.initialized && index < this.itemsPerPage && pageIndex == this.currentPage) {
+        if ((this.initialized || this.contents.menuFrameData() != null) && index < this.itemsPerPage && pageIndex == this.currentPage) {
             this.iterator.setNextAsync(itemSupplier.get());
         }
 
@@ -75,7 +75,7 @@ final class PaginationImpl implements Pagination {
                 .add(itemSupplier);
 
         if (this.currentPage + 1 <= this.lastPage()) {
-            this.contents.menuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+            this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
                 this.contents.setAsync(slot, item.get());
             });
         }
@@ -118,7 +118,7 @@ final class PaginationImpl implements Pagination {
 
         this.currentPage = page;
 
-        this.contents.menuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+        this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
             this.contents.setAsync(slot, item.get());
         });
 
@@ -144,7 +144,7 @@ final class PaginationImpl implements Pagination {
     @ApiStatus.Internal
     @Override
     public @NotNull List<Supplier<MenuItem>> getItemsOnPage() {
-        if (this.initialized) return List.of();
+        if (this.initialized || this.contents.menuFrameData() != null) return List.of();
 
         return this.getItemsOnPage(this.currentPage);
     }

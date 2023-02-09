@@ -115,6 +115,10 @@ final class RepeatedPatternScrollable extends PatternScrollable {
 
         int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getRow() + 1;
         this.lastVertical = Math.max(0, usedPatternAmount * this.patternCache.height() - this.showYAxis + offset);
+
+        if (this.currentYAxis > this.lastVertical) {
+            this.currentYAxis = this.lastVertical;
+        }
     }
 
     private void calculateLastHorizontal() {
@@ -124,6 +128,10 @@ final class RepeatedPatternScrollable extends PatternScrollable {
 
         int offset = (offsetIndex == -1) ? 0 : this.createSlotPos(offsetIndex).getColumn() + 1;
         this.lastHorizontal = Math.max(0, usedPatternAmount * this.patternCache.width() - this.showXAxis + offset);
+
+        if (this.currentXAxis > this.lastHorizontal) {
+            this.currentXAxis = this.lastHorizontal;
+        }
     }
 
     private LastPageData calculateLastPageData() {

@@ -41,9 +41,9 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
                 inventory = Bukkit.createInventory(null, menuType.type(), inventoryTitle);
             }
 
-            MenuSession menuSession = new MenuSession(player, menuType, annotation.rows(), inventory, annotation.title());
+            MenuSession menuSession = new MenuSession(player, menuType, annotation.rows(), inventory, annotation.title(), annotation.globalCacheKey());
 
-            InventoryContents contents = InventoryContents.create(menuSession);
+            InventoryContents contents = menuSession.getInventoryContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
 
             this.builder.getPaginationPages().forEach((id, page) -> {

@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.contents.pos;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 
 @Getter
@@ -10,20 +11,33 @@ public abstract class SlotPosition {
     protected int row, column;
     protected int slot;
 
+    protected boolean createdFromSlot;
+
     protected SlotPosition(int height, int width, int row, int column) {
+        Preconditions.checkArgument(height >= 0, "Height must be greater than 0");
+        Preconditions.checkArgument(width >= 0, "Width must be greater than 0");
+        Preconditions.checkArgument(row >= 0, "Row must be greater than 0");
+        Preconditions.checkArgument(column >= 0, "Column must be greater than 0");
+
         this.height = height;
         this.width = width;
         this.row = row;
         this.column = column;
         this.slot = (row * this.width) + column;
+        this.createdFromSlot = false;
     }
 
     protected SlotPosition(int height, int width, int slot) {
+        Preconditions.checkArgument(height >= 0, "Height must be greater than 0");
+        Preconditions.checkArgument(width >= 0, "Width must be greater than 0");
+        Preconditions.checkArgument(slot >= 0, "Slot must be greater than 0");
+
         this.height = height;
         this.width = width;
         this.slot = slot;
         this.row = slot / this.width;
         this.column = slot - (this.width * this.row);
+        this.createdFromSlot = true;
     }
 
     @Override

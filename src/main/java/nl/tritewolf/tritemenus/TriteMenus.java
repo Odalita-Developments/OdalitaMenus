@@ -4,11 +4,13 @@ import lombok.Getter;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.listeners.InventoryListener;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.session.SessionCache;
 import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.providers.ProvidersContainer;
 import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
+import nl.tritewolf.tritemenus.utils.cooldown.CooldownContainer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -26,10 +28,12 @@ public final class TriteMenus {
 
     private final ItemProcessor itemProcessor;
     private final MenuProcessor menuProcessor;
+    private final SessionCache sessionCache;
 
     private final PatternContainer patternContainer;
 
     private final ProvidersContainer providersContainer;
+    private final CooldownContainer cooldownContainer;
 
     public TriteMenus(JavaPlugin javaPlugin) {
         INSTANCE = this;
@@ -40,12 +44,15 @@ public final class TriteMenus {
 
         this.itemProcessor = new ItemProcessor();
         this.menuProcessor = new MenuProcessor(this.itemProcessor, this.supportedMenuTypes);
+        this.sessionCache = new SessionCache();
 
         this.patternContainer = new PatternContainer();
 
         this.providersContainer = new ProvidersContainer();
+        this.cooldownContainer = new CooldownContainer();
 
         javaPlugin.getServer().getPluginManager().registerEvents(new InventoryListener(this.menuProcessor), javaPlugin);
+        javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuUpdateTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuSchedulerTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);

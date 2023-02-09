@@ -85,7 +85,7 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
         }
 
         private int handleCurrentIndexValue(NavigableMap<Integer, Integer> index, String currentIndexValue, int currentIndex) {
-            if (currentIndexValue.equalsIgnoreCase("##")) {
+            if (currentIndexValue.contains("#")) {
                 index.put(currentIndex++, -1);
                 return currentIndex;
             }

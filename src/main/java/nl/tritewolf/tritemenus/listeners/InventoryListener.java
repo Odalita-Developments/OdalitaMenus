@@ -11,9 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,23 +27,34 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
         MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuSession == null) return;
 
+        if (event.getAction() == InventoryAction.HOTBAR_SWAP || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD || event.getClick() == ClickType.DOUBLE_CLICK) {
+            event.setCancelled(true);
+            return;
+        }
+
         MenuType menuType = openMenuSession.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
-            Set<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
-            if (event.getClick().isShiftClick() && !event.getView().getTopInventory().equals(clickedInventory)) {
+        if (event.getView().getTopInventory().equals(openMenuSession.getInventory()) && event.getRawSlot() >= 0) {
+            boolean clickedTopInventory = event.getView().getTopInventory().equals(clickedInventory);
+            if (!clickedTopInventory && event.getCurrentItem() != null && openMenuSession.getCache().getPlayerInventoryClickAction() != null) {
+                event.setCancelled(true); // Cancel event by default
+                openMenuSession.getCache().getPlayerInventoryClickAction().accept(event);
+                return;
+            }
+
+            List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+            if (event.getClick().isShiftClick() && !clickedTopInventory) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (!placeableItems.isEmpty() && event.getView().getBottomInventory().equals(clickedInventory)) return;
-            if (placeableItems.contains(event.getSlot())) {
+            if (!placeableItems.isEmpty() && !clickedTopInventory) return;
+            if (placeableItems.contains(event.getRawSlot())) {
                 PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
                 if (placeableItemAction != null && !placeableItemAction.shouldPlace(
-                        SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()),
-                        event.getCurrentItem(),
-                        event.getCursor())) {
+                        SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()),
+                        event)) {
                     event.setCancelled(true);
                 }
 
@@ -54,7 +63,7 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
 
             event.setCancelled(true);
 
-            MenuItem menuItem = openMenuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getSlot()));
+            MenuItem menuItem = openMenuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
                 menuItem.onClick().accept(event);
             }
@@ -67,31 +76,28 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
         MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuSession == null) return;
 
-        MenuType menuType = openMenuSession.getMenuType();
-        Set<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+        List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
         if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
-            Set<Integer> inventorySlots = event.getInventorySlots();
+            Set<Integer> inventorySlots = event.getRawSlots();
 
-            boolean b = event.getRawSlots().stream().allMatch(integer -> integer > (openMenuSession.getInventory().getSize() - 1));
-            if (!placeableItems.isEmpty() && b) return;
+            boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (openMenuSession.getInventory().getSize() - 1));
+            if (!placeableItems.isEmpty() && fitsInMenu) return;
 
             boolean matchAllSlots = new HashSet<>(placeableItems).containsAll(inventorySlots);
             if (!matchAllSlots) {
                 event.setCancelled(true);
-            } else {
-                PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
-                if (placeableItemAction == null) return;
+                return;
+            }
 
-                for (int slot : inventorySlots) {
-                    ItemStack clickedItem = event.getInventory().getItem(slot);
-
+            PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
+            if (placeableItemAction != null) {
+                for (Integer slot : inventorySlots) {
                     if (!placeableItemAction.shouldPlace(
-                            SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot),
-                            clickedItem,
-                            event.getCursor())) {
+                            SlotPos.of(openMenuSession.getMenuType().maxRows(), openMenuSession.getMenuType().maxColumns(), slot),
+                            new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, slot, ClickType.UNKNOWN, InventoryAction.UNKNOWN))) {
                         event.setCancelled(true);
-                        break;
+                        return;
                     }
                 }
             }
@@ -109,7 +115,7 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
             PlaceableItemsCloseAction placeableItemsCloseAction = openMenuSession.getCache().getPlaceableItemsCloseAction();
 
             if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
-                Set<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+                List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
                 placeableItems.forEach(integer -> {
                     ItemStack item = inventory.getItem(integer);

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.Map;
 
-sealed class PatternScrollable extends AbstractScrollable permits RepeatedPatternScrollable {
+class PatternScrollable extends AbstractScrollable {
 
     private final ScrollableDirectionPatternCache.Cache patternCache;
 

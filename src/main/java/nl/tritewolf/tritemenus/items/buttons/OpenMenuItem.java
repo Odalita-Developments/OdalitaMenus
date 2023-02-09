@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public sealed class OpenMenuItem<P extends MenuProvider> implements MenuItem permits BackItem {
+public class OpenMenuItem<P extends MenuProvider> implements MenuItem {
 
     public static <P extends MenuProvider> @NotNull OpenMenuItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
                                                                        @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction,

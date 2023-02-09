@@ -6,8 +6,10 @@ import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
+import nl.tritewolf.tritemenus.menu.MenuSessionCache;
 import nl.tritewolf.tritemenus.menu.PlaceableItemAction;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
+import nl.tritewolf.tritemenus.menu.providers.frame.MenuFrameProvider;
 import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.DirectionPattern;
 import nl.tritewolf.tritemenus.patterns.IteratorPattern;
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -37,6 +40,9 @@ public interface InventoryContents {
 
     @NotNull
     MenuSession menuSession();
+
+    @Nullable
+    MenuFrameData menuFrameData();
 
     /* DEFAULT */
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
@@ -54,6 +60,12 @@ public interface InventoryContents {
     void add(@NotNull MenuItem item);
 
     @NotNull Optional<@NotNull SlotPos> firstEmptySlot();
+
+    boolean isEmpty(@NotNull SlotPos slotPos);
+
+    boolean isEmpty(int row, int column);
+
+    boolean isEmpty(int slot);
 
     void fillRow(int row, @NotNull MenuItem item);
 
@@ -148,7 +160,6 @@ public interface InventoryContents {
 
 
     /* DEFAULT UPDATABLE */
-
     void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event);
 
     void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event);
@@ -181,9 +192,19 @@ public interface InventoryContents {
     /* PLACEABLE ITEMS */
     void registerPlaceableItemSlots(int... slots);
 
+    void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack);
+
+    void setForcedPlaceableItem(int row, int column, @NotNull ItemStack itemStack);
+
+    void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack);
+
     void onPlaceableItemClick(@NotNull PlaceableItemAction action);
 
     void removePlaceableItems(@NotNull PlaceableItemsCloseAction action);
+
+    @NotNull Optional<@NotNull SlotPos> firstEmptyPlaceableItemSlot();
+
+    @NotNull Map<Integer, ItemStack> getPlaceableItems();
 
 
     /* PAGINATION & SCROLLABLE */
@@ -200,11 +221,37 @@ public interface InventoryContents {
     void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem);
 
 
+    /* FRAME */
+    @ApiStatus.Experimental
+    <F extends MenuFrameProvider> void registerFrame(@NotNull String id, @NotNull SlotPos slotPos, @NotNull Class<F> frame);
+
+    @ApiStatus.Experimental
+    <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int row, int column, @NotNull Class<F> frame);
+
+    @ApiStatus.Experimental
+    <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int slot, @NotNull Class<F> frame);
+
+    @ApiStatus.Experimental
+    boolean loadFrame(@NotNull String id, Object @NotNull ... arguments);
+
+    @ApiStatus.Experimental
+    void unloadFrame(@NotNull String id);
+
+    @ApiStatus.Experimental
+    void registerFrameOverlaySlots(SlotPos @NotNull ... slots);
+
+    @ApiStatus.Experimental
+    void registerFrameOverlaySlots(int... slots);
+
+
     /* SCHEDULER */
     @NotNull InventoryContentsScheduler scheduler();
 
 
     /* CACHE */
+    @NotNull
+    MenuSessionCache cache();
+
     <T> T cache(@NotNull String key, T def);
 
     <T> T cache(@NotNull String key);
@@ -215,12 +262,20 @@ public interface InventoryContents {
     @NotNull
     InventoryContents pruneCache(@NotNull String key);
 
+    void setGlobalCacheKey(@NotNull String key);
+
 
     /* OTHER */
+    void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer);
+
     void setTitle(@NotNull String title);
 
     void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action);
 
     @Nullable
     String getSearchQuery(@NotNull String id);
+
+    int maxRows();
+
+    int maxColumns();
 }

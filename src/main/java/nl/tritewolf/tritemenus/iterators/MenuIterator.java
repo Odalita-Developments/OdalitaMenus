@@ -22,54 +22,47 @@ public class MenuIterator {
 
     private int index = 0;
 
-    private InventoryContents inventoryContents;
+    private InventoryContents contents;
     private boolean override = false;
 
     private MenuIteratorType menuIteratorType;
     private final int row;
     private final int column;
 
-    public MenuIterator(MenuIteratorType menuIteratorType, InventoryContents inventoryContents, int startRow, int startColumn) {
+    public MenuIterator(MenuIteratorType menuIteratorType, InventoryContents contents, int startRow, int startColumn) {
         this.menuIteratorType = menuIteratorType;
-        this.inventoryContents = inventoryContents;
+        this.contents = contents;
         this.row = startRow;
         this.column = startColumn;
     }
 
-    public void init(@NotNull MenuIteratorType menuIteratorType) {
-        switch (menuIteratorType) {
-            case HORIZONTAL -> horizontalInitialization();
-            case VERTICAL -> verticalInitialization();
-        }
-    }
-
     public MenuIterator addReusableSlot(int slot) {
-        this.canStillUse.add(slot);
+        this.canStillUse.add(this.getCorrectSlotPos(slot).getSlot());
         return this;
     }
 
     public MenuIterator set(MenuItem menuItem) {
-        this.inventoryContents.set(getSlot(), menuItem);
+        this.contents.set(getSlot(), menuItem);
         return this;
     }
 
     public MenuIterator setNext(MenuItem menuItem) {
-        this.inventoryContents.set(next(), menuItem);
+        this.contents.set(next(), menuItem);
         return this;
     }
 
     public synchronized MenuIterator setNextAsync(MenuItem menuItem) {
-        this.inventoryContents.setAsync(SlotPos.of(next()), menuItem);
+        this.contents.setAsync(next(), menuItem);
         return this;
     }
 
     public MenuIterator setPrevious(MenuItem menuItem) {
-        this.inventoryContents.set(previous(), menuItem);
+        this.contents.set(previous(), menuItem);
         return this;
     }
 
     public synchronized MenuIterator setPreviousAsync(MenuItem menuItem) {
-        this.inventoryContents.setAsync(SlotPos.of(previous()), menuItem);
+        this.contents.setAsync(SlotPos.of(previous()), menuItem);
         return this;
     }
 
@@ -143,24 +136,34 @@ public class MenuIterator {
     }
 
     public SlotPos getStartPos() {
-        return SlotPos.of(this.row, this.column);
+        return this.getSlotPos(this.row, this.column);
     }
 
     private Inventory getInventory() {
-        return this.inventoryContents.menuSession().getInventory();
+        return this.contents.menuSession().getInventory();
+    }
+
+    private void init(@NotNull MenuIteratorType menuIteratorType) {
+        switch (menuIteratorType) {
+            case HORIZONTAL -> this.horizontalInitialization();
+            case VERTICAL -> this.verticalInitialization();
+        }
     }
 
     private void horizontalInitialization() {
-        int inventorySize = this.inventoryContents.menuSession().getRows() * 9;
+        int inventorySize = this.contents.maxRows() * this.contents.maxColumns();
         Inventory inventory = getInventory();
 
-        int slotStart = SlotPos.of(this.row, this.column).getSlot();
+        int slotStart = this.getSlotPos(this.row, this.column).getSlot();
         for (int slot = slotStart; slot < inventorySize; slot++) {
             if (blacklist.contains(slot)) continue;
 
-            ItemStack item = inventory.getItem(slot);
+            // Check if item can be overridden in inventory
+            int inventorySlot = this.getCorrectSlotPos(slot).getSlot();
+            ItemStack item = inventory.getItem(inventorySlot);
             if (!isOverride() && item != null && item.getType() != Material.AIR) continue;
 
+            // Add slot to items, inventorySlot will give issues with frames
             items.add(slot);
         }
     }
@@ -168,11 +171,12 @@ public class MenuIterator {
     private void verticalInitialization() {
         Inventory inventory = getInventory();
 
-        for (int column = this.column; column < 9; column++) {
-            for (int row = this.row; row < this.inventoryContents.menuSession().getRows(); row++) {
-                int currentSlot = SlotPos.of(row, column).getSlot();
+        for (int column = this.column; column < this.contents.maxColumns(); column++) {
+            for (int row = this.row; row < this.contents.maxRows(); row++) {
+                int currentSlot = this.getSlotPos(row, column).getSlot();
                 if (blacklist.contains(currentSlot)) continue;
 
+                currentSlot = this.getCorrectSlotPos(currentSlot).getSlot();
 
                 ItemStack item = inventory.getItem(currentSlot);
                 if (!isOverride() && item != null && item.getType() != Material.AIR) continue;
@@ -180,5 +184,30 @@ public class MenuIterator {
                 items.add(currentSlot);
             }
         }
+    }
+
+    private SlotPos getSlotPos(int row, int column) {
+        return SlotPos.of(
+                this.contents.maxRows(),
+                this.contents.maxColumns(),
+                row,
+                column
+        );
+    }
+
+    private SlotPos getSlotPos(int slot) {
+        return SlotPos.of(
+                this.contents.maxRows(),
+                this.contents.maxColumns(),
+                slot
+        );
+    }
+
+    private SlotPos getCorrectSlotPos(int slot) {
+        return this.getSlotPos(slot).convertFromFrame(
+                this.contents.menuSession().getRows(),
+                this.contents.menuSession().getColumns(),
+                this.contents.menuFrameData()
+        );
     }
 }

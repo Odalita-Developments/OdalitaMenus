@@ -1,18 +1,24 @@
 package nl.tritewolf.tritemenus.contents;
 
 import nl.tritewolf.tritemenus.TriteMenus;
+import nl.tritewolf.tritemenus.annotations.MenuFrame;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.*;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
 import nl.tritewolf.tritemenus.menu.MenuSession;
+import nl.tritewolf.tritemenus.menu.MenuSessionCache;
 import nl.tritewolf.tritemenus.menu.PlaceableItemAction;
 import nl.tritewolf.tritemenus.menu.PlaceableItemsCloseAction;
+import nl.tritewolf.tritemenus.menu.providers.frame.GlobalMenuFrameProvider;
+import nl.tritewolf.tritemenus.menu.providers.frame.MenuFrameProvider;
+import nl.tritewolf.tritemenus.menu.providers.frame.PlayerMenuFrameProvider;
 import nl.tritewolf.tritemenus.menu.type.SupportedFeatures;
 import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.*;
 import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
+import nl.tritewolf.tritemenus.utils.cooldown.CooldownContainer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,13 +26,44 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-record InventoryContentsImpl(MenuSession menuSession,
-                             InventoryContentsScheduler scheduler) implements InventoryContents {
+public class InventoryContentsImpl implements InventoryContents {
+
+    protected final MenuSession menuSession;
+    protected final MenuSessionCache cache;
+    protected final InventoryContentsScheduler scheduler;
+
+    InventoryContentsImpl(MenuSession menuSession, InventoryContentsScheduler scheduler) {
+        this.menuSession = menuSession;
+        this.cache = menuSession.getCache();
+        this.scheduler = scheduler;
+    }
+
+    InventoryContentsImpl(MenuSession menuSession, MenuSessionCache cache, InventoryContentsScheduler scheduler) {
+        this.menuSession = menuSession;
+        this.cache = cache;
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public @NotNull MenuSession menuSession() {
+        return this.menuSession;
+    }
+
+    @Override
+    public @NotNull InventoryContentsScheduler scheduler() {
+        return this.scheduler;
+    }
+
+    @Override
+    public @Nullable MenuFrameData menuFrameData() {
+        return null;
+    }
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
@@ -69,8 +106,8 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public @NotNull Optional<@NotNull SlotPos> firstEmptySlot() {
-        for (int row = 0; row < this.menuSession.getRows(); row++) {
-            for (int column = 0; column < this.menuSession.getColumns(); column++) {
+        for (int row = 0; row < this.maxColumns(); row++) {
+            for (int column = 0; column < this.maxColumns(); column++) {
                 SlotPos slotPos = SlotPos.of(row, column);
 
                 if (this.menuSession.getContent(slotPos) == null) {
@@ -83,23 +120,38 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
+    public boolean isEmpty(@NotNull SlotPos slotPos) { // TODO override
+        return this.menuSession.getContent(slotPos) == null;
+    }
+
+    @Override
+    public boolean isEmpty(int row, int column) { // TODO override
+        return this.isEmpty(SlotPos.of(row, column));
+    }
+
+    @Override
+    public boolean isEmpty(int slot) { // TODO override
+        return this.isEmpty(SlotPos.of(slot));
+    }
+
+    @Override
     public void fillRow(int row, @NotNull MenuItem item) {
-        if (row < 0 || row >= this.menuSession.getRows()) {
-            throw new IllegalArgumentException("Row must be between '0' and '" + this.menuSession.getRows() + "'");
+        if (row < 0 || row >= this.maxRows()) {
+            throw new IllegalArgumentException("Row must be between '0' and '" + this.maxRows() + "'");
         }
 
-        for (int column = 0; column < this.menuSession.getColumns(); column++) {
+        for (int column = 0; column < this.maxColumns(); column++) {
             this.set(row, column, item);
         }
     }
 
     @Override
     public void fillColumn(int column, @NotNull MenuItem item) {
-        if (column < 0 || column >= this.menuSession.getColumns()) {
-            throw new IllegalArgumentException("Column must be between '0' and '" + this.menuSession.getColumns() + "'");
+        if (column < 0 || column >= this.maxColumns()) {
+            throw new IllegalArgumentException("Column must be between '0' and '" + this.maxColumns() + "'");
         }
 
-        for (int row = 0; row < this.menuSession.getRows(); row++) {
+        for (int row = 0; row < this.maxRows(); row++) {
             this.set(SlotPos.of(row, column), item);
         }
     }
@@ -132,10 +184,10 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public void fill(@NotNull MenuItem item) {
-        for (int row = 0; row < this.menuSession.getRows(); row++) {
-            for (int column = 0; column < this.menuSession.getColumns(); column++) {
+        for (int row = 0; row < this.maxRows(); row++) {
+            for (int column = 0; column < this.maxColumns(); column++) {
                 SlotPos slotPos = SlotPos.of(row, column);
-                if (this.menuSession.getContent(slotPos) != null || this.menuSession.getCache().getPlaceableItems().contains(slotPos.getSlot())) {
+                if (this.menuSession.getContent(slotPos) != null || this.cache.getPlaceableItems().contains(slotPos.getSlot())) {
                     continue;
                 }
 
@@ -145,7 +197,14 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
+    public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
+        // If menu is not opened yet, the items still need to be set in the item processor
+        // which will cause this item to be overridden by the item processor
+        if (!this.menuSession.isOpened()) {
+            this.set(slotPos, item, override);
+            return;
+        }
+
         this.set(slotPos, item, override, (slot) -> {
             this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
             InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(), this.menuSession.getInventory());
@@ -153,39 +212,34 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
+    public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
         this.setAsync(slotPos, item, true);
     }
 
     @Override
-    public void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
+    public synchronized void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
         this.setAsync(SlotPos.of(row, column), item, override);
     }
 
     @Override
-    public void setAsync(int row, int column, @NotNull MenuItem item) {
+    public synchronized void setAsync(int row, int column, @NotNull MenuItem item) {
         this.setAsync(row, column, item, true);
     }
 
     @Override
-    public void setAsync(int slot, @NotNull MenuItem item, boolean override) {
+    public synchronized void setAsync(int slot, @NotNull MenuItem item, boolean override) {
         this.setAsync(SlotPos.of(slot), item, override);
     }
 
     @Override
-    public void setAsync(int slot, @NotNull MenuItem item) {
+    public synchronized void setAsync(int slot, @NotNull MenuItem item) {
         this.setAsync(slot, item, true);
     }
 
     @Override
     public void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item, boolean override) {
-        MenuItem menuItem = item.get();
-        if (menuItem instanceof UpdatableItem) {
-            throw new IllegalArgumentException("Updatable item cannot be set as refreshable");
-        }
-
-        this.set(slotPos, menuItem, override);
-        this.menuSession.getCache().getRefreshableItems().put(slotPos.getSlot(), item);
+        this.set(slotPos, item.get(), override);
+        this.cache.getRefreshableItems().put(slotPos.getSlot(), item);
     }
 
     @Override
@@ -215,7 +269,17 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public synchronized void refreshItem(@NotNull SlotPos slotPos) {
-        this.refreshItem(slotPos.getSlot());
+        int slot = slotPos.getSlot();
+
+        Supplier<MenuItem> menuItemSupplier = this.cache.getRefreshableItems().get(slot);
+        if (menuItemSupplier == null) {
+            MenuItem item = this.menuSession.getContent(slotPos);
+            if (item == null || !item.isUpdatable()) return;
+
+            menuItemSupplier = () -> item;
+        }
+
+        this.setAsync(slot, menuItemSupplier.get());
     }
 
     @Override
@@ -225,10 +289,7 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public synchronized void refreshItem(int slot) {
-        Supplier<MenuItem> menuItemSupplier = this.menuSession.getCache().getRefreshableItems().get(slot);
-        if (menuItemSupplier == null) return;
-
-        this.setAsync(slot, menuItemSupplier.get());
+        this.refreshItem(SlotPos.of(slot));
     }
 
     @Override
@@ -368,7 +429,7 @@ record InventoryContentsImpl(MenuSession menuSession,
     @Override
     public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
         MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
-        this.menuSession.getCache().getIterators().put(iterator, menuIterator);
+        this.cache.getIterators().put(iterator, menuIterator);
         return menuIterator;
     }
 
@@ -422,18 +483,66 @@ record InventoryContentsImpl(MenuSession menuSession,
     @Override
     public void registerPlaceableItemSlots(int... slots) {
         for (int slot : slots) {
-            this.menuSession.getCache().getPlaceableItems().add(slot);
+            this.cache.getPlaceableItems().add(slot);
         }
     }
 
     @Override
+    public void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {
+        this.setForcedPlaceableItem(slotPos.getSlot(), itemStack);
+    }
+
+    @Override
+    public void setForcedPlaceableItem(int row, int column, @NotNull ItemStack itemStack) {
+        this.setForcedPlaceableItem(SlotPos.of(row, column), itemStack);
+    }
+
+    @Override
+    public void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack) {
+        if (!this.menuSession.fits(slot)) return;
+
+        this.menuSession.getInventory().setItem(slot, itemStack);
+    }
+
+    @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemAction action) {
-        this.menuSession.getCache().setPlaceableItemAction(action);
+        this.cache.setPlaceableItemAction(action);
     }
 
     @Override
     public void removePlaceableItems(@NotNull PlaceableItemsCloseAction action) {
-        this.menuSession.getCache().setPlaceableItemsCloseAction(action);
+        this.cache.setPlaceableItemsCloseAction(action);
+    }
+
+    @Override
+    public @NotNull Optional<@NotNull SlotPos> firstEmptyPlaceableItemSlot() {
+        MenuSessionCache cache = this.cache;
+        if (cache.getPlaceableItems().isEmpty()) return Optional.empty();
+
+        for (int slot : cache.getPlaceableItems()) {
+            ItemStack item = this.menuSession.getInventory().getItem(slot);
+            if (item == null || item.getType().isAir()) {
+                return Optional.of(SlotPos.of(slot));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public @NotNull Map<Integer, ItemStack> getPlaceableItems() {
+        Map<Integer, ItemStack> items = new HashMap<>();
+        MenuSessionCache cache = this.cache;
+        if (cache.getPlaceableItems().isEmpty()) return items;
+
+        for (int slot : cache.getPlaceableItems()) {
+            ItemStack item = this.menuSession.getInventory().getItem(slot);
+            if (item == null || item.getType().isAir()) continue;
+
+            items.put(slot, item);
+        }
+
+        return items;
     }
 
     @Override
@@ -481,25 +590,150 @@ record InventoryContentsImpl(MenuSession menuSession,
     }
 
     @Override
+    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, @NotNull SlotPos slotPos, @NotNull Class<F> frameClass) {
+        this.registerFrame(id, slotPos.getRow(), slotPos.getColumn(), frameClass);
+    }
+
+    @Override
+    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int row, int column, @NotNull Class<F> frameClass) {
+        if (!frameClass.isAnnotationPresent(MenuFrame.class)) {
+            throw new IllegalArgumentException("The frameClass class '" + frameClass.getName() + "' is not annotated with @MenuFrame!");
+        }
+
+        MenuFrame frameData = frameClass.getAnnotation(MenuFrame.class);
+
+        MenuFrameData previousValue = this.menuSession.getCache().getFrames().putIfAbsent(id, new MenuFrameData(id, frameData.height(), frameData.width(), row, column, frameClass));
+        if (previousValue != null) {
+            throw new IllegalArgumentException("The frameClass with the id '" + id + "' is already registered!");
+        }
+    }
+
+    @Override
+    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int slot, @NotNull Class<F> frameClass) {
+        this.registerFrame(id, SlotPos.of(slot), frameClass);
+    }
+
+    @Override
+    public boolean loadFrame(@NotNull String id, Object @NotNull ... arguments) {
+        MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
+        if (frameData == null) {
+            throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
+        }
+
+        if (TriteMenus.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INVENTORY_CONTENTS_FRAME_LOAD", 500, TimeUnit.MILLISECONDS)) {
+            // Added cooldown to prevent spamming
+            return false;
+        }
+
+        if (this.menuSession.getCache().getLoadedFrameId() != null) {
+            this.unloadFrame(this.menuSession.getCache().getLoadedFrameId());
+        }
+
+        Class<? extends MenuFrameProvider> frameClass = frameData.frameClass();
+        MenuFrameProvider frame;
+        try {
+            Constructor<?> constructor;
+            if (arguments.length == 0) {
+                constructor = frameClass.getDeclaredConstructor();
+            } else {
+                Class<?>[] parameterTypes = Arrays.stream(arguments)
+                        .map(Object::getClass)
+                        .toArray(Class<?>[]::new);
+
+                constructor = frameClass.getDeclaredConstructor(parameterTypes);
+            }
+
+            constructor.setAccessible(true);
+            frame = (MenuFrameProvider) constructor.newInstance(arguments);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException("The frameClass '" + frameClass.getName() + "' does not have a constructor with the arguments: " + Arrays.toString(arguments), exception);
+        }
+
+        if (frame instanceof GlobalMenuFrameProvider globalMenuFrame) {
+            globalMenuFrame.onLoad(new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler));
+        } else if (frame instanceof PlayerMenuFrameProvider playerMenuFrame) {
+            playerMenuFrame.onLoad(this.menuSession.getPlayer(), new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler));
+        } else {
+            throw new IllegalArgumentException("The frame '" + frame.getClass().getName() + "' is not supported!");
+        }
+
+        this.menuSession.getCache().setLoadedFrameId(id);
+        return true;
+    }
+
+    @Override
+    public void unloadFrame(@NotNull String id) {
+        MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
+        if (frameData == null) {
+            throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
+        }
+
+        if (!id.equals(this.menuSession.getCache().getLoadedFrameId())) {
+            throw new IllegalArgumentException("The frame with the id '" + id + "' is not loaded!");
+        }
+
+        for (int row = frameData.startRow(); row < Math.max(6, frameData.startRow() + frameData.height()); row++) {
+            for (int column = frameData.startColumn(); column < Math.max(9, frameData.startColumn() + frameData.width()); column++) {
+                int slot = SlotPos.of(row, column).getSlot();
+                if (this.menuSession.getCache().getFrameOverlaySlots().contains(slot)) continue;
+
+                this.menuSession.getContents()[row][column] = null;
+                InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
+            }
+        }
+
+        this.menuSession.getCache().setLoadedFrameId(null);
+    }
+
+    @Override
+    public void registerFrameOverlaySlots(SlotPos @NotNull ... slots) {
+        for (SlotPos slot : slots) {
+            this.registerFrameOverlaySlots(slot.getSlot());
+        }
+    }
+
+    @Override
+    public void registerFrameOverlaySlots(int... slots) {
+        for (int slot : slots) {
+            this.menuSession.getCache().getFrameOverlaySlots().add(slot);
+        }
+    }
+
+    @Override
+    public @NotNull MenuSessionCache cache() {
+        return this.cache;
+    }
+
+    @Override
     public synchronized <T> T cache(@NotNull String key, T def) {
-        return this.menuSession.getCache().cache(key, def);
+        return this.cache.cache(key, def);
     }
 
     @Override
     public synchronized <T> T cache(@NotNull String key) {
-        return this.menuSession.getCache().cache(key);
+        return this.cache.cache(key);
     }
 
     @Override
     public synchronized @NotNull InventoryContents setCache(@NotNull String key, @NotNull Object value) {
-        this.menuSession.getCache().setCache(key, value);
+        this.cache.setCache(key, value);
         return this;
     }
 
     @Override
     public synchronized @NotNull InventoryContents pruneCache(@NotNull String key) {
-        this.menuSession.getCache().pruneCache(key);
+        this.cache.pruneCache(key);
         return this;
+    }
+
+    @Override
+    public synchronized void setGlobalCacheKey(@NotNull String key) {
+        this.menuSession.setGlobalCacheKey(key);
+    }
+
+    @Override
+    public void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer) {
+        this.cache.setPlayerInventoryClickAction(eventConsumer);
     }
 
     @Override
@@ -509,26 +743,27 @@ record InventoryContentsImpl(MenuSession menuSession,
 
     @Override
     public void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action) {
-        this.menuSession.getCache().setPlaceableItemsCloseAction(action);
+        this.cache.setPlaceableItemsCloseAction(action);
         player.closeInventory();
     }
 
     @Override
     public @Nullable String getSearchQuery(@NotNull String id) {
-        return this.menuSession.getCache().getSearchQueries().get(id);
+        return this.cache.getSearchQueries().get(id);
     }
 
-    private void set(SlotPos slotPos, MenuItem item, boolean override, Consumer<SlotPos> setter) {
-        slotPos = this.createSlotPos(slotPos);
+    protected void set(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, Consumer<SlotPos> setter) {
+        slotPos = this.convertSlotPos(slotPos);
+        int slot = slotPos.getSlot();
 
-        if (!this.menuSession.fits(slotPos.getSlot())) {
-            throw new IllegalArgumentException("The slot '" + slotPos.getSlot() + "' is out of bounds for this menu");
+        if (!this.menuSession.fits(slot)) {
+            throw new IllegalArgumentException("The slot '" + slot + "' is out of bounds for this menu");
         }
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
         if (item instanceof PageUpdatableItem) {
-            this.menuSession.getCache().getPageSwitchUpdateItems().put(slotPos.getSlot(), () -> item);
+            this.cache.getPageSwitchUpdateItems().put(originalSlot, () -> item);
         }
 
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
@@ -538,7 +773,24 @@ record InventoryContentsImpl(MenuSession menuSession,
         setter.accept(slotPos);
     }
 
-    private SlotPos createSlotPos(SlotPos slotPos) {
-        return SlotPos.of(this.menuSession.getMenuType().maxRows(), this.menuSession.getMenuType().maxColumns(), slotPos.getSlot());
+    private void set(SlotPos slotPos, MenuItem item, boolean override, Consumer<SlotPos> setter) {
+        this.set(slotPos, slotPos.getSlot(), item, override, setter);
+    }
+
+    protected SlotPos convertSlotPos(SlotPos slotPos) {
+        return slotPos.convertTo(
+                this.maxRows(),
+                this.maxColumns()
+        );
+    }
+
+    @Override
+    public int maxRows() {
+        return this.menuSession.getRows();
+    }
+
+    @Override
+    public int maxColumns() {
+        return this.menuSession.getColumns();
     }
 }

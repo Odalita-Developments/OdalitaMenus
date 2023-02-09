@@ -4,7 +4,7 @@ import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.contents.pos.SlotPosition;
 import org.jetbrains.annotations.NotNull;
 
-sealed class ScrollableSlotPos extends SlotPosition permits ScrollableSlotPos.SingleScrollableSlotPos {
+class ScrollableSlotPos extends SlotPosition {
 
     static @NotNull ScrollableSlotPos of(int height, int width, int row, int column) {
         return new ScrollableSlotPos(height, width, row, column);
@@ -31,7 +31,7 @@ sealed class ScrollableSlotPos extends SlotPosition permits ScrollableSlotPos.Si
         }
     }
 
-    static non-sealed class SingleScrollableSlotPos extends ScrollableSlotPos {
+    static class SingleScrollableSlotPos extends ScrollableSlotPos {
 
         static @NotNull SingleScrollableSlotPos of(@NotNull ScrollableDirection direction, int height, int width, int slot) {
             return new SingleScrollableSlotPos(direction, height, width, slot);

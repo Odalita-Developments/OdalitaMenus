@@ -11,5 +11,4 @@ public interface MenuProvider {
             throw new IllegalStateException("MenuProvider '" + getClass().getSimpleName() + "' is not annotated with @Menu");
         return getClass().getAnnotation(Menu.class);
     }
-
 }
