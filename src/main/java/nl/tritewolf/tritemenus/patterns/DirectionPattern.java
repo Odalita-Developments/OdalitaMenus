@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.iterators.MenuIteratorType;
-import org.apache.commons.lang.math.NumberUtils;
+import nl.tritewolf.tritemenus.utils.CharacterUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -15,11 +15,11 @@ public interface DirectionPattern extends MenuPattern<List<SlotPos>> {
 
     MenuIteratorType menuIteratorType();
 
-    default int startingRow(){
+    default int startingRow() {
         return 0;
     }
 
-    default int startingColumn(){
+    default int startingColumn() {
         return 0;
     }
 
@@ -33,7 +33,7 @@ public interface DirectionPattern extends MenuPattern<List<SlotPos>> {
 
                 String string = getPattern().get(row).substring(lastIndex, lastIndex += 2);
                 if (string.equalsIgnoreCase("##")) continue;
-                if (NumberUtils.isDigits(string)) {
+                if (CharacterUtils.isDigits(string)) {
                     slots.put(Integer.parseInt(string), SlotPos.of((row + startingRow()), (column + startingColumn())));
                 }
             }

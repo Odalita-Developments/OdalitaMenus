@@ -2,7 +2,7 @@ package nl.tritewolf.tritemenus.scrollable;
 
 import nl.tritewolf.tritemenus.iterators.MenuIterator;
 import nl.tritewolf.tritemenus.patterns.MenuPattern;
-import org.apache.commons.lang.math.NumberUtils;
+import nl.tritewolf.tritemenus.utils.CharacterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +90,7 @@ public interface ScrollableDirectionPattern extends MenuPattern<ScrollableDirect
                 return currentIndex;
             }
 
-            if (NumberUtils.isDigits(currentIndexValue)) {
+            if (CharacterUtils.isDigits(currentIndexValue)) {
                 index.put(currentIndex++, Integer.parseInt(currentIndexValue));
             }
 
