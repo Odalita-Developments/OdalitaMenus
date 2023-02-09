@@ -18,7 +18,7 @@ import nl.tritewolf.tritemenus.pagination.PaginationBuilder;
 import nl.tritewolf.tritemenus.patterns.*;
 import nl.tritewolf.tritemenus.scrollable.ScrollableBuilder;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
-import nl.tritewolf.tritemenus.utils.cooldown.CooldownContainer;
+import nl.tritewolf.tritemenus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -620,8 +619,8 @@ public class InventoryContentsImpl implements InventoryContents {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
         }
 
-        if (TriteMenus.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INVENTORY_CONTENTS_FRAME_LOAD", 500, TimeUnit.MILLISECONDS)) {
-            // Added cooldown to prevent spamming
+        Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().frameLoadCooldown();
+        if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
             return false;
         }
 

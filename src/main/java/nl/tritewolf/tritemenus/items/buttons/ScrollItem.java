@@ -6,6 +6,7 @@ import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.providers.providers.DefaultItemProvider;
 import nl.tritewolf.tritemenus.scrollable.Scrollable;
+import nl.tritewolf.tritemenus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -112,10 +113,16 @@ public final class ScrollItem implements PageUpdatableItem {
     @Override
     public @NotNull Consumer<InventoryClickEvent> onClick() {
         return (event) -> {
-            if (!(event.getWhoClicked() instanceof Player)) return;
-            if (this.isOnLastPageForDirection()) return;
+            if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            this.direction.next(this.scrollable);
+            Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().pageCooldown();
+            if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
+                return;
+            }
+
+            if (!this.isOnLastPageForDirection()) {
+                this.direction.next(this.scrollable);
+            }
         };
     }
 

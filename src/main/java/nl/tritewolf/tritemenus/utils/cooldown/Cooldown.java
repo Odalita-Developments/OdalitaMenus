@@ -2,14 +2,10 @@ package nl.tritewolf.tritemenus.utils.cooldown;
 
 import java.util.concurrent.TimeUnit;
 
-public record Cooldown(long created, long expireDate) {
+public record Cooldown(long created, long expireDate, int value, TimeUnit unit) {
 
     public Cooldown(int value, TimeUnit timeUnit) {
-        this(System.currentTimeMillis(), System.currentTimeMillis() + timeUnit.toMillis(value));
-    }
-
-    public static Cooldown of(long created, long expireDate) {
-        return new Cooldown(created, expireDate);
+        this(System.currentTimeMillis(), System.currentTimeMillis() + timeUnit.toMillis(value), value, timeUnit);
     }
 
     public static Cooldown of(int value, TimeUnit timeUnit) {

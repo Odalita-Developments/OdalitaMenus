@@ -3,6 +3,7 @@ package nl.tritewolf.tritemenus.items.buttons;
 import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.pagination.Pagination;
+import nl.tritewolf.tritemenus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -44,7 +45,7 @@ public final class PreviousItem implements PageUpdatableItem {
         this.pagination = pagination;
         this.showOnFirstPage = showOnFirstPage;
 
-        this.itemStack = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider().previousItem(pagination);
+        this.itemStack = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider().previousPageItem(pagination);
     }
 
     private PreviousItem(Pagination pagination, ItemStack itemStack) {
@@ -67,10 +68,16 @@ public final class PreviousItem implements PageUpdatableItem {
     @Override
     public @NotNull Consumer<InventoryClickEvent> onClick() {
         return (event) -> {
-            if (!(event.getWhoClicked() instanceof Player)) return;
-            if (this.pagination.isFirstPage()) return;
+            if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            this.pagination.previousPage();
+            Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().pageCooldown();
+            if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_PAGE_COOLDOWN", cooldown)) {
+                return;
+            }
+
+            if (!this.pagination.isFirstPage()) {
+                this.pagination.previousPage();
+            }
         };
     }
 }

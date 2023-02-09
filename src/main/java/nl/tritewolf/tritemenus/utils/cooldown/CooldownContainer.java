@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.utils.cooldown;
 
+import com.google.common.base.Preconditions;
 import nl.tritewolf.tritemenus.utils.collection.Table;
 
 import java.util.UUID;
@@ -10,6 +11,8 @@ public final class CooldownContainer {
     private final Table<UUID, String, Cooldown> playerCooldowns = new Table<>();
 
     public void addCooldown(UUID uuid, String name, Cooldown cooldown) {
+        Preconditions.checkArgument(cooldown.value() > 0, "value must be greater than 0");
+
         this.playerCooldowns.computeIfAbsent(uuid, name, (u, s) -> cooldown);
     }
 
