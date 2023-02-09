@@ -73,7 +73,7 @@ public final class MenuSessionCache {
 
     Map<String, Object> getCache() {
         if (!this.menuSession.getGlobalCacheKey().isEmpty() && !this.menuSession.getGlobalCacheKey().isBlank()) {
-            return TriteMenus.getInstance().getSessionCache().getOrCreateCache(this.menuSession);
+            return this.menuSession.getInstance().getSessionCache().getOrCreateCache(this.menuSession);
         }
 
         return this.cache;

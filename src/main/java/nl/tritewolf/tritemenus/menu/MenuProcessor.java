@@ -1,6 +1,8 @@
 package nl.tritewolf.tritemenus.menu;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
@@ -11,16 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Getter
+@Getter(AccessLevel.PACKAGE)
 public final class MenuProcessor {
 
+    private final TriteMenus instance;
     private final ItemProcessor itemProcessor;
     private final SupportedMenuTypes supportedMenuTypes;
 
+    @Getter
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
+    @Getter
     private final Map<Player, MenuSession> openMenus = new ConcurrentHashMap<>();
 
-    public MenuProcessor(ItemProcessor itemProcessor, SupportedMenuTypes supportedMenuTypes) {
+    public MenuProcessor(TriteMenus instance, ItemProcessor itemProcessor, SupportedMenuTypes supportedMenuTypes) {
+        this.instance = instance;
         this.itemProcessor = itemProcessor;
         this.supportedMenuTypes = supportedMenuTypes;
     }

@@ -2,6 +2,7 @@ package nl.tritewolf.tritemenus.items;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import nl.tritewolf.tritemenus.TriteMenus;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +20,12 @@ public final class ClickableItem implements MenuItem {
     private final Consumer<InventoryClickEvent> clickHandler;
 
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return this.clickHandler;
     }
 }

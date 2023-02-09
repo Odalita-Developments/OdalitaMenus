@@ -31,8 +31,9 @@ public final class NextItem implements PageUpdatableItem {
     }
 
     private final Pagination pagination;
-    private final ItemStack itemStack;
     private final boolean showOnLastPage;
+
+    private ItemStack itemStack;
 
     private NextItem(Pagination pagination, ItemStack itemStack, boolean showOnLastPage) {
         this.pagination = pagination;
@@ -41,10 +42,7 @@ public final class NextItem implements PageUpdatableItem {
     }
 
     private NextItem(Pagination pagination, boolean showOnLastPage) {
-        this.pagination = pagination;
-        this.showOnLastPage = showOnLastPage;
-
-        this.itemStack = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider().nextPageItem(pagination);
+        this(pagination, null, showOnLastPage);
     }
 
     private NextItem(Pagination pagination, ItemStack itemStack) {
@@ -56,21 +54,25 @@ public final class NextItem implements PageUpdatableItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
         if (!this.showOnLastPage && this.pagination.isLastPage()) {
             return new ItemStack(Material.AIR);
+        }
+
+        if (this.itemStack == null) {
+            this.itemStack = instance.getProvidersContainer().getDefaultItemProvider().nextPageItem(this.pagination);
         }
 
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().pageCooldown();
-            if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_PAGE_COOLDOWN", cooldown)) {
+            Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().pageCooldown();
+            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_PAGE_COOLDOWN", cooldown)) {
                 return;
             }
 

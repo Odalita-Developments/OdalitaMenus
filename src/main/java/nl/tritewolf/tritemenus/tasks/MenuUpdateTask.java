@@ -1,9 +1,10 @@
 package nl.tritewolf.tritemenus.tasks;
 
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
-import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
+import nl.tritewolf.tritemenus.menu.MenuSession;
 import nl.tritewolf.tritemenus.utils.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public record MenuUpdateTask(MenuProcessor menuProcessor) implements Runnable {
+public record MenuUpdateTask(TriteMenus instance, MenuProcessor menuProcessor) implements Runnable {
 
     private static final AtomicInteger TICKS = new AtomicInteger(0);
 
@@ -44,7 +45,7 @@ public record MenuUpdateTask(MenuProcessor menuProcessor) implements Runnable {
                     updatableItems++;
 
                     if (ticks % menuItem.getUpdateTicks() == 0) {
-                        ItemStack item = menuItem.getItemStack();
+                        ItemStack item = menuItem.getItemStack(this.instance);
                         int slot = SlotPos.of(row, column).getSlot();
 
                         InventoryUtils.updateItem(player, slot, item, menuSession.getInventory());

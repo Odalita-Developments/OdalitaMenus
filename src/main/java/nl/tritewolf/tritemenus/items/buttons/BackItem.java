@@ -58,13 +58,19 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
     }
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
-        this(
-                TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider().backItem(menuProvider),
-                menuProvider, builderFunction, menuProviderLoader
-        );
+        super(menuProvider, builderFunction, menuProviderLoader);
     }
 
     private BackItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
-        this(menuProvider, builderFunction, null);
+        super(menuProvider, builderFunction, null);
+    }
+
+    @Override
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
+        if (super.itemStack == null) {
+            super.itemStack = instance.getProvidersContainer().getDefaultItemProvider().backItem(super.menuProvider);
+        }
+
+        return super.itemStack;
     }
 }

@@ -74,7 +74,7 @@ public final class ItemProcessor {
                 if (menuItem == null) continue;
 
                 int slot = SlotPos.of(menuType.maxRows(), menuType.maxColumns(), row, column).getSlot();
-                inventory.setItem(slot, menuItem.getItemStack());
+                inventory.setItem(slot, menuItem.getItemStack(menuSession.getInstance()));
 
                 if (!menuSession.isHasUpdatableItems() && menuItem.isUpdatable()) {
                     menuSession.setHasUpdatableItems(true);

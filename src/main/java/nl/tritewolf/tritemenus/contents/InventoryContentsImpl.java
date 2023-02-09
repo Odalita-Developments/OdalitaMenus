@@ -206,7 +206,7 @@ public class InventoryContentsImpl implements InventoryContents {
 
         this.set(slotPos, item, override, (slot) -> {
             this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(), this.menuSession.getInventory());
+            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
         });
     }
 
@@ -455,7 +455,7 @@ public class InventoryContentsImpl implements InventoryContents {
 
     @Override
     public void createPatternIterator(@NotNull Class<? extends IteratorPattern> clazz, @NotNull List<@NotNull MenuItem> menuItems) {
-        PatternContainer patternContainer = TriteMenus.getInstance().getPatternContainer();
+        PatternContainer patternContainer = this.menuSession.getInstance().getPatternContainer();
         IteratorPattern iteratorPatternByClass = patternContainer.getPattern(clazz);
 
         if (iteratorPatternByClass == null) {
@@ -467,7 +467,7 @@ public class InventoryContentsImpl implements InventoryContents {
 
     @Override
     public void createDirectionsPatternIterator(@NotNull Class<? extends DirectionPattern> clazz, @NotNull List<@NotNull MenuItem> menuItems) {
-        PatternContainer patternContainer = TriteMenus.getInstance().getPatternContainer();
+        PatternContainer patternContainer = this.menuSession.getInstance().getPatternContainer();
         List<SlotPos> directionsPattern = patternContainer.getPattern(clazz);
         if (directionsPattern == null) {
             throw new IllegalArgumentException("The pattern class '" + clazz.getName() + "' is not registered!");
@@ -619,8 +619,8 @@ public class InventoryContentsImpl implements InventoryContents {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
         }
 
-        Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().frameLoadCooldown();
-        if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
+        Cooldown cooldown = this.menuSession.getInstance().getProvidersContainer().getCooldownProvider().frameLoadCooldown();
+        if (cooldown != null && this.menuSession.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
             return false;
         }
 

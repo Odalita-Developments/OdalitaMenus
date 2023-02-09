@@ -1,5 +1,6 @@
 package nl.tritewolf.tritemenus.listeners;
 
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
@@ -19,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record InventoryListener(MenuProcessor menuProcessor) implements Listener {
+public record InventoryListener(TriteMenus instance, MenuProcessor menuProcessor) implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -65,7 +66,7 @@ public record InventoryListener(MenuProcessor menuProcessor) implements Listener
 
             MenuItem menuItem = openMenuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
-                menuItem.onClick().accept(event);
+                menuItem.onClick(this.instance).accept(event);
             }
         }
     }

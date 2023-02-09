@@ -1,7 +1,5 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.PageUpdatableItem;
 import nl.tritewolf.tritemenus.providers.providers.DefaultItemProvider;
@@ -15,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ScrollItem implements PageUpdatableItem {
 
     public static @NotNull ScrollItem up(@NotNull Scrollable scrollable, @NotNull ItemStack itemStack, boolean showOnLastPage) {
@@ -84,39 +81,47 @@ public final class ScrollItem implements PageUpdatableItem {
 
     private final Direction direction;
     private final Scrollable scrollable;
-    private final ItemStack itemStack;
     private final boolean showOnLastPage;
 
-    private ScrollItem(Direction direction, Scrollable scrollable, boolean showOnLastPage) {
+    private ItemStack itemStack;
+
+    private ScrollItem(Direction direction, Scrollable scrollable, ItemStack itemStack, boolean showOnLastPage) {
         this.direction = direction;
         this.scrollable = scrollable;
+        this.itemStack = itemStack;
         this.showOnLastPage = showOnLastPage;
+    }
 
-        DefaultItemProvider defaultItemProvider = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider();
-        this.itemStack = switch (this.direction) {
-            case UP -> defaultItemProvider.scrollUpItem(scrollable);
-            case DOWN -> defaultItemProvider.scrollDownItem(scrollable);
-            case LEFT -> defaultItemProvider.scrollLeftItem(scrollable);
-            case RIGHT -> defaultItemProvider.scrollRightItem(scrollable);
-        };
+    private ScrollItem(Direction direction, Scrollable scrollable, boolean showOnLastPage) {
+        this(direction, scrollable, null, showOnLastPage);
     }
 
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
         if (!this.showOnLastPage && this.isOnLastPageForDirection()) {
             return new ItemStack(Material.AIR);
+        }
+
+        if (this.itemStack == null) {
+            DefaultItemProvider defaultItemProvider = instance.getProvidersContainer().getDefaultItemProvider();
+            this.itemStack = switch (this.direction) {
+                case UP -> defaultItemProvider.scrollUpItem(this.scrollable);
+                case DOWN -> defaultItemProvider.scrollDownItem(this.scrollable);
+                case LEFT -> defaultItemProvider.scrollLeftItem(this.scrollable);
+                case RIGHT -> defaultItemProvider.scrollRightItem(this.scrollable);
+            };
         }
 
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            Cooldown cooldown = TriteMenus.getInstance().getProvidersContainer().getCooldownProvider().pageCooldown();
-            if (cooldown != null && TriteMenus.getInstance().getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
+            Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().pageCooldown();
+            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
                 return;
             }
 

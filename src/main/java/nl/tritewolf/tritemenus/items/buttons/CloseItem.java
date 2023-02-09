@@ -1,7 +1,5 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CloseItem implements MenuItem {
 
     public static @NotNull CloseItem of(@NotNull ItemStack itemStack) {
@@ -21,19 +18,27 @@ public final class CloseItem implements MenuItem {
         return new CloseItem();
     }
 
-    private final ItemStack itemStack;
+    private ItemStack itemStack;
+
+    private CloseItem(ItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
 
     private CloseItem() {
-        this.itemStack = TriteMenus.getInstance().getProvidersContainer().getDefaultItemProvider().closeItem();
+        this(null);
     }
 
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
+        if (this.itemStack == null) {
+            this.itemStack = instance.getProvidersContainer().getDefaultItemProvider().closeItem();
+        }
+
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return (event) -> event.getWhoClicked().closeInventory();
     }
 }

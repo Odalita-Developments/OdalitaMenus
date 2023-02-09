@@ -41,19 +41,19 @@ public final class SearchItem implements MenuItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
             String query = this.searchHandler.apply(event);
             if (query.isBlank() || query.isEmpty()) query = null;
 
-            MenuProcessor menuProcessor = TriteMenus.getInstance().getMenuProcessor();
+            MenuProcessor menuProcessor = instance.getMenuProcessor();
             MenuSession openMenuSession = menuProcessor.getOpenMenus().get(player);
 
             if (openMenuSession != null) {

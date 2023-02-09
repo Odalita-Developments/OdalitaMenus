@@ -1,13 +1,12 @@
 package nl.tritewolf.tritemenus.items.buttons;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.items.MenuItem;
 import nl.tritewolf.tritemenus.menu.MenuOpenerBuilder;
 import nl.tritewolf.tritemenus.menu.MenuProcessor;
 import nl.tritewolf.tritemenus.menu.providers.MenuProvider;
 import nl.tritewolf.tritemenus.menu.providers.MenuProviderLoader;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class OpenMenuItem<P extends MenuProvider> implements MenuItem {
 
     public static <P extends MenuProvider> @NotNull OpenMenuItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
@@ -38,26 +36,46 @@ public class OpenMenuItem<P extends MenuProvider> implements MenuItem {
         return new OpenMenuItem<>(itemStack, menuProvider, (builder) -> builder);
     }
 
-    protected final ItemStack itemStack;
     protected final P menuProvider;
     protected final Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction;
     protected final MenuProviderLoader<P> menuProviderLoader;
+
+    protected ItemStack itemStack;
+
+    protected OpenMenuItem(ItemStack itemStack, P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
+        this.menuProvider = menuProvider;
+        this.builderFunction = builderFunction;
+        this.menuProviderLoader = menuProviderLoader;
+        this.itemStack = itemStack;
+    }
 
     protected OpenMenuItem(ItemStack itemStack, P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
         this(itemStack, menuProvider, builderFunction, null);
     }
 
+    protected OpenMenuItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction, MenuProviderLoader<P> menuProviderLoader) {
+        this(null, menuProvider, builderFunction, menuProviderLoader);
+    }
+
+    protected OpenMenuItem(P menuProvider, Function<MenuOpenerBuilder, MenuOpenerBuilder> builderFunction) {
+        this(null, menuProvider, builderFunction, null);
+    }
+
     @Override
-    public @NotNull ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack(@NotNull TriteMenus instance) {
+        if (this.itemStack == null) {
+            this.itemStack = new ItemStack(Material.AIR);
+        }
+
         return this.itemStack;
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick() {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull TriteMenus instance) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
-            MenuProcessor menuProcessor = TriteMenus.getInstance().getMenuProcessor();
+            MenuProcessor menuProcessor = instance.getMenuProcessor();
             MenuOpenerBuilder builder = (this.menuProviderLoader == null)
                     ? menuProcessor.openMenuBuilder(this.menuProvider, player)
                     : menuProcessor.openMenuBuilder(this.menuProvider, player, this.menuProviderLoader);

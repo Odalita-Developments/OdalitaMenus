@@ -3,6 +3,7 @@ package nl.tritewolf.tritemenus.menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.contents.pos.SlotPos;
 import nl.tritewolf.tritemenus.items.MenuItem;
@@ -22,6 +23,7 @@ import java.util.Map;
 @Setter
 public final class MenuSession {
 
+    private final TriteMenus instance;
     private final Player player;
 
     private final MenuType menuType;
@@ -42,7 +44,8 @@ public final class MenuSession {
     @Getter(AccessLevel.PACKAGE)
     private final List<Runnable> actionsAfterOpening = new ArrayList<>();
 
-    MenuSession(Player player, MenuType menuType, byte rows, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(TriteMenus instance, Player player, MenuType menuType, byte rows, Inventory inventory, String title, String globalCacheKey) {
+        this.instance = instance;
         this.player = player;
         this.menuType = menuType;
 

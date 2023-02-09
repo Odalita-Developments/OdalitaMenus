@@ -11,16 +11,43 @@ import nl.tritewolf.tritemenus.providers.ProvidersContainer;
 import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
 import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
 import nl.tritewolf.tritemenus.utils.cooldown.CooldownContainer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public final class TriteMenus {
+public final class TriteMenus implements Listener {
 
-    private static TriteMenus INSTANCE;
+    private static final Map<Plugin, TriteMenus> INSTANCES = new HashMap<>();
+
+    public static @NotNull TriteMenus createInstance(@NotNull JavaPlugin javaPlugin) {
+        return new TriteMenus(javaPlugin);
+    }
+
+    public static @NotNull TriteMenus getInstance(@NotNull JavaPlugin javaPlugin) {
+        TriteMenus instance = INSTANCES.get(javaPlugin);
+        if (instance == null) {
+            throw new IllegalStateException("TriteMenus is not initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
+        }
+
+        return instance;
+    }
+
+    public static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
+        return INSTANCES.containsKey(javaPlugin);
+    }
 
     private final JavaPlugin javaPlugin;
 
@@ -35,15 +62,22 @@ public final class TriteMenus {
     private final ProvidersContainer providersContainer;
     private final CooldownContainer cooldownContainer;
 
-    public TriteMenus(JavaPlugin javaPlugin) {
-        INSTANCE = this;
+    private final InventoryListener inventoryListener;
+
+    private final ScheduledFuture<?> updateTask;
+    private final ScheduledFuture<?> schedulerTask;
+
+    private TriteMenus(JavaPlugin javaPlugin) {
+        if (INSTANCES.containsKey(javaPlugin)) {
+            throw new IllegalStateException("TriteMenus is already initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
+        }
 
         this.javaPlugin = javaPlugin;
 
         this.supportedMenuTypes = new SupportedMenuTypes();
 
         this.itemProcessor = new ItemProcessor();
-        this.menuProcessor = new MenuProcessor(this.itemProcessor, this.supportedMenuTypes);
+        this.menuProcessor = new MenuProcessor(this, this.itemProcessor, this.supportedMenuTypes);
         this.sessionCache = new SessionCache();
 
         this.patternContainer = new PatternContainer();
@@ -51,15 +85,32 @@ public final class TriteMenus {
         this.providersContainer = new ProvidersContainer();
         this.cooldownContainer = new CooldownContainer();
 
-        javaPlugin.getServer().getPluginManager().registerEvents(new InventoryListener(this.menuProcessor), javaPlugin);
+        this.inventoryListener = new InventoryListener(this, this.menuProcessor);
+        javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
+        javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuUpdateTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuSchedulerTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+        this.updateTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuUpdateTask(this, this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+        this.schedulerTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuSchedulerTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+
+        INSTANCES.put(javaPlugin, this);
     }
 
-    @ApiStatus.Internal
-    public static TriteMenus getInstance() {
-        return INSTANCE;
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private void onPluginDisable(PluginDisableEvent event) {
+        if (this.javaPlugin.equals(event.getPlugin())) {
+            for (Player player : this.menuProcessor.getOpenMenus().keySet()) {
+                player.closeInventory();
+            }
+
+            this.updateTask.cancel(true);
+            this.schedulerTask.cancel(true);
+
+            HandlerList.unregisterAll(this.inventoryListener);
+            HandlerList.unregisterAll(this.sessionCache);
+            HandlerList.unregisterAll(this);
+
+            INSTANCES.remove(this.javaPlugin);
+        }
     }
 }

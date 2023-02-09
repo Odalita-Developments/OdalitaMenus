@@ -1,6 +1,5 @@
 package nl.tritewolf.tritemenus.menu;
 
-import nl.tritewolf.tritemenus.TriteMenus;
 import nl.tritewolf.tritemenus.annotations.Menu;
 import nl.tritewolf.tritemenus.contents.InventoryContents;
 import nl.tritewolf.tritemenus.items.ItemProcessor;
@@ -33,7 +32,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             }
 
             Inventory inventory;
-            ColorProvider colorProvider = TriteMenus.getInstance().getProvidersContainer().getColorProvider();
+            ColorProvider colorProvider = this.menuProcessor.getInstance().getProvidersContainer().getColorProvider();
             String inventoryTitle = colorProvider.handle(annotation.title());
             if (menuType.type() == InventoryType.CHEST) {
                 inventory = Bukkit.createInventory(null, annotation.rows() * 9, inventoryTitle);
@@ -41,7 +40,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
                 inventory = Bukkit.createInventory(null, menuType.type(), inventoryTitle);
             }
 
-            MenuSession menuSession = new MenuSession(player, menuType, annotation.rows(), inventory, annotation.title(), annotation.globalCacheKey());
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuType, annotation.rows(), inventory, annotation.title(), annotation.globalCacheKey());
 
             InventoryContents contents = menuSession.getInventoryContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
