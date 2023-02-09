@@ -8,8 +8,7 @@ import nl.tritewolf.tritemenus.menu.session.SessionCache;
 import nl.tritewolf.tritemenus.menu.type.SupportedMenuTypes;
 import nl.tritewolf.tritemenus.patterns.PatternContainer;
 import nl.tritewolf.tritemenus.providers.ProvidersContainer;
-import nl.tritewolf.tritemenus.tasks.MenuSchedulerTask;
-import nl.tritewolf.tritemenus.tasks.MenuUpdateTask;
+import nl.tritewolf.tritemenus.tasks.MenuTasksProcessor;
 import nl.tritewolf.tritemenus.utils.cooldown.CooldownContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,8 +63,7 @@ public final class TriteMenus implements Listener {
 
     private final InventoryListener inventoryListener;
 
-    private final ScheduledFuture<?> updateTask;
-    private final ScheduledFuture<?> schedulerTask;
+    private final ScheduledFuture<?> menuTask;
 
     private TriteMenus(JavaPlugin javaPlugin) {
         if (INSTANCES.containsKey(javaPlugin)) {
@@ -90,8 +88,7 @@ public final class TriteMenus implements Listener {
         javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
-        this.updateTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuUpdateTask(this, this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
-        this.schedulerTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuSchedulerTask(this.menuProcessor), 0, 50, TimeUnit.MILLISECONDS);
+        this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
 
         INSTANCES.put(javaPlugin, this);
     }
@@ -103,8 +100,7 @@ public final class TriteMenus implements Listener {
                 player.closeInventory();
             }
 
-            this.updateTask.cancel(true);
-            this.schedulerTask.cancel(true);
+            this.menuTask.cancel(true);
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.sessionCache);
