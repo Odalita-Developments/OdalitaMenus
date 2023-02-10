@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface PaginationBuilder {
+public sealed interface PaginationBuilder permits PaginationBuilderImpl {
 
     static @NotNull PaginationBuilder builder(@NotNull InventoryContents contents, @NotNull String id, int itemsPerPage) {
         return new PaginationBuilderImpl(contents, id, itemsPerPage);

@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.contents;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface InventoryContentsScheduler {
+public sealed interface InventoryContentsScheduler permits InventoryContentsSchedulerImpl {
 
     @NotNull
     MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes);

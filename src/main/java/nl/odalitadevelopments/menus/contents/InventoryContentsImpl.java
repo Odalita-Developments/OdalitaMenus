@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-class InventoryContentsImpl implements InventoryContents {
+sealed class InventoryContentsImpl implements InventoryContents permits InventoryFrameContentsImpl {
 
     protected final MenuSession menuSession;
     protected final MenuSessionCache cache;

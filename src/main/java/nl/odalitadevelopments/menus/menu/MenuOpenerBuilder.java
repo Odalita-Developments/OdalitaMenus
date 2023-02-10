@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-public interface MenuOpenerBuilder {
+public sealed interface MenuOpenerBuilder permits MenuOpenerBuilderImpl {
 
     @NotNull MenuOpenerBuilder pagination(@NotNull String id, int page);
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public interface Pagination {
+public sealed interface Pagination permits PaginationImpl {
 
     @NotNull String getId();
 

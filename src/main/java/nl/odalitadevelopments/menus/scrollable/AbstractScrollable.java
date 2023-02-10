@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-abstract class AbstractScrollable implements Scrollable {
+abstract sealed class AbstractScrollable implements Scrollable permits SingleScrollable, PatternScrollable {
 
     protected final ScrollableBuilderImpl builder;
 

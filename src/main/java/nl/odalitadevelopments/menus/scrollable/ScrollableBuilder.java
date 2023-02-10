@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public interface ScrollableBuilder {
+public sealed interface ScrollableBuilder permits ScrollableBuilderImpl {
 
     static @NotNull ScrollableBuilder builder(@NotNull InventoryContents contents, @NotNull String id, int showYAxis, int showXAxis) {
         return new ScrollableBuilderImpl(contents, id, showYAxis, showXAxis);
@@ -21,14 +21,14 @@ public interface ScrollableBuilder {
 
     @NotNull Scrollable create();
 
-    interface ScrollableSingleBuilder {
+    sealed interface ScrollableSingleBuilder permits ScrollableBuilderImpl.ScrollableSingleBuilderImpl {
 
         @NotNull Scrollable horizontally();
 
         @NotNull Scrollable vertically();
     }
 
-    interface ScrollablePatternBuilder {
+    sealed interface ScrollablePatternBuilder permits ScrollableBuilderImpl.ScrollablePatternBuilderImpl {
 
         @NotNull ScrollableBuilder.ScrollableRepeatedPatternBuilder horizontally();
 
@@ -37,7 +37,7 @@ public interface ScrollableBuilder {
         @NotNull Scrollable horizontallyAndVertically();
     }
 
-    interface ScrollableRepeatedPatternBuilder {
+    sealed interface ScrollableRepeatedPatternBuilder permits ScrollableBuilderImpl.ScrollableRepeatedPatternBuilderImpl {
 
         @NotNull Scrollable repeated();
 

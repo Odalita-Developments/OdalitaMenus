@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public interface InventoryContents {
+public sealed interface InventoryContents permits InventoryContentsImpl {
 
     @ApiStatus.Internal
     static InventoryContents create(@NotNull MenuSession menuSession) {
