@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>nl.tritewolf.tritemenus</groupId>
-    <artifactId>TriteMenus</artifactId>
+    <groupId>nl.odalitadevelopments</groupId>
+    <artifactId>odalitamenus</artifactId>
     <version>0.0.1</version>
+    <name>OdalitaMenus</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -45,7 +46,7 @@
     </dependencies>
 
     <build>
-        <finalName>TriteMenus-${version}</finalName>
+        <finalName>OdalitaMenus-${version}</finalName>
         <defaultGoal>clean install</defaultGoal>
 
         <resources>
