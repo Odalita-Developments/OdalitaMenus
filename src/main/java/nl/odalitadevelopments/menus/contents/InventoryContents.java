@@ -1,21 +1,21 @@
 package nl.odalitadevelopments.menus.contents;
 
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
-import nl.odalitadevelopments.menus.iterators.MenuIterator;
-import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
-import nl.odalitadevelopments.menus.patterns.DirectionPattern;
-import nl.odalitadevelopments.menus.patterns.IteratorPattern;
-import nl.odalitadevelopments.menus.patterns.MenuPattern;
-import nl.odalitadevelopments.menus.patterns.PatternCache;
-import nl.odalitadevelopments.menus.scrollable.ScrollableBuilder;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.iterators.MenuIterator;
+import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
 import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
+import nl.odalitadevelopments.menus.patterns.DirectionPattern;
+import nl.odalitadevelopments.menus.patterns.IteratorPattern;
+import nl.odalitadevelopments.menus.patterns.MenuPattern;
+import nl.odalitadevelopments.menus.patterns.PatternCache;
+import nl.odalitadevelopments.menus.scrollable.ScrollableBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -272,9 +272,6 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
     void setTitle(@NotNull String title);
 
     void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action);
-
-    @Nullable
-    String getSearchQuery(@NotNull String id);
 
     int maxRows();
 

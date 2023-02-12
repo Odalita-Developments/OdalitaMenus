@@ -740,11 +740,6 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
         player.closeInventory();
     }
 
-    @Override
-    public @Nullable String getSearchQuery(@NotNull String id) {
-        return this.cache.getSearchQueries().get(id);
-    }
-
     protected void set(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, Consumer<SlotPos> setter) {
         slotPos = this.convertSlotPos(slotPos);
         int slot = slotPos.getSlot();

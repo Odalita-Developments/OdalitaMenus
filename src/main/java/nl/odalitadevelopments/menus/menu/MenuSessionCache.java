@@ -33,8 +33,6 @@ public final class MenuSessionCache {
 
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
-    private final Map<String, String> searchQueries = Maps.newConcurrentMap();
-
     private final List<Integer> placeableItems = Lists.newCopyOnWriteArrayList();
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
     private PlaceableItemAction placeableItemAction = null;
