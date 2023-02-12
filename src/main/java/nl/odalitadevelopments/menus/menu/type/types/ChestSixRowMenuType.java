@@ -1,23 +1,23 @@
 package nl.odalitadevelopments.menus.menu.type.types;
 
 import nl.odalitadevelopments.menus.menu.type.MenuType;
-import org.bukkit.event.inventory.InventoryType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.jetbrains.annotations.NotNull;
 
-public final class DropperMenuType implements MenuType {
+public final class ChestSixRowMenuType implements SupportedMenuType {
 
     @Override
-    public @NotNull InventoryType type() {
-        return InventoryType.DROPPER;
+    public @NotNull MenuType type() {
+        return MenuType.CHEST_6_ROW;
     }
 
     @Override
     public int maxRows() {
-        return 3;
+        return 6;
     }
 
     @Override
     public int maxColumns() {
-        return 3;
+        return 9;
     }
 }

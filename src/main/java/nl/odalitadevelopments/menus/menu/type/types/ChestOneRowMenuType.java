@@ -1,19 +1,19 @@
 package nl.odalitadevelopments.menus.menu.type.types;
 
 import nl.odalitadevelopments.menus.menu.type.MenuType;
-import org.bukkit.event.inventory.InventoryType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.jetbrains.annotations.NotNull;
 
-public final class BarrelMenuType implements MenuType {
+public final class ChestOneRowMenuType implements SupportedMenuType {
 
     @Override
-    public @NotNull InventoryType type() {
-        return InventoryType.BARREL;
+    public @NotNull MenuType type() {
+        return MenuType.CHEST_1_ROW;
     }
 
     @Override
     public int maxRows() {
-        return 3;
+        return 1;
     }
 
     @Override

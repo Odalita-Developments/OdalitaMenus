@@ -1,7 +1,6 @@
 package nl.odalitadevelopments.menus.annotations;
 
-import org.bukkit.event.inventory.InventoryType;
-import org.jetbrains.annotations.ApiStatus;
+import nl.odalitadevelopments.menus.menu.type.MenuType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,10 +13,7 @@ public @interface Menu {
 
     String title();
 
-    byte rows() default 3;
-
-    @ApiStatus.Experimental
-    InventoryType type() default InventoryType.CHEST;
+    MenuType type() default MenuType.CHEST_3_ROW;
 
     String globalCacheKey() default "";
 }

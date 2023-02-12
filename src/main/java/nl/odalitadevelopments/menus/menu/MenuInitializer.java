@@ -4,7 +4,7 @@ import nl.odalitadevelopments.menus.annotations.Menu;
 import nl.odalitadevelopments.menus.contents.InventoryContents;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
-import nl.odalitadevelopments.menus.menu.type.MenuType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
@@ -26,21 +26,13 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
         try {
             Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
 
-            MenuType menuType;
-            if ((menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type())) == null) {
-                throw new IllegalArgumentException("Inventory type not supported: '" + annotation.type() + "'");
-            }
-
-            Inventory inventory;
             ColorProvider colorProvider = this.menuProcessor.getInstance().getProvidersContainer().getColorProvider();
             String inventoryTitle = colorProvider.handle(annotation.title());
-            if (menuType.type() == InventoryType.CHEST) {
-                inventory = Bukkit.createInventory(null, annotation.rows() * 9, inventoryTitle);
-            } else {
-                inventory = Bukkit.createInventory(null, menuType.type(), inventoryTitle);
-            }
 
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuType, annotation.rows(), inventory, annotation.title(), annotation.globalCacheKey());
+            SupportedMenuType menuType = this.supportedMenuTypes().getSupportedMenuType(annotation.type());
+            Inventory inventory = menuType.createInventory(inventoryTitle);
+
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuType, inventory, annotation.title(), annotation.globalCacheKey());
 
             InventoryContents contents = menuSession.getInventoryContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);

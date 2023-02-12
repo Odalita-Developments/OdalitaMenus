@@ -5,7 +5,7 @@ import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.menu.type.MenuType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -17,7 +17,7 @@ public final class ItemProcessor {
 
     @ApiStatus.Internal
     public void initializeItems(MenuSession menuSession, InventoryContents inventoryContents) {
-        MenuType menuType = menuSession.getMenuType();
+        SupportedMenuType menuType = menuSession.getMenuType();
         Inventory inventory = menuSession.getInventory();
 
         MenuItem[][] contents = menuSession.getContents();

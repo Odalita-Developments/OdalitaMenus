@@ -4,20 +4,20 @@ import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.jetbrains.annotations.NotNull;
 
-public final class HopperMenuType implements SupportedMenuType {
+public final class ChestFiveRowMenuType implements SupportedMenuType {
 
     @Override
     public @NotNull MenuType type() {
-        return MenuType.HOPPER;
+        return MenuType.CHEST_5_ROW;
     }
 
     @Override
     public int maxRows() {
-        return 1;
+        return 5;
     }
 
     @Override
     public int maxColumns() {
-        return 5;
+        return 9;
     }
 }

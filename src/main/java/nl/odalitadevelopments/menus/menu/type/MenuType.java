@@ -1,40 +1,53 @@
 package nl.odalitadevelopments.menus.menu.type;
 
-import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Set;
+public enum MenuType {
 
-public interface MenuType {
+    ANVIL(InventoryType.ANVIL),
+    BEACON(InventoryType.BEACON),
+    BLAST_FURNACE(InventoryType.BLAST_FURNACE),
+    BREWING(InventoryType.BREWING),
+    CARTOGRAPHY(InventoryType.CARTOGRAPHY),
+    CHEST_1_ROW(9),
+    CHEST_2_ROW(18),
+    CHEST_3_ROW(27),
+    CHEST_4_ROW(36),
+    CHEST_5_ROW(45),
+    CHEST_6_ROW(54),
+    CRAFTING(InventoryType.WORKBENCH),
+    ENCHANTING(InventoryType.ENCHANTING),
+    FURNACE(InventoryType.FURNACE),
+    GRINDSTONE(InventoryType.GRINDSTONE),
+    HOPPER(InventoryType.HOPPER),
+    LECTERN(InventoryType.LECTERN),
+    LOOM(InventoryType.LOOM),
+    SMITHING(InventoryType.SMITHING),
+    SMOKER(InventoryType.SMOKER),
+    STONE_CUTTER(InventoryType.STONECUTTER),
+    WINDOW_3X3(InventoryType.DROPPER);
 
-    @NotNull
-    InventoryType type();
+    private final int size;
+    private final InventoryType inventoryType;
 
-    int maxRows();
-
-    int maxColumns();
-
-    default @NotNull Collection<@NotNull Integer> otherSlots() {
-        return Set.of();
+    MenuType(int size) {
+        this.size = size;
+        this.inventoryType = null;
     }
 
-    default @NotNull Collection<@NotNull SupportedFeatures> disallowedFeatures() {
-        return Set.of();
+    MenuType(@NotNull InventoryType inventoryType) {
+        this.size = 0;
+        this.inventoryType = inventoryType;
     }
 
-    default boolean fitsInMenu(int slot) {
-        boolean otherSlot = this.otherSlots().contains(slot);
-        if (otherSlot) return true;
-
-        if (this.maxColumns() == 0) return false;
-
-        SlotPos slotPos = SlotPos.of(this.maxRows(), this.maxColumns(), slot);
-        return slotPos.getRow() < this.maxRows() && slotPos.getColumn() < this.maxColumns();
-    }
-
-    default boolean isFeatureAllowed(@NotNull SupportedFeatures feature) {
-        return !this.disallowedFeatures().contains(feature);
+    @NotNull Inventory createInventory(String title) {
+        if (this.inventoryType == null) {
+            return Bukkit.getServer().createInventory(null, this.size, title);
+        } else {
+            return Bukkit.getServer().createInventory(null, this.inventoryType, title);
+        }
     }
 }

@@ -1,14 +1,14 @@
 package nl.odalitadevelopments.menus.menu.type.types;
 
 import nl.odalitadevelopments.menus.menu.type.MenuType;
-import org.bukkit.event.inventory.InventoryType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.jetbrains.annotations.NotNull;
 
-public final class ShulkerBoxMenuType implements MenuType {
+public final class WindowThreeThreeMenuType implements SupportedMenuType {
 
     @Override
-    public @NotNull InventoryType type() {
-        return InventoryType.SHULKER_BOX;
+    public @NotNull MenuType type() {
+        return MenuType.WINDOW_3X3;
     }
 
     @Override
@@ -18,6 +18,6 @@ public final class ShulkerBoxMenuType implements MenuType {
 
     @Override
     public int maxColumns() {
-        return 9;
+        return 3;
     }
 }

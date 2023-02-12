@@ -3,14 +3,13 @@ package nl.odalitadevelopments.menus.menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.InventoryContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
-import nl.odalitadevelopments.menus.menu.type.MenuType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
-import nl.odalitadevelopments.menus.OdalitaMenus;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +25,7 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final Player player;
 
-    private final MenuType menuType;
+    private final SupportedMenuType menuType;
     private final Inventory inventory;
     private final int rows;
     private final int columns;
@@ -44,18 +43,13 @@ public final class MenuSession {
     @Getter(AccessLevel.PACKAGE)
     private final List<Runnable> actionsAfterOpening = new ArrayList<>();
 
-    MenuSession(OdalitaMenus instance, Player player, MenuType menuType, byte rows, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, Player player, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
         this.player = player;
         this.menuType = menuType;
 
-        if (menuType.type() == InventoryType.CHEST) {
-            this.rows = rows;
-            this.columns = 9;
-        } else {
-            this.rows = Math.max(menuType.maxRows(), 1);
-            this.columns = menuType.maxColumns() + menuType.otherSlots().size();
-        }
+        this.rows = Math.max(menuType.maxRows(), 1);
+        this.columns = menuType.maxColumns() + menuType.otherSlots().size();
 
         this.inventory = inventory;
         this.contents = new MenuItem[this.rows][this.columns];

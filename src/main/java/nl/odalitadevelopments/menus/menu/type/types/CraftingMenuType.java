@@ -1,17 +1,17 @@
 package nl.odalitadevelopments.menus.menu.type.types;
 
 import nl.odalitadevelopments.menus.menu.type.MenuType;
-import org.bukkit.event.inventory.InventoryType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
 
-public final class WorkbenchMenuType implements MenuType {
+public final class CraftingMenuType implements SupportedMenuType {
 
     @Override
-    public @NotNull InventoryType type() {
-        return InventoryType.WORKBENCH;
+    public @NotNull MenuType type() {
+        return MenuType.CRAFTING;
     }
 
     @Override

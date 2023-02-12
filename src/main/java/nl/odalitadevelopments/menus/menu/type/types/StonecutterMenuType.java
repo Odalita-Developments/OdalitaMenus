@@ -1,18 +1,18 @@
 package nl.odalitadevelopments.menus.menu.type.types;
 
 import nl.odalitadevelopments.menus.menu.type.MenuType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
-import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
 
-public final class StonecutterMenuType implements MenuType {
+public final class StonecutterMenuType implements SupportedMenuType {
 
     @Override
-    public @NotNull InventoryType type() {
-        return InventoryType.STONECUTTER;
+    public @NotNull MenuType type() {
+        return MenuType.STONE_CUTTER;
     }
 
     @Override

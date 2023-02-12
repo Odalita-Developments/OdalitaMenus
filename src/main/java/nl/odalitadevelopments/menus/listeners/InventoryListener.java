@@ -7,7 +7,7 @@ import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
 import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
-import nl.odalitadevelopments.menus.menu.type.MenuType;
+import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +33,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
             return;
         }
 
-        MenuType menuType = openMenuSession.getMenuType();
+        SupportedMenuType menuType = openMenuSession.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
         if (event.getView().getTopInventory().equals(openMenuSession.getInventory()) && event.getRawSlot() >= 0) {
