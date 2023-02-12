@@ -1,112 +1,68 @@
 package nl.odalitadevelopments.menus;
 
-import lombok.Getter;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
-import nl.odalitadevelopments.menus.listeners.InventoryListener;
+import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
+import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
+import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
+import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.session.SessionCache;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
-import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+public interface OdalitaMenus {
 
-@Getter
-public final class OdalitaMenus implements Listener {
-
-    private static final Map<Plugin, OdalitaMenus> INSTANCES = new HashMap<>();
-
-    public static @NotNull OdalitaMenus createInstance(@NotNull JavaPlugin javaPlugin) {
-        return new OdalitaMenus(javaPlugin);
+    static @NotNull OdalitaMenus createInstance(@NotNull JavaPlugin javaPlugin) {
+        return OdalitaMenusImpl.createInstance(javaPlugin);
     }
 
-    public static @NotNull OdalitaMenus getInstance(@NotNull JavaPlugin javaPlugin) {
-        OdalitaMenus instance = INSTANCES.get(javaPlugin);
-        if (instance == null) {
-            throw new IllegalStateException("OdalitaMenus is not initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
-        }
-
-        return instance;
+    static @NotNull OdalitaMenus getInstance(@NotNull JavaPlugin javaPlugin) {
+        return OdalitaMenusImpl.getInstance(javaPlugin);
     }
 
-    public static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
-        return INSTANCES.containsKey(javaPlugin);
+    static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
+        return OdalitaMenusImpl.hasInstance(javaPlugin);
     }
 
-    private final JavaPlugin javaPlugin;
+    @NotNull JavaPlugin getJavaPlugin();
 
-    private final SupportedMenuTypes supportedMenuTypes;
+    @NotNull SupportedMenuTypes getSupportedMenuTypes();
 
-    private final ItemProcessor itemProcessor;
-    private final MenuProcessor menuProcessor;
-    private final SessionCache sessionCache;
+    @NotNull ItemProcessor getItemProcessor();
 
-    private final PatternContainer patternContainer;
+    @NotNull MenuProcessor getMenuProcessor();
 
-    private final ProvidersContainer providersContainer;
-    private final CooldownContainer cooldownContainer;
+    @NotNull SessionCache getSessionCache();
 
-    private final InventoryListener inventoryListener;
+    @NotNull PatternContainer getPatternContainer();
 
-    private final ScheduledFuture<?> menuTask;
+    @NotNull ProvidersContainer getProvidersContainer();
 
-    private OdalitaMenus(JavaPlugin javaPlugin) {
-        if (INSTANCES.containsKey(javaPlugin)) {
-            throw new IllegalStateException("OdalitaMenus is already initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
-        }
+    @NotNull CooldownContainer getCooldownContainer();
 
-        this.javaPlugin = javaPlugin;
+    <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader);
 
-        this.supportedMenuTypes = new SupportedMenuTypes();
+    <P extends MenuProvider> boolean isProviderLoaderRegistered(@NotNull Class<P> providerClass);
 
-        this.itemProcessor = new ItemProcessor();
-        this.menuProcessor = new MenuProcessor(this, this.itemProcessor, this.supportedMenuTypes);
-        this.sessionCache = new SessionCache();
+    <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P> loader);
 
-        this.patternContainer = new PatternContainer();
+    <P extends MenuFrameProvider> boolean isFrameProviderLoaderRegistered(@NotNull Class<P> providerClass);
 
-        this.providersContainer = new ProvidersContainer();
-        this.cooldownContainer = new CooldownContainer();
+    <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader);
 
-        this.inventoryListener = new InventoryListener(this, this.menuProcessor);
-        javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
-        javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
-        javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
+    void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player);
 
-        this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
+    <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
+                                                                        @NotNull MenuProviderLoader<P> providerLoader);
 
-        INSTANCES.put(javaPlugin, this);
-    }
+    <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player);
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    private void onPluginDisable(PluginDisableEvent event) {
-        if (this.javaPlugin.equals(event.getPlugin())) {
-            for (Player player : this.menuProcessor.getOpenMenus().keySet()) {
-                player.closeInventory();
-            }
-
-            this.menuTask.cancel(true);
-
-            HandlerList.unregisterAll(this.inventoryListener);
-            HandlerList.unregisterAll(this.sessionCache);
-            HandlerList.unregisterAll(this);
-
-            INSTANCES.remove(this.javaPlugin);
-        }
-    }
+    <CacheType, T extends MenuPattern<CacheType>> void registerPattern(@NotNull T pattern);
 }
