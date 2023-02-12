@@ -9,9 +9,8 @@ import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
 import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
-import nl.odalitadevelopments.menus.menu.providers.frame.GlobalMenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
-import nl.odalitadevelopments.menus.menu.providers.frame.PlayerMenuFrameProvider;
+import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.*;
@@ -647,13 +646,9 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
             throw new IllegalArgumentException("The frameClass '" + frameClass.getName() + "' does not have a constructor with the arguments: " + Arrays.toString(arguments), exception);
         }
 
-        if (frame instanceof GlobalMenuFrameProvider globalMenuFrame) {
-            globalMenuFrame.onLoad(new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler));
-        } else if (frame instanceof PlayerMenuFrameProvider playerMenuFrame) {
-            playerMenuFrame.onLoad(this.menuSession.getPlayer(), new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler));
-        } else {
-            throw new IllegalArgumentException("The frame '" + frame.getClass().getName() + "' is not supported!");
-        }
+        MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
+        InventoryFrameContentsImpl frameContents = new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler);
+        loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
         return true;

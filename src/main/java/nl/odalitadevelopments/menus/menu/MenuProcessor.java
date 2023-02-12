@@ -2,14 +2,15 @@ package nl.odalitadevelopments.menus.menu;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
-import nl.odalitadevelopments.menus.OdalitaMenus;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +22,13 @@ public final class MenuProcessor {
     private final SupportedMenuTypes supportedMenuTypes;
 
     @Getter
+    private final MenuFrameProcessor menuFrameProcessor;
+
+    @Getter
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
+
+    private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaderCache = new HashMap<>();
+
     @Getter
     private final Map<Player, MenuSession> openMenus = new ConcurrentHashMap<>();
 
@@ -29,10 +36,19 @@ public final class MenuProcessor {
         this.instance = instance;
         this.itemProcessor = itemProcessor;
         this.supportedMenuTypes = supportedMenuTypes;
+
+        this.menuFrameProcessor = new MenuFrameProcessor(this);
     }
 
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
-        this.providerLoaders.put(providerClass, loader);
+        MenuProviderLoader<?> previous = this.providerLoaders.putIfAbsent(providerClass, loader);
+        if (previous != null) {
+            throw new IllegalStateException("Provider loader for '" + providerClass.getName() + "' already registered");
+        }
+    }
+
+    public <P extends MenuProvider> boolean isProviderLoaderRegistered(@NotNull Class<P> providerClass) {
+        return this.providerLoaders.containsKey(providerClass);
     }
 
     public <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader) {
@@ -52,24 +68,33 @@ public final class MenuProcessor {
 
     @SuppressWarnings("unchecked")
     public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player) {
-        MenuProviderLoader<P> providerLoader = null;
+        MenuProviderLoader<P> providerLoader = (MenuProviderLoader<P>) this.providerLoaderCache.get(menuProvider.getClass());
+        if (providerLoader == null) {
+            Class<?> providerLoaderClass = this.findProviderLoader(menuProvider.getClass(), MenuProvider.class);
+            providerLoader = (MenuProviderLoader<P>) this.providerLoaders.get(providerLoaderClass);
+            if (providerLoader == null) {
+                providerLoader = MenuProviderLoader.defaultLoader();
+            }
 
+            this.providerLoaderCache.put(menuProvider.getClass(), providerLoader);
+        }
+
+
+        return this.openMenuBuilder(menuProvider, player, providerLoader);
+    }
+
+    Class<?> findProviderLoader(Class<?> menuProviderClass, Class<?> providerClass) {
         try {
-            Class<?>[] interfaces = menuProvider.getClass().getInterfaces();
+            Class<?>[] interfaces = menuProviderClass.getInterfaces();
             for (Class<?> menuInterface : interfaces) {
-                if (MenuProvider.class.isAssignableFrom(menuInterface)) {
-                    providerLoader = (MenuProviderLoader<P>) this.providerLoaders.get(menuInterface);
-                    break;
+                if (providerClass.isAssignableFrom(menuInterface)) {
+                    return menuInterface;
                 }
             }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
 
-        if (providerLoader == null) {
-            providerLoader = MenuProviderLoader.defaultLoader();
-        }
-
-        return this.openMenuBuilder(menuProvider, player, providerLoader);
+        return null;
     }
 }
