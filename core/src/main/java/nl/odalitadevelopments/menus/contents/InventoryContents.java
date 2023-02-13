@@ -244,6 +244,9 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
     @ApiStatus.Experimental
     void registerFrameOverlaySlots(int... slots);
 
+    @ApiStatus.Experimental
+    @Nullable String loadedFrameId();
+
 
     /* SCHEDULER */
     @NotNull InventoryContentsScheduler scheduler();

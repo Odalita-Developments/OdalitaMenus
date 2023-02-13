@@ -31,12 +31,12 @@ public final class PageItem implements PageUpdatableItem {
         return new PageItem(Type.PREVIOUS, pagination, false);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnFirstPage) {
-        return new PageItem(Type.NEXT, pagination, itemStack, showOnFirstPage);
+    public static @NotNull PageItem next(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnLastPage) {
+        return new PageItem(Type.NEXT, pagination, itemStack, showOnLastPage);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination, boolean showOnFirstPage) {
-        return new PageItem(Type.NEXT, pagination, showOnFirstPage);
+    public static @NotNull PageItem next(@NotNull Pagination pagination, boolean showOnLastPage) {
+        return new PageItem(Type.NEXT, pagination, showOnLastPage);
     }
 
     public static @NotNull PageItem next(@NotNull Pagination pagination, @NotNull ItemStack itemStack) {
@@ -66,7 +66,7 @@ public final class PageItem implements PageUpdatableItem {
 
     @Override
     public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance) {
-        if (!this.showOnFirstOrLastPage && !this.canBeSeen()) {
+        if (!this.showOnFirstOrLastPage && !this.canBeUsed()) {
             return new ItemStack(Material.AIR);
         }
 
@@ -91,13 +91,13 @@ public final class PageItem implements PageUpdatableItem {
                 return;
             }
 
-            if (this.canBeSeen()) {
+            if (this.canBeUsed()) {
                 this.type.handle(this.pagination);
             }
         };
     }
 
-    private boolean canBeSeen() {
+    private boolean canBeUsed() {
         return (this.type == Type.PREVIOUS && !this.pagination.isFirstPage())
                 || (this.type == Type.NEXT && !this.pagination.isLastPage());
     }

@@ -693,6 +693,11 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     }
 
     @Override
+    public @Nullable String loadedFrameId() {
+        return this.cache.getLoadedFrameId();
+    }
+
+    @Override
     public @NotNull MenuSessionCache cache() {
         return this.cache;
     }

@@ -142,6 +142,11 @@ final class InventoryFrameContentsImpl extends InventoryContentsImpl {
     }
 
     @Override
+    public @Nullable String loadedFrameId() {
+        throw new UnsupportedOperationException("Cannot get loaded frame id inside a frame");
+    }
+
+    @Override
     protected void set(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, Consumer<SlotPos> setter) {
         slotPos = slotPos.convertTo(this.maxRows(), this.maxColumns());
         slotPos = slotPos.convertFromFrame(this.menuSession.getRows(), this.menuSession.getColumns(), this.frameData);
