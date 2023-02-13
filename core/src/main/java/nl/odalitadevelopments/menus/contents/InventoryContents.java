@@ -265,7 +265,6 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
 
     void setGlobalCacheKey(@NotNull String key);
 
-
     /* OTHER */
     void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer);
 

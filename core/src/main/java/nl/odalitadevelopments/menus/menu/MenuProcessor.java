@@ -41,6 +41,10 @@ public final class MenuProcessor {
     }
 
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
+        if (!providerClass.isInterface()) {
+            throw new IllegalArgumentException("Menu providers must be an interface");
+        }
+
         MenuProviderLoader<?> previous = this.providerLoaders.putIfAbsent(providerClass, loader);
         if (previous != null) {
             throw new IllegalStateException("Provider loader for '" + providerClass.getName() + "' already registered");

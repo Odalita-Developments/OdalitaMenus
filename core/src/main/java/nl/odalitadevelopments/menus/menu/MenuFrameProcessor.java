@@ -23,6 +23,10 @@ public final class MenuFrameProcessor {
     }
 
     public <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P> loader) {
+        if (!providerClass.isInterface()) {
+            throw new IllegalArgumentException("Frame menu providers must be an interface");
+        }
+
         MenuFrameProviderLoader<?> previous = this.frameProviderLoaders.putIfAbsent(providerClass, loader);
         if (previous != null) {
             throw new IllegalStateException("Frame provider loader for '" + providerClass.getName() + "' already registered");
