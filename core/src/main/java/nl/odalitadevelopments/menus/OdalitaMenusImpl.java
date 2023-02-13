@@ -122,19 +122,8 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     }
 
     @Override
-    public <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader) {
-        this.menuProcessor.openMenu(menuProvider, player, providerLoader);
-    }
-
-    @Override
     public void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player) {
         this.menuProcessor.openMenu(menuProvider, player);
-    }
-
-    @Override
-    public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
-                                                                               @NotNull MenuProviderLoader<P> providerLoader) {
-        return this.menuProcessor.openMenuBuilder(menuProvider, player, providerLoader);
     }
 
     @Override
@@ -150,11 +139,11 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onPluginDisable(PluginDisableEvent event) {
         if (this.javaPlugin.equals(event.getPlugin())) {
+            this.menuTask.cancel(true);
+
             for (Player player : this.menuProcessor.getOpenMenus().keySet()) {
                 player.closeInventory();
             }
-
-            this.menuTask.cancel(true);
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.sessionCache);

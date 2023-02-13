@@ -55,12 +55,7 @@ public interface OdalitaMenus {
 
     <P extends MenuFrameProvider> boolean isFrameProviderLoaderRegistered(@NotNull Class<P> providerClass);
 
-    <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader);
-
     void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player);
-
-    <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
-                                                                        @NotNull MenuProviderLoader<P> providerLoader);
 
     <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player);
 

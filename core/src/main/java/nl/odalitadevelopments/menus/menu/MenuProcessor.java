@@ -55,19 +55,9 @@ public final class MenuProcessor {
         return this.providerLoaders.containsKey(providerClass);
     }
 
-    public <P extends MenuProvider> void openMenu(@NotNull P menuProvider, @NotNull Player player, @NotNull MenuProviderLoader<P> providerLoader) {
-        this.openMenuBuilder(menuProvider, player, providerLoader)
-                .open();
-    }
-
     public void openMenu(@NotNull MenuProvider menuProvider, @NotNull Player player) {
         this.openMenuBuilder(menuProvider, player)
                 .open();
-    }
-
-    public <P extends MenuProvider> @NotNull MenuOpenerBuilder openMenuBuilder(@NotNull P menuProvider, @NotNull Player player,
-                                                                               @NotNull MenuProviderLoader<P> providerLoader) {
-        return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, this.supportedMenuTypes, menuProvider, player, providerLoader);
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +74,7 @@ public final class MenuProcessor {
         }
 
 
-        return this.openMenuBuilder(menuProvider, player, providerLoader);
+        return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, this.supportedMenuTypes, menuProvider, player, providerLoader);
     }
 
     Class<?> findProviderLoader(Class<?> menuProviderClass, Class<?> providerClass) {
