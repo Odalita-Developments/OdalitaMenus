@@ -11,6 +11,7 @@ import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +43,8 @@ public final class MenuSession {
     private boolean opened = false;
     @Getter(AccessLevel.PACKAGE)
     private final List<Runnable> actionsAfterOpening = new ArrayList<>();
+
+    private boolean closed = false;
 
     MenuSession(OdalitaMenus instance, Player player, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
@@ -96,5 +99,10 @@ public final class MenuSession {
 
     public boolean fits(int slot) {
         return this.menuType.fitsInMenu(slot);
+    }
+
+    @ApiStatus.Internal
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }

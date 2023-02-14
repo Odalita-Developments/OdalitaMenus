@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.listeners;
 
-import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
@@ -124,6 +124,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
                 });
             }
 
+            openMenuSession.setClosed(true);
             this.menuProcessor.getOpenMenus().remove(player);
         }
     }

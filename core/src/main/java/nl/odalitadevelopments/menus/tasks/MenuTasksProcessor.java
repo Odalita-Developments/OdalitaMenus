@@ -31,6 +31,10 @@ public final class MenuTasksProcessor implements Runnable {
     public void run() {
         int tick = this.tickCounter.getAndIncrement();
 
+        for (MenuTaskRunnable runnable : this.tasks) {
+            runnable.runGlobally(this.instance, this.menuProcessor, tick);
+        }
+
         Map<Player, MenuSession> openMenus = this.menuProcessor.getOpenMenus();
         if (openMenus.isEmpty()) return;
 
@@ -42,7 +46,7 @@ public final class MenuTasksProcessor implements Runnable {
             if (player == null || !player.isOnline()) continue;
 
             for (MenuTaskRunnable runnable : this.tasks) {
-                runnable.run(this.instance, this.menuProcessor, tick, player, menuSession);
+                runnable.runPerSession(this.instance, this.menuProcessor, tick, player, menuSession);
             }
         }
     }
