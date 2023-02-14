@@ -71,9 +71,9 @@ public final class InventoryUtils {
                 TITLE_FIELD.set(activeContainer, titleComponent);
                 TITLE_FIELD.setAccessible(false);
 
-                if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_18_2)) {
+                if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17)) {
                     REFRESH_INVENTORY.invoke(activeContainer);
-                } else if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
+                } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
                     Object items = GET_NMS_CONTAINER_ITEMS_1165.get(activeContainer);
                     REFRESH_INVENTORY_1165.invoke(entityPlayer, activeContainer, items);
                 }
