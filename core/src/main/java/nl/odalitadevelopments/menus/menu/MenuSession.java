@@ -65,9 +65,9 @@ public final class MenuSession {
     }
 
     public synchronized void setTitle(@NotNull String title) {
-        if (this.title.equals(title) || title.isEmpty() || title.isBlank()) return;
+        if (this.title.equals(title)) return;
 
-        this.title = title;
+        this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
         if (!this.opened) {
             this.actionsAfterOpening.add(() -> InventoryUtils.changeTitle(this.inventory, title));
