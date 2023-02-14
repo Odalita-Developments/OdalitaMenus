@@ -31,6 +31,9 @@ public class Table<R, C, V> implements Iterable<Table.Entry<R, C, V>> {
         this.colMapSupplier = columnMapSupplier;
     }
 
+    public Map<R, Map<C, V>> getRowMap() {
+        return rowMap;
+    }
 
     public V get(R row, C col) {
         return getIfExists(row, col);

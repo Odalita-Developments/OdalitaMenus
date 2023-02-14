@@ -2,11 +2,15 @@ package nl.odalitadevelopments.menus.utils.cooldown;
 
 import com.google.common.base.Preconditions;
 import nl.odalitadevelopments.menus.utils.collection.Table;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public final class CooldownContainer {
+public final class CooldownContainer implements Listener {
 
     private final Table<UUID, String, Cooldown> playerCooldowns = new Table<>();
 
@@ -47,9 +51,13 @@ public final class CooldownContainer {
         return this.checkAndCreate(uuid, name, Cooldown.of(value, timeUnit));
     }
 
-    public void removeExpiredCooldowns() {
-        this.playerCooldowns.removeIf((uuid, name, cooldown) -> {
-            return cooldown.isExpired();
-        });
+    @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        this.playerCooldowns.getRowMap().remove(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    private void onPlayerKick(PlayerKickEvent event) {
+        this.playerCooldowns.getRowMap().remove(event.getPlayer().getUniqueId());
     }
 }

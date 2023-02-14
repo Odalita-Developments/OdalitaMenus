@@ -94,6 +94,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
         javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
+        javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
         this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
@@ -147,6 +148,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.sessionCache);
+            HandlerList.unregisterAll(this.cooldownContainer);
             HandlerList.unregisterAll(this);
 
             INSTANCES.remove(this.javaPlugin);
