@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DisplayItem implements MenuItem {
+public final class DisplayItem extends MenuItem {
 
     public static @NotNull DisplayItem of(@NotNull ItemStack itemStack) {
         return new DisplayItem(itemStack);

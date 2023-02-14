@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public final class ScrollItem implements PageUpdatableItem {
+public final class ScrollItem extends PageUpdatableItem {
 
     public static @NotNull ScrollItem up(@NotNull Scrollable scrollable, @NotNull ItemStack itemStack, boolean showOnLastPage) {
         return new ScrollItem(Direction.UP, scrollable, itemStack, showOnLastPage);

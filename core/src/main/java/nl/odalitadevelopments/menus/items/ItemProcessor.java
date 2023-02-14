@@ -2,10 +2,10 @@ package nl.odalitadevelopments.menus.items;
 
 import nl.odalitadevelopments.menus.contents.InventoryContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
-import nl.odalitadevelopments.menus.pagination.Pagination;
-import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
+import nl.odalitadevelopments.menus.pagination.Pagination;
+import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.ApiStatus;
 

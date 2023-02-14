@@ -7,19 +7,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public interface MenuItem {
+public abstract class MenuItem {
 
-    @NotNull
-    ItemStack getItemStack(@NotNull OdalitaMenus instance);
 
-    @NotNull
-    Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance);
 
-    default boolean isUpdatable() {
+    public abstract @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance);
+
+    public abstract @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance);
+
+    public boolean isUpdatable() {
         return false;
     }
 
-    default int getUpdateTicks() {
+    public int getUpdateTicks() {
         return -1;
     }
 }

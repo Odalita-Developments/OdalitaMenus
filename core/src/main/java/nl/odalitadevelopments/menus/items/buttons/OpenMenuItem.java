@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class OpenMenuItem<P extends MenuProvider> implements MenuItem {
+public class OpenMenuItem<P extends MenuProvider> extends MenuItem {
 
     public static <P extends MenuProvider> @NotNull OpenMenuItem<P> of(@NotNull ItemStack itemStack, @NotNull P menuProvider,
                                                                        @NotNull Function<@NotNull MenuOpenerBuilder, @NotNull MenuOpenerBuilder> builderFunction) {

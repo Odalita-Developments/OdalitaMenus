@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public final class PageItem implements PageUpdatableItem {
+public final class PageItem extends PageUpdatableItem {
 
     public static @NotNull PageItem previous(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnFirstPage) {
         return new PageItem(Type.PREVIOUS, pagination, itemStack, showOnFirstPage);

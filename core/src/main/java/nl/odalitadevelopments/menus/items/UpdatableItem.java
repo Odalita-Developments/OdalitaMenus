@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class UpdatableItem implements MenuItem {
+public final class UpdatableItem extends MenuItem {
 
     public static @NotNull UpdatableItem of(@NotNull Supplier<@NotNull ItemStack> itemStackSupplier,
                                             @NotNull Consumer<@NotNull InventoryClickEvent> clickHandler, int updateTicks) {

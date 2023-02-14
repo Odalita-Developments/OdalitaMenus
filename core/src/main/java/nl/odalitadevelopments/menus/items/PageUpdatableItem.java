@@ -1,4 +1,4 @@
 package nl.odalitadevelopments.menus.items;
 
-public interface PageUpdatableItem extends MenuItem {
+public abstract class PageUpdatableItem extends MenuItem {
 }

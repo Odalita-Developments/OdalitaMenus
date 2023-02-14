@@ -98,8 +98,19 @@ public final class ConfirmMenu implements PlayerMenuProvider {
         BIG // 3x3 items
     }
 
-    private record ConfirmItem(InventoryContents contents, ConfirmMenuBuilderImpl builder, boolean confirm,
-                               MenuItem menuItem) implements MenuItem {
+    private static final class ConfirmItem extends MenuItem {
+
+        private final InventoryContents contents;
+        private final ConfirmMenuBuilderImpl builder;
+        private final boolean confirm;
+        private final MenuItem menuItem;
+
+        private ConfirmItem(InventoryContents contents, ConfirmMenuBuilderImpl builder, boolean confirm, MenuItem menuItem) {
+            this.contents = contents;
+            this.builder = builder;
+            this.confirm = confirm;
+            this.menuItem = menuItem;
+        }
 
         @Override
         public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance) {

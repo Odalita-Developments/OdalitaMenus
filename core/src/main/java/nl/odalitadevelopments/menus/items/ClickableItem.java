@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ClickableItem implements MenuItem {
+public final class ClickableItem extends MenuItem {
 
     public static @NotNull ClickableItem of(@NotNull ItemStack itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> clickHandler) {
         return new ClickableItem(itemStack, clickHandler);

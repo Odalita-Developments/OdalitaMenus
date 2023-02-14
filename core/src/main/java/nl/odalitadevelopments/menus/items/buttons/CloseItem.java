@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public final class CloseItem implements MenuItem {
+public final class CloseItem extends MenuItem {
 
     public static @NotNull CloseItem of(@NotNull ItemStack itemStack) {
         return new CloseItem(itemStack);
