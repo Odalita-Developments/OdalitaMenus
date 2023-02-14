@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public interface OdalitaMenus {
+public sealed interface OdalitaMenus permits OdalitaMenusImpl {
 
     static @NotNull OdalitaMenus createInstance(@NotNull JavaPlugin javaPlugin) {
         return OdalitaMenusImpl.createInstance(javaPlugin);
