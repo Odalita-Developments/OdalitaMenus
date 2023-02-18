@@ -1,10 +1,11 @@
-package nl.odalitadevelopments.menus.menu;
+package nl.odalitadevelopments.menus.contents.placeableitem;
 
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface PlaceableItemAction {
+@FunctionalInterface
+public interface PlaceableItemClickAction {
 
     boolean shouldPlace(@NotNull SlotPos slotPos, @NotNull InventoryClickEvent event);
 }

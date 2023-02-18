@@ -1,9 +1,8 @@
 package nl.odalitadevelopments.menus.contents;
 
-import nl.odalitadevelopments.menus.menu.MenuSession;
 import org.jetbrains.annotations.NotNull;
 
-record InventoryContentsSchedulerImpl(MenuSession menuSession) implements InventoryContentsScheduler {
+record InventoryContentsSchedulerImpl(InventoryContentsImpl inventoryContents) implements InventoryContentsScheduler {
 
     @Override
     public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
@@ -11,15 +10,15 @@ record InventoryContentsSchedulerImpl(MenuSession menuSession) implements Invent
             throw new IllegalArgumentException("Delay, period must be positive");
         }
 
-        synchronized (this.menuSession.getCache().getTasks()) {
+        synchronized (this.inventoryContents.cache.getTasks()) {
             runTimes = Math.max(runTimes, 0);
 
-            if (this.menuSession.getCache().getTasks().containsKey(id)) {
+            if (this.inventoryContents.cache.getTasks().containsKey(id)) {
                 throw new IllegalArgumentException("Task with id '" + id + "' already exists");
             }
 
             MenuTask task = new MenuTask(this, id, runnable, ticksDelay, ticksPeriod, runTimes);
-            this.menuSession.getCache().getTasks().put(task.getId(), task);
+            this.inventoryContents.cache.getTasks().put(task.getId(), task);
             return task;
         }
     }
@@ -41,15 +40,15 @@ record InventoryContentsSchedulerImpl(MenuSession menuSession) implements Invent
 
     @Override
     public boolean isRunning(@NotNull String id) {
-        synchronized (this.menuSession.getCache().getTasks()) {
-            return this.menuSession.getCache().getTasks().containsKey(id);
+        synchronized (this.inventoryContents.cache.getTasks()) {
+            return this.inventoryContents.cache.getTasks().containsKey(id);
         }
     }
 
     @Override
     public void cancel(@NotNull String id) {
-        synchronized (this.menuSession.getCache().getTasks()) {
-            this.menuSession.getCache().getTasks().remove(id);
+        synchronized (this.inventoryContents.cache.getTasks()) {
+            this.inventoryContents.cache.getTasks().remove(id);
         }
     }
 }

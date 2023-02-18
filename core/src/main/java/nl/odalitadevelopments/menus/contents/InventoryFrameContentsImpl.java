@@ -4,8 +4,7 @@ import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.MenuSessionCache;
-import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
-import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +18,8 @@ final class InventoryFrameContentsImpl extends InventoryContentsImpl {
 
     private final MenuFrameData frameData;
 
-    InventoryFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, InventoryContentsScheduler scheduler) {
-        super(menuSession, cache, scheduler);
+    InventoryFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, InventoryContentsScheduler scheduler, InventoryContentsEvents events) {
+        super(menuSession, cache, scheduler, events);
 
         this.frameData = frameData;
     }
@@ -83,11 +82,6 @@ final class InventoryFrameContentsImpl extends InventoryContentsImpl {
 
     @Override
     public void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
-    }
-
-    @Override
-    public void onPlaceableItemClick(@NotNull PlaceableItemAction action) {
         throw new UnsupportedOperationException("Placeable items are not supported in frames.");
     }
 

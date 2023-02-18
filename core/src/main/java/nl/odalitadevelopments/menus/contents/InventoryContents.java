@@ -7,8 +7,7 @@ import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.MenuSessionCache;
-import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
-import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.DirectionPattern;
@@ -34,11 +33,17 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
 
     @ApiStatus.Internal
     static InventoryContents create(@NotNull MenuSession menuSession) {
-        return new InventoryContentsImpl(menuSession, new InventoryContentsSchedulerImpl(menuSession));
+        return new InventoryContentsImpl(menuSession);
     }
 
     @NotNull
     MenuSession menuSession();
+
+    @NotNull
+    InventoryContentsScheduler scheduler();
+
+    @NotNull
+    InventoryContentsEvents events();
 
     @Nullable
     MenuFrameData menuFrameData();
@@ -199,8 +204,6 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
 
     void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack);
 
-    void onPlaceableItemClick(@NotNull PlaceableItemAction action);
-
     void removePlaceableItems(@NotNull PlaceableItemsCloseAction action);
 
     @NotNull Optional<@NotNull SlotPos> firstEmptyPlaceableItemSlot();
@@ -248,10 +251,6 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
     @Nullable String loadedFrameId();
 
 
-    /* SCHEDULER */
-    @NotNull InventoryContentsScheduler scheduler();
-
-
     /* CACHE */
     @NotNull
     MenuSessionCache cache();
@@ -269,8 +268,6 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
     void setGlobalCacheKey(@NotNull String key);
 
     /* OTHER */
-    void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer);
-
     void setTitle(@NotNull String title);
 
     void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action);

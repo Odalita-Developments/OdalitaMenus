@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.menu;
+package nl.odalitadevelopments.menus.contents.placeableitem;
 
 public enum PlaceableItemsCloseAction {
 

@@ -1,12 +1,13 @@
 package nl.odalitadevelopments.menus.listeners;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
-import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +54,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
 
             if (!placeableItems.isEmpty() && !clickedTopInventory) return;
             if (placeableItems.contains(event.getRawSlot())) {
-                PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
+                PlaceableItemClickAction placeableItemAction = openMenuSession.getCache().getPlaceableItemClickAction();
                 if (placeableItemAction != null && !placeableItemAction.shouldPlace(
                         SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()),
                         event)) {
@@ -77,6 +79,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
         MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
         if (openMenuSession == null) return;
 
+        SupportedMenuType menuType = openMenuSession.getMenuType();
         List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
         if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
@@ -91,16 +94,19 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
                 return;
             }
 
-            PlaceableItemAction placeableItemAction = openMenuSession.getCache().getPlaceableItemAction();
-            if (placeableItemAction != null) {
-                for (Integer slot : inventorySlots) {
-                    if (!placeableItemAction.shouldPlace(
-                            SlotPos.of(openMenuSession.getMenuType().maxRows(), openMenuSession.getMenuType().maxColumns(), slot),
-                            new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, slot, ClickType.UNKNOWN, InventoryAction.UNKNOWN))) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
+            PlaceableItemDragAction placeableItemAction = openMenuSession.getCache().getPlaceableItemDragAction();
+            if (placeableItemAction == null) {
+                event.setCancelled(true);
+                return;
+            }
+
+            List<SlotPos> slotPosses = new ArrayList<>();
+            for (Integer slot : inventorySlots) {
+                slotPosses.add(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot));
+            }
+
+            if (!placeableItemAction.shouldPlace(slotPosses, event)) {
+                event.setCancelled(true);
             }
         }
     }

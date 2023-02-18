@@ -7,8 +7,7 @@ import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.MenuSessionCache;
-import nl.odalitadevelopments.menus.menu.PlaceableItemAction;
-import nl.odalitadevelopments.menus.menu.PlaceableItemsCloseAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
@@ -31,20 +30,23 @@ import java.util.function.Supplier;
 
 sealed class InventoryContentsImpl implements InventoryContents permits InventoryFrameContentsImpl {
 
-    protected final MenuSession menuSession;
-    protected final MenuSessionCache cache;
-    protected final InventoryContentsScheduler scheduler;
+    final MenuSession menuSession;
+    final MenuSessionCache cache;
+    final InventoryContentsScheduler scheduler;
+    final InventoryContentsEvents events;
 
-    InventoryContentsImpl(MenuSession menuSession, InventoryContentsScheduler scheduler) {
+    InventoryContentsImpl(MenuSession menuSession) {
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
-        this.scheduler = scheduler;
+        this.scheduler = new InventoryContentsSchedulerImpl(this);
+        this.events = new InventoryContentsEventsImpl(this);
     }
 
-    InventoryContentsImpl(MenuSession menuSession, MenuSessionCache cache, InventoryContentsScheduler scheduler) {
+    InventoryContentsImpl(MenuSession menuSession, MenuSessionCache cache, InventoryContentsScheduler scheduler, InventoryContentsEvents events) {
         this.menuSession = menuSession;
         this.cache = cache;
         this.scheduler = scheduler;
+        this.events = events;
     }
 
     @Override
@@ -55,6 +57,11 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     @Override
     public @NotNull InventoryContentsScheduler scheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    public @NotNull InventoryContentsEvents events() {
+        return this.events;
     }
 
     @Override
@@ -502,11 +509,6 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     }
 
     @Override
-    public void onPlaceableItemClick(@NotNull PlaceableItemAction action) {
-        this.cache.setPlaceableItemAction(action);
-    }
-
-    @Override
     public void removePlaceableItems(@NotNull PlaceableItemsCloseAction action) {
         this.cache.setPlaceableItemsCloseAction(action);
     }
@@ -647,7 +649,7 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
         }
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
-        InventoryFrameContentsImpl frameContents = new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler);
+        InventoryFrameContentsImpl frameContents = new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.events);
         loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
@@ -727,11 +729,6 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     @Override
     public synchronized void setGlobalCacheKey(@NotNull String key) {
         this.menuSession.setGlobalCacheKey(key);
-    }
-
-    @Override
-    public void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer) {
-        this.cache.setPlayerInventoryClickAction(eventConsumer);
     }
 
     @Override
