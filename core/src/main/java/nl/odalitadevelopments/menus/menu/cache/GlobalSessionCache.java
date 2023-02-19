@@ -1,8 +1,7 @@
-package nl.odalitadevelopments.menus.menu.session;
+package nl.odalitadevelopments.menus.menu.cache;
 
-import lombok.RequiredArgsConstructor;
-import nl.odalitadevelopments.menus.utils.collection.Table;
 import nl.odalitadevelopments.menus.menu.MenuSession;
+import nl.odalitadevelopments.menus.utils.collection.Table;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,8 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public final class SessionCache implements Listener {
+public final class GlobalSessionCache implements Listener {
 
     private final Table<UUID, String, Map<String, Object>> playerMenuCache = new Table<>();
 
@@ -33,12 +31,12 @@ public final class SessionCache implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    private void onPlayerQuit(PlayerQuitEvent event) {
         this.playerMenuCache.removeIf((uuid, key, map) -> uuid.equals(event.getPlayer().getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerKick(PlayerKickEvent event) {
+    private void onPlayerKick(PlayerKickEvent event) {
         this.playerMenuCache.removeIf((uuid, key, map) -> uuid.equals(event.getPlayer().getUniqueId()));
     }
 }

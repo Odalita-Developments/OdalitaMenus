@@ -10,7 +10,7 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
-import nl.odalitadevelopments.menus.menu.session.SessionCache;
+import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
@@ -61,7 +61,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
     private final ItemProcessor itemProcessor;
     private final MenuProcessor menuProcessor;
-    private final SessionCache sessionCache;
+    private final GlobalSessionCache globalSessionCache;
 
     private final PatternContainer patternContainer;
 
@@ -84,7 +84,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.itemProcessor = new ItemProcessor();
         this.menuProcessor = new MenuProcessor(this, this.itemProcessor, this.supportedMenuTypes);
-        this.sessionCache = new SessionCache();
+        this.globalSessionCache = new GlobalSessionCache();
 
         this.patternContainer = new PatternContainer();
 
@@ -93,7 +93,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
         javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
-        javaPlugin.getServer().getPluginManager().registerEvents(this.sessionCache, javaPlugin);
+        javaPlugin.getServer().getPluginManager().registerEvents(this.globalSessionCache, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
@@ -147,7 +147,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             }
 
             HandlerList.unregisterAll(this.inventoryListener);
-            HandlerList.unregisterAll(this.sessionCache);
+            HandlerList.unregisterAll(this.globalSessionCache);
             HandlerList.unregisterAll(this.cooldownContainer);
             HandlerList.unregisterAll(this);
 

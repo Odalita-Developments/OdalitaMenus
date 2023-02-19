@@ -7,7 +7,7 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
-import nl.odalitadevelopments.menus.menu.session.SessionCache;
+import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
@@ -39,7 +39,7 @@ public sealed interface OdalitaMenus permits OdalitaMenusImpl {
 
     @NotNull MenuProcessor getMenuProcessor();
 
-    @NotNull SessionCache getSessionCache();
+    @NotNull GlobalSessionCache getGlobalSessionCache();
 
     @NotNull PatternContainer getPatternContainer();
 

@@ -3,7 +3,7 @@ package nl.odalitadevelopments.menus.contents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.menu.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import org.bukkit.inventory.ItemStack;

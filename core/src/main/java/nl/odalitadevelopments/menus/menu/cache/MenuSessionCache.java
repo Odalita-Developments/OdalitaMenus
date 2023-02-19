@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.menu;
+package nl.odalitadevelopments.menus.menu.cache;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,6 +12,7 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragActi
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,6 +41,7 @@ public final class MenuSessionCache {
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
     private PlaceableItemClickAction placeableItemClickAction = null;
     private PlaceableItemDragAction placeableItemDragAction = null;
+
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
 
     private final Map<String, MenuFrameData> frames = Maps.newConcurrentMap();
@@ -72,9 +74,9 @@ public final class MenuSessionCache {
         this.getCache().remove(key);
     }
 
-    Map<String, Object> getCache() {
+    public Map<String, Object> getCache() {
         if (!this.menuSession.getGlobalCacheKey().isEmpty() && !this.menuSession.getGlobalCacheKey().isBlank()) {
-            return this.menuSession.getInstance().getSessionCache().getOrCreateCache(this.menuSession);
+            return this.menuSession.getInstance().getGlobalSessionCache().getOrCreateCache(this.menuSession);
         }
 
         return this.cache;
