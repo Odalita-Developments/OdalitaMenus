@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.scrollable;
 
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
@@ -18,7 +18,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     protected final ScrollableBuilderImpl builder;
 
     protected final String id;
-    protected final InventoryContents contents;
+    protected final MenuContents contents;
     protected final int showYAxis, showXAxis;
     protected final int startRow, startColumn;
 

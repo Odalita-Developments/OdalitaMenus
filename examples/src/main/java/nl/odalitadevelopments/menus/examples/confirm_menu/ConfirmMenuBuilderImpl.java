@@ -3,7 +3,7 @@ package nl.odalitadevelopments.menus.examples.confirm_menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,16 +16,16 @@ import java.util.function.Function;
 @Getter(AccessLevel.PACKAGE)
 final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
 
-    private Function<InventoryContents, String> title = (contents) -> "";
+    private Function<MenuContents, String> title = (contents) -> "";
     private boolean updatableTitle = false;
 
     private Consumer<Boolean> response;
-    private Function<InventoryContents, MenuItem[]> centerButtons = (contents) -> new MenuItem[0];
+    private Function<MenuContents, MenuItem[]> centerButtons = (contents) -> new MenuItem[0];
     private boolean closeAfter = true;
 
     private ConfirmMenu.ButtonSize buttonSize = ConfirmMenu.ButtonSize.BIG;
-    private Function<InventoryContents, MenuItem> confirmItem;
-    private Function<InventoryContents, MenuItem> cancelItem;
+    private Function<MenuContents, MenuItem> confirmItem;
+    private Function<MenuContents, MenuItem> cancelItem;
 
     private int readableTimeDelay = 0;
 
@@ -37,14 +37,14 @@ final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
     }
 
     @Override
-    public @NotNull ConfirmMenuBuilder title(@NotNull Function<@NotNull InventoryContents, @NotNull String> title, boolean updatable) {
+    public @NotNull ConfirmMenuBuilder title(@NotNull Function<@NotNull MenuContents, @NotNull String> title, boolean updatable) {
         this.title = title;
         this.updatableTitle = updatable;
         return this;
     }
 
     @Override
-    public @NotNull ConfirmMenuBuilder title(@NotNull Function<@NotNull InventoryContents, @NotNull String> title) {
+    public @NotNull ConfirmMenuBuilder title(@NotNull Function<@NotNull MenuContents, @NotNull String> title) {
         return this.title(title, false);
     }
 
@@ -60,7 +60,7 @@ final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
     }
 
     @Override
-    public @NotNull ConfirmMenuBuilder centerButtons(@NotNull Function<@NotNull InventoryContents, MenuItem[]> centerButtons) {
+    public @NotNull ConfirmMenuBuilder centerButtons(@NotNull Function<@NotNull MenuContents, MenuItem[]> centerButtons) {
         this.centerButtons = centerButtons;
         return this;
     }
@@ -83,7 +83,7 @@ final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
     }
 
     @Override
-    public @NotNull ConfirmMenuBuilder confirmItem(@NotNull Function<@NotNull InventoryContents, @NotNull MenuItem> confirmItem) {
+    public @NotNull ConfirmMenuBuilder confirmItem(@NotNull Function<@NotNull MenuContents, @NotNull MenuItem> confirmItem) {
         this.confirmItem = confirmItem;
         return this;
     }
@@ -94,7 +94,7 @@ final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
     }
 
     @Override
-    public @NotNull ConfirmMenuBuilder cancelItem(@NotNull Function<@NotNull InventoryContents, @NotNull MenuItem> cancelItem) {
+    public @NotNull ConfirmMenuBuilder cancelItem(@NotNull Function<@NotNull MenuContents, @NotNull MenuItem> cancelItem) {
         this.cancelItem = cancelItem;
         return this;
     }

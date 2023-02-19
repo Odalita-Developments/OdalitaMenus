@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.iterators;
 
 import lombok.Getter;
 import lombok.Setter;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.bukkit.Material;
@@ -22,14 +22,14 @@ public class MenuIterator {
 
     private int index = 0;
 
-    private InventoryContents contents;
+    private MenuContents contents;
     private boolean override = false;
 
     private MenuIteratorType menuIteratorType;
     private final int row;
     private final int column;
 
-    public MenuIterator(MenuIteratorType menuIteratorType, InventoryContents contents, int startRow, int startColumn) {
+    public MenuIterator(MenuIteratorType menuIteratorType, MenuContents contents, int startRow, int startColumn) {
         this.menuIteratorType = menuIteratorType;
         this.contents = contents;
         this.row = startRow;

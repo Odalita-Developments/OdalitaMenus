@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public final class MenuTask {
 
-    private final InventoryContentsScheduler scheduler;
+    private final MenuContentsScheduler scheduler;
 
     private final String id;
     private final Runnable runnable;
@@ -20,7 +20,7 @@ public final class MenuTask {
     private int updatedAtTick = -1;
     private int ranTimes = 0;
 
-    MenuTask(InventoryContentsScheduler scheduler, String id, Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
+    MenuTask(MenuContentsScheduler scheduler, String id, Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
         this.scheduler = scheduler;
 
         this.id = id;

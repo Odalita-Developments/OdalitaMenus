@@ -3,7 +3,7 @@ package nl.odalitadevelopments.menus.scrollable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 @Getter(AccessLevel.PACKAGE)
 final class ScrollableBuilderImpl implements ScrollableBuilder {
 
-    private final InventoryContents contents;
+    private final MenuContents contents;
     private final String id;
     private final int showYAxis;
     private final int showXAxis;

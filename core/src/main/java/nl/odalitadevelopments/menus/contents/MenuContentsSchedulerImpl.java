@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.contents;
 
 import org.jetbrains.annotations.NotNull;
 
-record InventoryContentsSchedulerImpl(InventoryContentsImpl inventoryContents) implements InventoryContentsScheduler {
+record MenuContentsSchedulerImpl(MenuContentsImpl inventoryContents) implements MenuContentsScheduler {
 
     @Override
     public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {

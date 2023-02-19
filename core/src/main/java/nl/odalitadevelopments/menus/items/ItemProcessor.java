@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.items;
 
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public final class ItemProcessor {
 
     @ApiStatus.Internal
-    public void initializeItems(MenuSession menuSession, InventoryContents inventoryContents) {
+    public void initializeItems(MenuSession menuSession, MenuContents menuContents) {
         SupportedMenuType menuType = menuSession.getMenuType();
         Inventory inventory = menuSession.getInventory();
 
@@ -38,7 +38,7 @@ public final class ItemProcessor {
                 int slot = pagination.getIterator().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
-                inventoryContents.setAsync(slot, menuItem);
+                menuContents.setAsync(slot, menuItem);
                 pagination.getIterator().next();
             }
 
@@ -62,7 +62,7 @@ public final class ItemProcessor {
 
                 if (inventory.getItem(slot) != null) continue;
 
-                inventoryContents.setAsync(slot, menuItem);
+                menuContents.setAsync(slot, menuItem);
             }
 
             scrollable.setInitialized(true);

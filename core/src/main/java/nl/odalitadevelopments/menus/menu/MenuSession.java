@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
@@ -31,7 +31,7 @@ public final class MenuSession {
     private final int rows;
     private final int columns;
     private String title;
-    private final InventoryContents inventoryContents;
+    private final MenuContents menuContents;
 
     private volatile MenuItem[][] contents;
     private volatile boolean hasUpdatableItems = false;
@@ -61,7 +61,7 @@ public final class MenuSession {
         this.globalCacheKey = globalCacheKey;
         this.cache = new MenuSessionCache(this);
 
-        this.inventoryContents = InventoryContents.create(this);
+        this.menuContents = MenuContents.create(this);
     }
 
     public synchronized void setTitle(@NotNull String title) {

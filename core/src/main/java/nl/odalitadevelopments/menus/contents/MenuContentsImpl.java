@@ -28,21 +28,21 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-sealed class InventoryContentsImpl implements InventoryContents permits InventoryFrameContentsImpl {
+sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsImpl {
 
     final MenuSession menuSession;
     final MenuSessionCache cache;
-    final InventoryContentsScheduler scheduler;
-    final InventoryContentsEvents events;
+    final MenuContentsScheduler scheduler;
+    final MenuContentsEvents events;
 
-    InventoryContentsImpl(MenuSession menuSession) {
+    MenuContentsImpl(MenuSession menuSession) {
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
-        this.scheduler = new InventoryContentsSchedulerImpl(this);
-        this.events = new InventoryContentsEventsImpl(this);
+        this.scheduler = new MenuContentsSchedulerImpl(this);
+        this.events = new MenuContentsEventsImpl(this);
     }
 
-    InventoryContentsImpl(MenuSession menuSession, MenuSessionCache cache, InventoryContentsScheduler scheduler, InventoryContentsEvents events) {
+    MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsEvents events) {
         this.menuSession = menuSession;
         this.cache = cache;
         this.scheduler = scheduler;
@@ -55,12 +55,12 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     }
 
     @Override
-    public @NotNull InventoryContentsScheduler scheduler() {
+    public @NotNull MenuContentsScheduler scheduler() {
         return this.scheduler;
     }
 
     @Override
-    public @NotNull InventoryContentsEvents events() {
+    public @NotNull MenuContentsEvents events() {
         return this.events;
     }
 
@@ -649,7 +649,7 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
         }
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
-        InventoryFrameContentsImpl frameContents = new InventoryFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.events);
+        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.events);
         loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
@@ -715,13 +715,13 @@ sealed class InventoryContentsImpl implements InventoryContents permits Inventor
     }
 
     @Override
-    public synchronized @NotNull InventoryContents setCache(@NotNull String key, @NotNull Object value) {
+    public synchronized @NotNull MenuContents setCache(@NotNull String key, @NotNull Object value) {
         this.cache.setCache(key, value);
         return this;
     }
 
     @Override
-    public synchronized @NotNull InventoryContents pruneCache(@NotNull String key) {
+    public synchronized @NotNull MenuContents pruneCache(@NotNull String key) {
         this.cache.pruneCache(key);
         return this;
     }

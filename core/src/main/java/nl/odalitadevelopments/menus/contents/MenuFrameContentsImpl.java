@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-final class InventoryFrameContentsImpl extends InventoryContentsImpl {
+final class MenuFrameContentsImpl extends MenuContentsImpl {
 
     private final MenuFrameData frameData;
 
-    InventoryFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, InventoryContentsScheduler scheduler, InventoryContentsEvents events) {
+    MenuFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, MenuContentsScheduler scheduler, MenuContentsEvents events) {
         super(menuSession, cache, scheduler, events);
 
         this.frameData = frameData;

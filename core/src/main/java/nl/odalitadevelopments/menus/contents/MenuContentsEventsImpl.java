@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-record InventoryContentsEventsImpl(InventoryContentsImpl inventoryContents) implements InventoryContentsEvents {
+record MenuContentsEventsImpl(MenuContentsImpl inventoryContents) implements MenuContentsEvents {
 
     @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemClickAction action) {

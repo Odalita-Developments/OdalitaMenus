@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.pagination;
 
 import lombok.Getter;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 @Getter
 final class PaginationImpl implements Pagination {
 
-    private final InventoryContents contents;
+    private final MenuContents contents;
 
     private final String id;
     private final int itemsPerPage;
@@ -31,7 +31,7 @@ final class PaginationImpl implements Pagination {
 
     private boolean initialized = false;
 
-    PaginationImpl(InventoryContents contents, String id, int itemsPerPage, MenuIterator iterator) {
+    PaginationImpl(MenuContents contents, String id, int itemsPerPage, MenuIterator iterator) {
         this.contents = contents;
         this.id = id;
         this.itemsPerPage = itemsPerPage;

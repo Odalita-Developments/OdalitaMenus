@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.annotations.Menu;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.examples.common.ItemBuilder;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
@@ -35,7 +35,7 @@ public final class ConfirmMenu implements PlayerMenuProvider {
     private final ConfirmMenuBuilderImpl builder;
 
     @Override
-    public void onLoad(@NotNull Player player, @NotNull InventoryContents contents) {
+    public void onLoad(@NotNull Player player, @NotNull MenuContents contents) {
         if (this.builder.getGlobalCacheKey() != null) {
             contents.setGlobalCacheKey(this.builder.getGlobalCacheKey());
         }
@@ -100,12 +100,12 @@ public final class ConfirmMenu implements PlayerMenuProvider {
 
     private static final class ConfirmItem extends MenuItem {
 
-        private final InventoryContents contents;
+        private final MenuContents contents;
         private final ConfirmMenuBuilderImpl builder;
         private final boolean confirm;
         private final MenuItem menuItem;
 
-        private ConfirmItem(InventoryContents contents, ConfirmMenuBuilderImpl builder, boolean confirm, MenuItem menuItem) {
+        private ConfirmItem(MenuContents contents, ConfirmMenuBuilderImpl builder, boolean confirm, MenuItem menuItem) {
             this.contents = contents;
             this.builder = builder;
             this.confirm = confirm;

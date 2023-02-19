@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public sealed interface InventoryContentsEvents permits InventoryContentsEventsImpl {
+public sealed interface MenuContentsEvents permits MenuContentsEventsImpl {
 
     void onPlaceableItemClick(@NotNull PlaceableItemClickAction action);
 

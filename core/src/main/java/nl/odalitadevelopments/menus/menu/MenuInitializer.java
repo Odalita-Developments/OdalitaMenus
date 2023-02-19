@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.menu;
 
 import nl.odalitadevelopments.menus.annotations.Menu;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
@@ -9,9 +9,7 @@ import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +32,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
 
             MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuType, inventory, annotation.title(), annotation.globalCacheKey());
 
-            InventoryContents contents = menuSession.getInventoryContents();
+            MenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
 
             this.builder.getPaginationPages().forEach((id, page) -> {

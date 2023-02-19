@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.pagination;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 final class PaginationBuilderImpl implements PaginationBuilder {
 
-    private final InventoryContents contents;
+    private final MenuContents contents;
 
     private final String id;
     private final int itemsPerPage;
@@ -41,7 +41,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
     }
 
     @Override
-    public @NotNull PaginationBuilder iterator(@NotNull Function<@NotNull InventoryContents, @NotNull MenuIterator> iteratorFunction) {
+    public @NotNull PaginationBuilder iterator(@NotNull Function<@NotNull MenuContents, @NotNull MenuIterator> iteratorFunction) {
         return this.iterator(iteratorFunction.apply(this.contents));
     }
 

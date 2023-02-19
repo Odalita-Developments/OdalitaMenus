@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.scrollable;
 
-import nl.odalitadevelopments.menus.contents.InventoryContents;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public sealed interface ScrollableBuilder permits ScrollableBuilderImpl {
 
-    static @NotNull ScrollableBuilder builder(@NotNull InventoryContents contents, @NotNull String id, int showYAxis, int showXAxis) {
+    static @NotNull ScrollableBuilder builder(@NotNull MenuContents contents, @NotNull String id, int showYAxis, int showXAxis) {
         return new ScrollableBuilderImpl(contents, id, showYAxis, showXAxis);
     }
 

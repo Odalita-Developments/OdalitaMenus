@@ -29,21 +29,21 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public sealed interface InventoryContents permits InventoryContentsImpl {
+public sealed interface MenuContents permits MenuContentsImpl {
 
     @ApiStatus.Internal
-    static InventoryContents create(@NotNull MenuSession menuSession) {
-        return new InventoryContentsImpl(menuSession);
+    static MenuContents create(@NotNull MenuSession menuSession) {
+        return new MenuContentsImpl(menuSession);
     }
 
     @NotNull
     MenuSession menuSession();
 
     @NotNull
-    InventoryContentsScheduler scheduler();
+    MenuContentsScheduler scheduler();
 
     @NotNull
-    InventoryContentsEvents events();
+    MenuContentsEvents events();
 
     @Nullable
     MenuFrameData menuFrameData();
@@ -260,10 +260,10 @@ public sealed interface InventoryContents permits InventoryContentsImpl {
     <T> T cache(@NotNull String key);
 
     @NotNull
-    InventoryContents setCache(@NotNull String key, @NotNull Object value);
+    MenuContents setCache(@NotNull String key, @NotNull Object value);
 
     @NotNull
-    InventoryContents pruneCache(@NotNull String key);
+    MenuContents pruneCache(@NotNull String key);
 
     void setGlobalCacheKey(@NotNull String key);
 
