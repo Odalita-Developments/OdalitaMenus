@@ -67,15 +67,15 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
     public @NotNull Scrollable create() {
         AbstractScrollable scrollable;
         if (this.isSingle) {
-            scrollable = new SingleScrollable(this);
+            scrollable = new SingleScrollableImpl(this);
         } else if (this.repeatedPattern) {
             this.patternCache = this.tempPatternCache.initialize(this.direction.getCacheInitializationDirection());
 
-            scrollable = new RepeatedPatternScrollable(this);
+            scrollable = new RepeatedPatternScrollableImpl(this);
         } else {
             this.patternCache = this.tempPatternCache.initialize(this.direction.getCacheInitializationDirection());
 
-            scrollable = new PatternScrollable(this);
+            scrollable = new PatternScrollableImpl(this);
         }
 
         this.contents.menuSession().getCache().getScrollableMap().put(this.id, scrollable);

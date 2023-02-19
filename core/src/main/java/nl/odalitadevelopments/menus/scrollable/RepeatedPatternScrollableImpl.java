@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.Map;
 
-final class RepeatedPatternScrollable extends PatternScrollable {
+final class RepeatedPatternScrollableImpl extends PatternScrollableImpl {
 
     private final ScrollableDirectionPatternCache.Cache patternCache;
 
@@ -16,7 +16,7 @@ final class RepeatedPatternScrollable extends PatternScrollable {
     private int lastVertical = -1;
     private int lastHorizontal = -1;
 
-    RepeatedPatternScrollable(@NotNull ScrollableBuilderImpl builder) {
+    RepeatedPatternScrollableImpl(@NotNull ScrollableBuilderImpl builder) {
         super(builder);
 
         this.patternCache = builder.getPatternCache();
@@ -85,7 +85,7 @@ final class RepeatedPatternScrollable extends PatternScrollable {
                 ? this.showYAxis * this.showXAxis + this.currentXAxis * this.showYAxis
                 : this.showYAxis * this.showXAxis + this.currentYAxis * this.showXAxis;
 
-        return new Pair<>(startIndex, endIndex);
+        return Pair.of(startIndex, endIndex);
     }
 
     @Override
@@ -105,7 +105,7 @@ final class RepeatedPatternScrollable extends PatternScrollable {
 
     @Override
     protected @NotNull Pair<@NotNull Integer, @NotNull Integer> rowColumnModifier(int row, int column) {
-        return new Pair<>(row, column);
+        return Pair.of(row, column);
     }
 
     private void calculateLastVertical() {

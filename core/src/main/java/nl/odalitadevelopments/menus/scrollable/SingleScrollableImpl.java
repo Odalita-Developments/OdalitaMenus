@@ -3,9 +3,9 @@ package nl.odalitadevelopments.menus.scrollable;
 import nl.odalitadevelopments.menus.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
-final class SingleScrollable extends AbstractScrollable {
+final class SingleScrollableImpl extends AbstractScrollable {
 
-    SingleScrollable(@NotNull ScrollableBuilderImpl builder) {
+    SingleScrollableImpl(@NotNull ScrollableBuilderImpl builder) {
         super(builder);
     }
 
@@ -34,7 +34,7 @@ final class SingleScrollable extends AbstractScrollable {
                 ? (this.currentXAxis + this.showXAxis) * this.showYAxis
                 : (this.currentYAxis + this.showYAxis) * this.showXAxis;
 
-        return new Pair<>(startIndex, endIndex);
+        return Pair.of(startIndex, endIndex);
     }
 
     @Override

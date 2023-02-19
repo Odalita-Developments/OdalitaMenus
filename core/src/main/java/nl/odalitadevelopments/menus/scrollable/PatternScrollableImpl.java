@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.Map;
 
-sealed class PatternScrollable extends AbstractScrollable permits RepeatedPatternScrollable {
+sealed class PatternScrollableImpl extends AbstractScrollable permits RepeatedPatternScrollableImpl {
 
     private final ScrollableDirectionPatternCache.Cache patternCache;
 
     private int lastPatternIndex;
 
-    PatternScrollable(@NotNull ScrollableBuilderImpl builder) {
+    PatternScrollableImpl(@NotNull ScrollableBuilderImpl builder) {
         super(builder);
 
         this.patternCache = builder.getPatternCache();
@@ -58,7 +58,7 @@ sealed class PatternScrollable extends AbstractScrollable permits RepeatedPatter
                 this.showXAxis + this.currentXAxis
         ).getSlot();
 
-        return new Pair<>(startIndex, endIndex);
+        return Pair.of(startIndex, endIndex);
     }
 
     @Override
@@ -73,7 +73,7 @@ sealed class PatternScrollable extends AbstractScrollable permits RepeatedPatter
 
     @Override
     protected @NotNull Pair<@NotNull Integer, @NotNull Integer> rowColumnModifier(int row, int column) {
-        return new Pair<>(
+        return Pair.of(
                 row - this.currentYAxis,
                 column - this.currentXAxis
         );

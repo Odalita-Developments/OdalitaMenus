@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-abstract sealed class AbstractScrollable implements Scrollable permits SingleScrollable, PatternScrollable {
+abstract sealed class AbstractScrollable implements Scrollable permits SingleScrollableImpl, PatternScrollableImpl {
 
     protected final ScrollableBuilderImpl builder;
 
@@ -53,7 +53,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     protected abstract @NotNull ScrollableSlotPos createSlotPos(int index);
 
     protected @NotNull Pair<@NotNull Integer, @NotNull Integer> rowColumnModifier(int row, int column) {
-        return new Pair<>(row, column);
+        return Pair.of(row, column);
     }
 
     @Override
@@ -161,12 +161,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
         Map<Integer, Supplier<MenuItem>> itemsBySlot = new HashMap<>();
         Map<Integer, Supplier<MenuItem>> itemsByIndex = this.getItems();
 
-        int axis;
-        if (this.direction == ScrollableDirection.HORIZONTALLY) {
-            axis = this.currentXAxis;
-        } else {
-            axis = this.currentYAxis;
-        }
+        int axis = (this.direction == ScrollableDirection.HORIZONTALLY) ? this.currentXAxis : this.currentYAxis;
 
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : itemsByIndex.entrySet()) {
             this.calculateSlotPosWithOffset(entry.getKey(), axis, this.direction).ifPresent((slot) -> {
@@ -201,7 +196,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
             return this;
         }
 
-        this.cleanMenuGrid();
+        this.clearMenuGrid();
 
         for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
             this.calculateSlotPosWithOffset(entry.getKey(), newAxis, direction).ifPresent((slot) -> {
@@ -249,14 +244,9 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
         return Optional.of(SlotPos.of(row, column).getSlot());
     }
 
-    private void cleanMenuGrid() {
+    private void clearMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
-                MenuItem menuItem = this.contents.menuSession().getContents()[row][column];
-                if (this.contents.menuSession().isHasUpdatableItems() && menuItem != null && menuItem.isUpdatable()) {
-                    this.contents.menuSession().setHasUpdatableItems(false);
-                }
-
                 this.contents.menuSession().getContents()[row][column] = null;
             }
         }
