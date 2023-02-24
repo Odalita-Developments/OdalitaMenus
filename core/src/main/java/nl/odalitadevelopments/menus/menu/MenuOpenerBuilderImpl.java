@@ -8,6 +8,7 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.utils.Pair;
 import nl.odalitadevelopments.menus.utils.Triple;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,6 +86,14 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
 
     @Override
     public void open() {
+        if (!Bukkit.isPrimaryThread()) {
+            Bukkit.getScheduler().runTask(this.menuProcessor.getInstance().getJavaPlugin(), this::initializeMenu);
+        } else {
+            this.initializeMenu();
+        }
+    }
+
+    private void initializeMenu() {
         new MenuInitializer<>(this.menuProcessor, this.itemProcessor, this.supportedMenuTypes, this)
                 .initializeMenu();
     }
