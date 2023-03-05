@@ -33,8 +33,6 @@ public final class MenuSession {
     private SupportedMenuType menuType;
     @Setter(AccessLevel.NONE)
     private Inventory inventory;
-    private final int rows;
-    private final int columns;
     private String title;
     private final MenuContents menuContents;
 
@@ -56,11 +54,8 @@ public final class MenuSession {
         this.player = player;
         this.menuType = menuType;
 
-        this.rows = Math.max(menuType.maxRows(), 1);
-        this.columns = menuType.maxColumns() + menuType.otherSlots().size();
-
         this.inventory = inventory;
-        this.contents = new MenuItem[this.rows][this.columns];
+        this.contents = new MenuItem[this.getRows()][this.getColumns()];
         this.title = title;
 
         this.globalCacheKey = globalCacheKey;
@@ -112,7 +107,7 @@ public final class MenuSession {
     public @Nullable MenuItem getContent(@NotNull SlotPos slotPos) {
         int row = slotPos.getRow();
         int column = slotPos.getColumn();
-        if (row < 0 || row >= this.rows || column < 0 || column >= this.columns) return null;
+        if (row < 0 || row >= this.getRows() || column < 0 || column >= this.getColumns()) return null;
 
         return this.contents[row][column];
     }
@@ -124,5 +119,13 @@ public final class MenuSession {
     @ApiStatus.Internal
     public void setClosed(boolean closed) {
         this.closed = closed;
+    }
+
+    public int getRows() {
+        return Math.max(this.menuType.maxRows(), 1);
+    }
+
+    public int getColumns() {
+        return this.menuType.maxColumns() + this.menuType.otherSlots().size();
     }
 }
