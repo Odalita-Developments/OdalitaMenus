@@ -8,8 +8,10 @@ import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.ApiStatus;
@@ -27,8 +29,10 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final Player player;
 
-    private final SupportedMenuType menuType;
-    private final Inventory inventory;
+    @Setter(AccessLevel.NONE)
+    private SupportedMenuType menuType;
+    @Setter(AccessLevel.NONE)
+    private Inventory inventory;
     private final int rows;
     private final int columns;
     private String title;
@@ -74,6 +78,21 @@ public final class MenuSession {
             this.actionsAfterOpening.add(() -> InventoryUtils.changeTitle(this.inventory, title));
         } else {
             InventoryUtils.changeTitle(this.inventory, title);
+        }
+    }
+
+    public void setMenuType(@NotNull MenuType menuType) {
+        if (!Bukkit.isPrimaryThread()) {
+            throw new IllegalStateException("Cannot change menu type asynchronous!");
+        }
+
+        if (this.menuType.type().equals(menuType)) return;
+
+        if (this.opened) {
+            throw new IllegalStateException("Cannot change menu type while menu is opened!");
+        } else {
+            this.menuType = this.instance.getSupportedMenuTypes().getSupportedMenuType(menuType);
+            this.inventory = this.menuType.createInventory(this.title);
         }
     }
 

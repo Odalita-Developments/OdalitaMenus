@@ -10,6 +10,7 @@ import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
+import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.*;
@@ -734,6 +735,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public synchronized void setTitle(@NotNull String title) {
         this.menuSession.setTitle(title);
+    }
+
+    @Override
+    public void setMenuType(@NotNull MenuType menuType) {
+        this.menuSession.setMenuType(menuType);
     }
 
     @Override

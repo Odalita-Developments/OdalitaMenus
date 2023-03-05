@@ -9,6 +9,7 @@ import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
+import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.DirectionPattern;
 import nl.odalitadevelopments.menus.patterns.IteratorPattern;
@@ -269,6 +270,8 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     /* OTHER */
     void setTitle(@NotNull String title);
+
+    void setMenuType(@NotNull MenuType menuType);
 
     void closeInventory(@NotNull Player player, @NotNull PlaceableItemsCloseAction action);
 
