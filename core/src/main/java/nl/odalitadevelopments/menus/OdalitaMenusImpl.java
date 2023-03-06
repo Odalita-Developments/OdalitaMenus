@@ -6,17 +6,18 @@ import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.listeners.InventoryListener;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
-import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
+import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -76,6 +77,10 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private OdalitaMenusImpl(JavaPlugin javaPlugin) {
         if (INSTANCES.containsKey(javaPlugin)) {
             throw new IllegalStateException("OdalitaMenus is already initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
+        }
+
+        if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.NOT_SUPPORTED)) {
+            throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: 1.16.5 - 1.19.3)");
         }
 
         this.javaPlugin = javaPlugin;
