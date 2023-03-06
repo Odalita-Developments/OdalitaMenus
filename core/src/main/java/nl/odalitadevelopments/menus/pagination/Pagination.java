@@ -10,13 +10,13 @@ import java.util.function.Supplier;
 
 public sealed interface Pagination permits PaginationImpl {
 
-    @NotNull String getId();
+    @NotNull String id();
 
-    int getItemsPerPage();
+    int itemsPerPage();
 
-    @NotNull MenuIterator getIterator();
+    @NotNull MenuIterator iterator();
 
-    int getCurrentPage();
+    int currentPage();
 
     int firstPage();
 
@@ -38,7 +38,7 @@ public sealed interface Pagination permits PaginationImpl {
     void setPage(int page);
 
     @ApiStatus.Internal
-    void setInitialized(boolean initialized);
+    void setInitialized();
 
     @ApiStatus.Internal
     @NotNull List<Supplier<MenuItem>> getItemsOnPage();

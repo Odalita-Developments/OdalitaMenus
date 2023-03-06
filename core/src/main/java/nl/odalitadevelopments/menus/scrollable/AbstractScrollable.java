@@ -83,6 +83,26 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     }
 
     @Override
+    public final boolean isFirstVertical() {
+        return this.currentVertical() == 0;
+    }
+
+    @Override
+    public final boolean isFirstHorizontal() {
+        return this.currentHorizontal() == 0;
+    }
+
+    @Override
+    public final boolean isLastVertical() {
+        return this.currentVertical() == this.lastVertical();
+    }
+
+    @Override
+    public final boolean isLastHorizontal() {
+        return this.currentHorizontal() == this.lastHorizontal();
+    }
+
+    @Override
     public final @NotNull Scrollable openVertical(int newYAxis) {
         return this.open(newYAxis, ScrollableDirection.VERTICALLY);
     }
@@ -147,10 +167,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
 
     @ApiStatus.Internal
     @Override
-    public final void setInitialized(boolean initialized) {
-        if (this.initialized) return;
-
-        this.initialized = initialized;
+    public final void setInitialized() {
+        this.initialized = true;
     }
 
     @ApiStatus.Internal

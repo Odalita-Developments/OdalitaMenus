@@ -19,6 +19,14 @@ public sealed interface Scrollable permits AbstractScrollable {
 
     int lastHorizontal();
 
+    boolean isFirstVertical();
+
+    boolean isFirstHorizontal();
+
+    boolean isLastVertical();
+
+    boolean isLastHorizontal();
+
     @NotNull Scrollable openVertical(int newYAxis);
 
     @NotNull Scrollable openHorizontal(int newXAxis);
@@ -39,7 +47,7 @@ public sealed interface Scrollable permits AbstractScrollable {
     void setAxes(int xAxis, int yAxis);
 
     @ApiStatus.Internal
-    void setInitialized(boolean initialized);
+    void setInitialized();
 
     @ApiStatus.Internal
     @NotNull Map<Integer, Supplier<MenuItem>> getPageItems();

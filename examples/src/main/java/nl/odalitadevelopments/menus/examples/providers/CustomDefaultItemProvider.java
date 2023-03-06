@@ -25,12 +25,12 @@ public final class CustomDefaultItemProvider implements DefaultItemProvider {
 
     @Override
     public @NotNull ItemStack nextPageItem(@NotNull Pagination pagination) {
-        return ItemBuilder.of(Material.BARRIER, "&eNext &b(" + (pagination.getCurrentPage() + 1) + " / " + pagination.lastPage() + ")").build();
+        return ItemBuilder.of(Material.BARRIER, "&eNext &b(" + (pagination.currentPage() + 1) + " / " + pagination.lastPage() + ")").build();
     }
 
     @Override
     public @NotNull ItemStack previousPageItem(@NotNull Pagination pagination) {
-        return ItemBuilder.of(Material.BARRIER, "&ePrevious &b(" + (pagination.getCurrentPage() - 1) + " / " + pagination.lastPage() + ")").build();
+        return ItemBuilder.of(Material.BARRIER, "&ePrevious &b(" + (pagination.currentPage() - 1) + " / " + pagination.lastPage() + ")").build();
     }
 
     @Override

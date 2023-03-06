@@ -25,7 +25,7 @@ public final class ItemProcessor {
         for (Pagination pagination : menuSession.getCache().getPaginationMap().values()) {
             List<Supplier<MenuItem>> itemsOnPage = pagination.getItemsOnPage();
             if (itemsOnPage.isEmpty()) {
-                pagination.setInitialized(true);
+                pagination.setInitialized();
                 continue;
             }
 
@@ -35,20 +35,20 @@ public final class ItemProcessor {
                 MenuItem menuItem = menuItemSupplier.get();
                 if (menuItem == null) continue;
 
-                int slot = pagination.getIterator().getSlot();
+                int slot = pagination.iterator().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
                 menuContents.setAsync(slot, menuItem);
-                pagination.getIterator().next();
+                pagination.iterator().next();
             }
 
-            pagination.setInitialized(true);
+            pagination.setInitialized();
         }
 
         for (Scrollable scrollable : menuSession.getCache().getScrollableMap().values()) {
             Map<Integer, Supplier<MenuItem>> pageItems = scrollable.getPageItems();
             if (pageItems.isEmpty()) {
-                scrollable.setInitialized(true);
+                scrollable.setInitialized();
                 continue;
             }
 
@@ -65,7 +65,7 @@ public final class ItemProcessor {
                 menuContents.setAsync(slot, menuItem);
             }
 
-            scrollable.setInitialized(true);
+            scrollable.setInitialized();
         }
 
         for (int row = 0; row < menuSession.getRows(); row++) {

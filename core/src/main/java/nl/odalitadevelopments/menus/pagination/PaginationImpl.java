@@ -1,10 +1,9 @@
 package nl.odalitadevelopments.menus.pagination;
 
-import lombok.Getter;
 import nl.odalitadevelopments.menus.contents.MenuContents;
-import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@Getter
 final class PaginationImpl implements Pagination {
 
     private final MenuContents contents;
@@ -36,6 +34,26 @@ final class PaginationImpl implements Pagination {
         this.id = id;
         this.itemsPerPage = itemsPerPage;
         this.iterator = iterator;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return this.id;
+    }
+
+    @Override
+    public int itemsPerPage() {
+        return this.itemsPerPage;
+    }
+
+    @Override
+    public @NotNull MenuIterator iterator() {
+        return this.iterator;
+    }
+
+    @Override
+    public int currentPage() {
+        return this.currentPage;
     }
 
     @Override
@@ -135,10 +153,8 @@ final class PaginationImpl implements Pagination {
 
     @ApiStatus.Internal
     @Override
-    public void setInitialized(boolean initialized) {
-        if (this.initialized) return;
-
-        this.initialized = initialized;
+    public void setInitialized() {
+        this.initialized = true;
     }
 
     @ApiStatus.Internal

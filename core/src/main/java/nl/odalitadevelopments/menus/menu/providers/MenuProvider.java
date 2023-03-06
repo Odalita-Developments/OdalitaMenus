@@ -7,8 +7,8 @@ public interface MenuProvider {
 
     @NotNull
     default Menu getMenu() {
-        if (!getClass().isAnnotationPresent(Menu.class))
+        if (!this.getClass().isAnnotationPresent(Menu.class))
             throw new IllegalStateException("MenuProvider '" + getClass().getSimpleName() + "' is not annotated with @Menu");
-        return getClass().getAnnotation(Menu.class);
+        return this.getClass().getAnnotation(Menu.class);
     }
 }

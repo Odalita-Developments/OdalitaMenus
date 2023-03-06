@@ -1,9 +1,9 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
-import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
-import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
+import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -132,10 +132,10 @@ public final class ScrollItem extends PageUpdatableItem {
     }
 
     private boolean isOnLastPageForDirection() {
-        return (this.direction == Direction.UP && this.scrollable.currentVertical() == 0)
-                || (this.direction == Direction.DOWN && this.scrollable.currentVertical() == this.scrollable.lastVertical())
-                || (this.direction == Direction.LEFT && this.scrollable.currentHorizontal() == 0)
-                || (this.direction == Direction.RIGHT && this.scrollable.currentHorizontal() == this.scrollable.lastHorizontal());
+        return (this.direction == Direction.UP && this.scrollable.isFirstVertical())
+                || (this.direction == Direction.DOWN && this.scrollable.isLastVertical())
+                || (this.direction == Direction.LEFT && this.scrollable.isFirstHorizontal())
+                || (this.direction == Direction.RIGHT && this.scrollable.isLastHorizontal());
     }
 
     private enum Direction {
