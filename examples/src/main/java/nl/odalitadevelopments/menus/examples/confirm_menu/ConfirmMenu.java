@@ -57,13 +57,13 @@ public final class ConfirmMenu implements PlayerMenuProvider {
 
         ConfirmItem confirmItem = new ConfirmItem(contents, this.builder, true,
                 (this.builder.getConfirmItem() == null)
-                        ? DisplayItem.of(ItemBuilder.of(Material.LIME_WOOL, "&aBevestigen").build())
+                        ? DisplayItem.of(ItemBuilder.of(Material.LIME_WOOL, "&aConfirm").build())
                         : this.builder.getConfirmItem().apply(contents)
         );
 
         ConfirmItem cancelItem = new ConfirmItem(contents, this.builder, false,
                 (this.builder.getCancelItem() == null)
-                        ? DisplayItem.of(ItemBuilder.of(Material.RED_WOOL, "&cAnnuleren").build())
+                        ? DisplayItem.of(ItemBuilder.of(Material.RED_WOOL, "&cCancel").build())
                         : this.builder.getCancelItem().apply(contents)
         );
 
