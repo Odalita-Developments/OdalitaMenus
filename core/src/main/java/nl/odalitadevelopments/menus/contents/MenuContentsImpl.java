@@ -510,7 +510,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    public void removePlaceableItems(@NotNull PlaceableItemsCloseAction action) {
+    public void placeableItemsCloseAction(@NotNull PlaceableItemsCloseAction action) {
         this.cache.setPlaceableItemsCloseAction(action);
     }
 

@@ -205,7 +205,7 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack);
 
-    void removePlaceableItems(@NotNull PlaceableItemsCloseAction action);
+    void placeableItemsCloseAction(@NotNull PlaceableItemsCloseAction action);
 
     @NotNull Optional<@NotNull SlotPos> firstEmptyPlaceableItemSlot();
 

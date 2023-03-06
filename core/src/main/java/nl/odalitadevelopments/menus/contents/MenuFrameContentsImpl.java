@@ -86,7 +86,7 @@ final class MenuFrameContentsImpl extends MenuContentsImpl {
     }
 
     @Override
-    public void removePlaceableItems(@NotNull PlaceableItemsCloseAction action) {
+    public void placeableItemsCloseAction(@NotNull PlaceableItemsCloseAction action) {
         throw new UnsupportedOperationException("Placeable items are not supported in frames.");
     }
 

@@ -29,7 +29,7 @@ public abstract class SlotPosition {
 
     protected SlotPosition(int height, int width, int slot) {
         Preconditions.checkArgument(height >= 0, "height must be greater than 0");
-        Preconditions.checkArgument(width >= 0, "awaidth must be greater than 0");
+        Preconditions.checkArgument(width >= 0, "width must be greater than 0");
         Preconditions.checkArgument(slot >= 0, "slot must be greater than 0");
 
         this.height = height;
