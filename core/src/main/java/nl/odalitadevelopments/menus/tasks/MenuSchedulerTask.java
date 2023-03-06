@@ -20,9 +20,11 @@ final class MenuSchedulerTask implements MenuTaskRunnable {
                 task.setUpdatedAtTick(tick);
             }
 
-            if (!task.isStarted() && tick - task.getUpdatedAtTick() >= task.getTicksDelay()) {
+            if (!task.isStarted() && tick - task.getUpdatedAtTick() == task.getTicksDelay()) {
                 if (this.runAfterDelay(task, tick)) continue;
             }
+
+            if (!task.isStarted()) continue;
 
             if (tick - task.getUpdatedAtTick() == task.getTicksPeriod()) {
                 task.setUpdatedAtTick(tick);
@@ -37,8 +39,8 @@ final class MenuSchedulerTask implements MenuTaskRunnable {
         }
     }
 
-    private boolean runAfterDelay(MenuTask task, int ticks) {
-        task.setUpdatedAtTick(ticks);
+    private boolean runAfterDelay(MenuTask task, int tick) {
+        task.setUpdatedAtTick(tick);
         task.setStarted(true);
 
         task.getRunnable().run();
