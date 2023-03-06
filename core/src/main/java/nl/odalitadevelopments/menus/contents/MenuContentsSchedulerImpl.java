@@ -29,6 +29,11 @@ record MenuContentsSchedulerImpl(MenuContentsImpl inventoryContents) implements 
     }
 
     @Override
+    public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay) {
+        return this.delay(id, runnable, ticksDelay, 0, 1);
+    }
+
+    @Override
     public @NotNull MenuTask schedule(@NotNull String id, @NotNull Runnable runnable, int ticksPeriod, int runTimes) {
         return this.delay(id, runnable, 0, ticksPeriod, runTimes);
     }

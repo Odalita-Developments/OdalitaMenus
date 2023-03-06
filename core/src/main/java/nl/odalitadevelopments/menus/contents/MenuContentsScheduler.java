@@ -11,6 +11,9 @@ public sealed interface MenuContentsScheduler permits MenuContentsSchedulerImpl 
     MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod);
 
     @NotNull
+    MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay);
+
+    @NotNull
     MenuTask schedule(@NotNull String id, @NotNull Runnable runnable, int ticksPeriod, int runTimes);
 
     @NotNull
