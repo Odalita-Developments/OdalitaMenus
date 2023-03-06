@@ -18,8 +18,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -44,8 +42,6 @@ public final class MenuSession {
 
     @Setter(AccessLevel.PACKAGE)
     private boolean opened = false;
-    @Getter(AccessLevel.PACKAGE)
-    private final List<Runnable> actionsAfterOpening = new ArrayList<>();
 
     private boolean closed = false;
 
@@ -69,11 +65,7 @@ public final class MenuSession {
 
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        if (!this.opened) {
-            this.actionsAfterOpening.add(() -> InventoryUtils.changeTitle(this.inventory, title));
-        } else {
-            InventoryUtils.changeTitle(this.inventory, title);
-        }
+        InventoryUtils.changeTitle(this.inventory, title);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {

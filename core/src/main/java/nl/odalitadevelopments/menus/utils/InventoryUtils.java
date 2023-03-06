@@ -51,18 +51,29 @@ public final class InventoryUtils {
     }
 
     public static synchronized void changeTitle(Inventory inventory, String newTitle) {
-        for (HumanEntity viewer : inventory.getViewers()) {
-            if (!(viewer instanceof Player player)) continue;
+        try {
+            if (inventory.getViewers().isEmpty()) {
+                Object craftInventory = CRAFT_INVENTORY.cast(inventory);
+                Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+                Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
 
-            try {
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, newTitle);
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+                return;
+            }
+
+            Object titleComponent = createChatBaseComponent(newTitle);
+
+            for (HumanEntity viewer : inventory.getViewers()) {
+                if (!(viewer instanceof Player player)) continue;
+
                 Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
                 Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
                 if (windowId <= 0) return;
 
                 Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(activeContainer);
-                Object titleComponent = createChatBaseComponent(newTitle);
-
                 Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, titleComponent);
 
                 sendPacket(player, packetPlayOutOpenWindow);
@@ -75,11 +86,11 @@ public final class InventoryUtils {
                     REFRESH_INVENTORY.invoke(activeContainer);
                 } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
                     Object items = GET_NMS_CONTAINER_ITEMS_1165.get(activeContainer);
-                    REFRESH_INVENTORY_1165.invoke(entityPlayer, activeContainer, items);
+                    REFRESH_INVENTORY.invoke(entityPlayer, activeContainer, items);
                 }
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
             }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 

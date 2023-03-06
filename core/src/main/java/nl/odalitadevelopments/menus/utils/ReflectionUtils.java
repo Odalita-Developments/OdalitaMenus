@@ -35,6 +35,7 @@ final class ReflectionUtils {
 
     static Class<?> CRAFT_PLAYER;
     static Class<?> CRAFT_INVENTORY;
+    static Class<?> MINECRAFT_INVENTORY;
     static Class<?> ITEM_STACK;
     static Class<?> CRAFT_ITEM_STACK;
 
@@ -49,12 +50,12 @@ final class ReflectionUtils {
     static Method REFRESH_INVENTORY;
     static Method WINDOW_STATE_ID_METHOD;
 
-    static Method REFRESH_INVENTORY_1165;
     static Field GET_NMS_CONTAINER_ITEMS_1165;
 
     static Field ACTIVE_CONTAINER_FIELD;
     static Field WINDOW_ID_FIELD;
     static Field TITLE_FIELD;
+    static Field MINECRAFT_INVENTORY_TITLE_FIELD;
 
     static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
     static Constructor<?> PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR;
@@ -80,6 +81,7 @@ final class ReflectionUtils {
 
             CRAFT_PLAYER = obcClass("entity.CraftPlayer");
             CRAFT_INVENTORY = obcClass("inventory.CraftInventory");
+            MINECRAFT_INVENTORY = obcClass("inventory.CraftInventoryCustom$MinecraftInventory");
             ITEM_STACK = nmsClass("world.item", "ItemStack");
             CRAFT_ITEM_STACK = obcClass("inventory.CraftItemStack");
 
@@ -91,6 +93,7 @@ final class ReflectionUtils {
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
             TITLE_FIELD = CONTAINER.getDeclaredField("title");
+            MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
 
             ACTIVE_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
                     .filter(field -> field.getType().isAssignableFrom(CONTAINER))
@@ -127,7 +130,7 @@ final class ReflectionUtils {
             } else {
                 GET_NMS_INVENTORY_TYPE = CONTAINER.getMethod("getType");
                 GET_NMS_CONTAINER_ITEMS_1165 = CONTAINER.getDeclaredField("items");
-                REFRESH_INVENTORY_1165 = ENTITY_PLAYER.getMethod("a", CONTAINER, NON_NULL_LIST);
+                REFRESH_INVENTORY = ENTITY_PLAYER.getMethod("a", CONTAINER, NON_NULL_LIST);
 
                 WINDOW_ID_FIELD = CONTAINER.getField("windowId");
 
