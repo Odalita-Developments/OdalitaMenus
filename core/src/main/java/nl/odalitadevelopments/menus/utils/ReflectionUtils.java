@@ -175,7 +175,10 @@ final class ReflectionUtils {
     }
 
     private static String nmsClassName(String post1_17package, String className) {
-        String classPackage = post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package;
+        String classPackage = (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17))
+                ? post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package
+                : NM_PACKAGE + '.' + getServerProtocolVersion();
+
         return classPackage + '.' + className;
     }
 
