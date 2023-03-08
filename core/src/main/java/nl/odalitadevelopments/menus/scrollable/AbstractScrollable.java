@@ -135,24 +135,18 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     @Override
     public final @NotNull Scrollable next() {
         return switch (this.direction) {
-            case VERTICALLY:
-                yield this.nextVertical();
-            case HORIZONTALLY:
-                yield this.nextHorizontal();
-            case ALL:
-                throw new UnsupportedOperationException("Next is not supported for 'all' direction.");
+            case VERTICALLY -> this.nextVertical();
+            case HORIZONTALLY -> this.nextHorizontal();
+            case ALL -> throw new UnsupportedOperationException("Next is not supported for 'all' direction.");
         };
     }
 
     @Override
     public final @NotNull Scrollable previous() {
         return switch (this.direction) {
-            case VERTICALLY:
-                yield this.previousVertical();
-            case HORIZONTALLY:
-                yield this.previousHorizontal();
-            case ALL:
-                throw new UnsupportedOperationException("Previous is not supported for 'all' direction.");
+            case VERTICALLY -> this.previousVertical();
+            case HORIZONTALLY -> this.previousHorizontal();
+            case ALL -> throw new UnsupportedOperationException("Previous is not supported for 'all' direction.");
         };
     }
 
