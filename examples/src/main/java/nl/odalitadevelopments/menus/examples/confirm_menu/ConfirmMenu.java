@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 @Menu(
         title = "",
-        type = MenuType.CHEST_3_ROW // Not required, default
+        type = MenuType.CHEST_3_ROW// Not required, default
 )
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
