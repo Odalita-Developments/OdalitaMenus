@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.utils;
 
+import io.papermc.paper.text.PaperComponents;
 import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -60,6 +61,12 @@ public final class InventoryUtils {
                 MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
                 MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, newTitle);
                 MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+
+                if (IS_PAPER) {
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(newTitle));
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+                }
                 return;
             }
 

@@ -20,6 +20,17 @@ final class ReflectionUtils {
     private ReflectionUtils() {
     }
 
+    static final boolean IS_PAPER = checkIsPaper();
+
+    @SuppressWarnings("all")
+    private static boolean checkIsPaper() {
+        try {
+            return Class.forName("com.destroystokyo.paper.PaperConfig") != null;
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
+    }
+
     private static final String NM_PACKAGE = "net.minecraft";
     private static final String OBC_PACKAGE = "org.bukkit.craftbukkit";
 
@@ -56,6 +67,7 @@ final class ReflectionUtils {
     static Field WINDOW_ID_FIELD;
     static Field TITLE_FIELD;
     static Field MINECRAFT_INVENTORY_TITLE_FIELD;
+    static Field PAPER_MINECRAFT_INVENTORY_TITLE_FIELD;
 
     static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
     static Constructor<?> PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR;
@@ -94,6 +106,10 @@ final class ReflectionUtils {
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
             TITLE_FIELD = CONTAINER.getDeclaredField("title");
             MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
+
+            if (IS_PAPER) {
+                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
+            }
 
             ACTIVE_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
                     .filter(field -> field.getType().isAssignableFrom(CONTAINER))
