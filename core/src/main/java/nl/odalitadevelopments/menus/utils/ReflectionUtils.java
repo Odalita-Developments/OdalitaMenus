@@ -181,8 +181,30 @@ final class ReflectionUtils {
         }
     }
 
+    static Object createPacketPlayOutSetSlotPacket(int windowId, int slot, Object itemStack, Object activeContainer) throws Exception {
+        Object packetPlayOutSetSlot;
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
+            // From 1.17.1 it is required to add a 'stateId' as parameter to the packet
+            Object stateId = WINDOW_STATE_ID_METHOD.invoke(activeContainer);
+            packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, itemStack);
+        } else {
+            packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, itemStack);
+        }
+
+        return packetPlayOutSetSlot;
+    }
+
     static Object createChatBaseComponent(String string) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         return CHAT_BASE_COMPONENT.getDeclaredClasses()[0].getMethod("a", String.class).invoke(null, "{\"text\":\"" + string + "\"}");
+    }
+
+    static void refreshInventory(Object entityPlayer, Object activeContainer) throws Exception {
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17)) {
+            REFRESH_INVENTORY.invoke(activeContainer);
+        } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
+            Object items = GET_NMS_CONTAINER_ITEMS_1165.get(activeContainer);
+            REFRESH_INVENTORY.invoke(entityPlayer, activeContainer, items);
+        }
     }
 
     private static String getServerProtocolVersion() {

@@ -1,13 +1,13 @@
 package nl.odalitadevelopments.menus.contents;
 
 import nl.odalitadevelopments.menus.annotations.MenuFrame;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.*;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
-import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
@@ -203,13 +203,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
-        // If menu is not opened yet, the items still need to be set in the item processor
-        // which will cause this item to be overridden by the item processor
-        if (!this.menuSession.isOpened()) {
-            this.set(slotPos, item, override);
-            return;
-        }
-
         this.set(slotPos, item, override, (slot) -> {
             this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
             InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());

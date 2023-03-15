@@ -24,6 +24,11 @@ public final class InventoryUtils {
 
     public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {
+            if (inventory.getViewers().isEmpty()) {
+                inventory.setItem(slot, itemStack);
+                return;
+            }
+
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
             int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
@@ -36,15 +41,7 @@ public final class InventoryUtils {
             Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
             SET_LIST.invoke(contents, slot, nmsItemStack);
 
-            Object packetPlayOutSetSlot;
-            if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
-                // From 1.17.1 it is required to add a 'stateId' as parameter to the packet
-                Object stateId = WINDOW_STATE_ID_METHOD.invoke(activeContainer);
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, nmsItemStack);
-            } else {
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
-            }
-
+            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
             sendPacket(player, packetPlayOutSetSlot);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -89,12 +86,7 @@ public final class InventoryUtils {
                 TITLE_FIELD.set(activeContainer, titleComponent);
                 TITLE_FIELD.setAccessible(false);
 
-                if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17)) {
-                    REFRESH_INVENTORY.invoke(activeContainer);
-                } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
-                    Object items = GET_NMS_CONTAINER_ITEMS_1165.get(activeContainer);
-                    REFRESH_INVENTORY.invoke(entityPlayer, activeContainer, items);
-                }
+                refreshInventory(entityPlayer, activeContainer);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
