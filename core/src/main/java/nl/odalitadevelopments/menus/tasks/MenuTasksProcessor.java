@@ -29,25 +29,28 @@ public final class MenuTasksProcessor implements Runnable {
 
     @Override
     public void run() {
-        int tick = this.tickCounter.getAndIncrement();
-
-        for (MenuTaskRunnable runnable : this.tasks) {
-            runnable.runGlobally(this.instance, this.menuProcessor, tick);
-        }
-
-        Map<Player, MenuSession> openMenus = this.menuProcessor.getOpenMenus();
-        if (openMenus.isEmpty()) return;
-
-        for (Map.Entry<Player, MenuSession> entry : openMenus.entrySet()) {
-            MenuSession menuSession = entry.getValue();
-            if (menuSession == null) continue;
-
-            Player player = entry.getKey();
-            if (player == null || !player.isOnline()) continue;
+        try {
+            int tick = this.tickCounter.getAndIncrement();
 
             for (MenuTaskRunnable runnable : this.tasks) {
-                runnable.runPerSession(this.instance, this.menuProcessor, tick, player, menuSession);
+                runnable.runGlobally(this.instance, this.menuProcessor, tick);
             }
+
+            Map<Player, MenuSession> openMenus = this.menuProcessor.getOpenMenus();
+
+            for (Map.Entry<Player, MenuSession> entry : openMenus.entrySet()) {
+                MenuSession menuSession = entry.getValue();
+                if (menuSession == null || menuSession.isClosed()) continue;
+
+                Player player = entry.getKey();
+                if (player == null || !player.isOnline()) continue;
+
+                for (MenuTaskRunnable runnable : this.tasks) {
+                    runnable.runPerSession(this.instance, this.menuProcessor, tick, player, menuSession);
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 }

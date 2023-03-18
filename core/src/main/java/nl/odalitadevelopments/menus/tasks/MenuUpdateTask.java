@@ -20,11 +20,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
 
     @Override
     public void runGlobally(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick) {
-        for (MenuSession menuSession : this.updatableItems.getRowMap().keySet()) {
-            if (menuSession.isClosed()) {
-                this.updatableItems.getRowMap().remove(menuSession);
-            }
-        }
+        this.updatableItems.getRowMap().keySet().removeIf(MenuSession::isClosed);
     }
 
     @Override
