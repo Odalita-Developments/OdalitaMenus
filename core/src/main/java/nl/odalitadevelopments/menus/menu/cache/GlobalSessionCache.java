@@ -32,11 +32,15 @@ public final class GlobalSessionCache implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerQuit(PlayerQuitEvent event) {
-        this.playerMenuCache.removeIf((uuid, key, map) -> uuid.equals(event.getPlayer().getUniqueId()));
+        this.cleanPlayerCache(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerKick(PlayerKickEvent event) {
-        this.playerMenuCache.removeIf((uuid, key, map) -> uuid.equals(event.getPlayer().getUniqueId()));
+        this.cleanPlayerCache(event.getPlayer().getUniqueId());
+    }
+
+    private void cleanPlayerCache(UUID playerUuid) {
+        this.playerMenuCache.getRowMap().remove(playerUuid);
     }
 }
