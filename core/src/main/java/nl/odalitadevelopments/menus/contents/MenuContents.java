@@ -1,13 +1,14 @@
 package nl.odalitadevelopments.menus.contents;
 
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
+import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
-import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
@@ -24,10 +25,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public sealed interface MenuContents permits MenuContentsImpl {
@@ -188,6 +191,10 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
                               @NotNull List<@NotNull MenuItem> menuItems, int... blacklisted);
+
+    @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                            @NotNull Collection<@NotNull T> values,
+                                                            @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
 
     <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems);
 

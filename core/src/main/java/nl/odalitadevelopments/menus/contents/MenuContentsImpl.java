@@ -6,6 +6,7 @@ import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.*;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
+import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsImpl {
@@ -426,7 +428,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
-        MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
+        MenuIterator menuIterator = new MenuIterator(this, menuIteratorType, startRow, startColumn);
         this.cache.getIterators().put(iterator, menuIterator);
         return menuIterator;
     }
@@ -434,7 +436,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn, @NotNull List<@NotNull MenuItem> menuItems,
                                      int... blacklisted) {
-        MenuIterator menuIterator = new MenuIterator(menuIteratorType, this, startRow, startColumn);
+        MenuIterator menuIterator = new MenuIterator(this, menuIteratorType, startRow, startColumn);
         menuIterator.blacklist(blacklisted);
 
         for (MenuItem menuItem : menuItems) {
@@ -443,8 +445,15 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                                   @NotNull Collection<@NotNull T> values,
+                                                                   @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction) {
+        return new MenuObjectIterator<>(this, menuIteratorType, startRow, startColumn, values, menuItemCreatorFunction);
+    }
+
+    @Override
     public <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems) {
-        MenuIterator value = new MenuIterator(MenuIteratorType.PATTERN, this, 0, 0);
+        MenuIterator value = new MenuIterator(this, MenuIteratorType.PATTERN, 0, 0);
         iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {
