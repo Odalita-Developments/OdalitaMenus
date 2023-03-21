@@ -119,8 +119,12 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
 
         Inventory inventory = event.getInventory();
         if (openMenuSession.getInventory().equals(inventory)) {
-            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuSession.getCache().getPlaceableItemsCloseAction();
+            Runnable closeActionBefore = openMenuSession.getCache().getCloseActionBefore();
+            if (closeActionBefore != null) {
+                closeActionBefore.run();
+            }
 
+            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuSession.getCache().getPlaceableItemsCloseAction();
             if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
                 List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
 
@@ -128,6 +132,11 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
                     ItemStack item = inventory.getItem(integer);
                     if (item != null) player.getInventory().addItem(item);
                 });
+            }
+
+            Runnable closeActionAfter = openMenuSession.getCache().getCloseActionAfter();
+            if (closeActionAfter != null) {
+                closeActionAfter.run();
             }
 
             openMenuSession.setClosed(true);
