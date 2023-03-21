@@ -22,7 +22,7 @@
     </dependencies>
 
     <build>
-        <finalName>OdalitaMenusPlugin-${version}</finalName>
+        <finalName>OdalitaMenusPlugin-${project.version}</finalName>
         <defaultGoal>clean install</defaultGoal>
 
         <resources>
@@ -52,6 +52,15 @@
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
+
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
