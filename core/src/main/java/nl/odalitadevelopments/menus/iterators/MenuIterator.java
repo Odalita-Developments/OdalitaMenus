@@ -52,7 +52,7 @@ public class MenuIterator {
     }
 
     public synchronized MenuIterator setNextAsync(MenuItem menuItem) {
-        this.contents.setAsync(next(), menuItem);
+        this.contents.set(next(), menuItem);
         return this;
     }
 
@@ -62,7 +62,7 @@ public class MenuIterator {
     }
 
     public synchronized MenuIterator setPreviousAsync(MenuItem menuItem) {
-        this.contents.setAsync(SlotPos.of(previous()), menuItem);
+        this.contents.set(SlotPos.of(previous()), menuItem);
         return this;
     }
 

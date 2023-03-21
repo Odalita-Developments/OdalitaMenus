@@ -20,7 +20,7 @@ public final class ItemProcessor {
         SupportedMenuType menuType = menuSession.getMenuType();
         Inventory inventory = menuSession.getInventory();
 
-        MenuItem[][] contents = menuSession.getContents();
+        MenuItem[][] contents = menuSession.contents;
 
         for (Pagination pagination : menuSession.getCache().getPaginationMap().values()) {
             List<Supplier<MenuItem>> itemsOnPage = pagination.getItemsOnPage();
@@ -38,7 +38,7 @@ public final class ItemProcessor {
                 int slot = pagination.iterator().getSlot();
                 if (inventory.getItem(slot) != null) continue;
 
-                menuContents.setAsync(slot, menuItem);
+                menuContents.set(slot, menuItem);
                 pagination.iterator().next();
             }
 
@@ -62,7 +62,7 @@ public final class ItemProcessor {
 
                 if (inventory.getItem(slot) != null) continue;
 
-                menuContents.setAsync(slot, menuItem);
+                menuContents.set(slot, menuItem);
             }
 
             scrollable.setInitialized();

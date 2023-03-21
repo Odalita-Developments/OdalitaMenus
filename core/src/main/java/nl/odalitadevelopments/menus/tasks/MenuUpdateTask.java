@@ -29,7 +29,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
 
         int updatableItems = 0;
 
-        MenuItem[][] contents = session.getContents();
+        MenuItem[][] contents = session.contents;
         for (int row = 0; row < contents.length; row++) {
             for (int column = 0; column < contents[0].length; column++) {
                 MenuItem menuItem = contents[row][column];

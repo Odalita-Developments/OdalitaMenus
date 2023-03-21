@@ -73,7 +73,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         this.set(slotPos, item, override, (slot) -> {
-            this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
+            this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
+
+            if (this.menuSession.isOpened()) {
+                InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            }
         });
     }
 
@@ -202,36 +206,39 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
-        this.set(slotPos, item, override, (slot) -> {
-            this.menuSession.getContents()[slot.getRow()][slot.getColumn()] = item;
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
-        });
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
+        this.set(slotPos, item, override);
     }
 
     @Override
-    public synchronized void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
-        this.setAsync(slotPos, item, true);
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
+        this.set(slotPos, item, true);
     }
 
     @Override
-    public synchronized void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
-        this.setAsync(SlotPos.of(row, column), item, override);
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
+        this.set(SlotPos.of(row, column), item, override);
     }
 
     @Override
-    public synchronized void setAsync(int row, int column, @NotNull MenuItem item) {
-        this.setAsync(row, column, item, true);
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(int row, int column, @NotNull MenuItem item) {
+        this.set(row, column, item, true);
     }
 
     @Override
-    public synchronized void setAsync(int slot, @NotNull MenuItem item, boolean override) {
-        this.setAsync(SlotPos.of(slot), item, override);
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(int slot, @NotNull MenuItem item, boolean override) {
+        this.set(SlotPos.of(slot), item, override);
     }
 
     @Override
-    public synchronized void setAsync(int slot, @NotNull MenuItem item) {
-        this.setAsync(slot, item, true);
+    @Deprecated(forRemoval = true, since = "0.1.6")
+    public void setAsync(int slot, @NotNull MenuItem item) {
+        this.set(slot, item, true);
     }
 
     @Override
@@ -277,7 +284,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
             menuItemSupplier = () -> item;
         }
 
-        this.setAsync(slot, menuItemSupplier.get());
+        this.set(slot, menuItemSupplier.get());
     }
 
     @Override
@@ -666,7 +673,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 int slot = SlotPos.of(row, column).getSlot();
                 if (this.menuSession.getCache().getFrameOverlaySlots().contains(slot)) continue;
 
-                this.menuSession.getContents()[row][column] = null;
+                this.menuSession.contents[row][column] = null;
                 InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
             }
         }

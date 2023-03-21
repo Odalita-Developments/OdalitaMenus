@@ -34,7 +34,8 @@ public final class MenuSession {
     private String title;
     private final MenuContents menuContents;
 
-    private volatile MenuItem[][] contents;
+    @Getter(AccessLevel.NONE)
+    public volatile MenuItem[][] contents;
     private volatile boolean hasUpdatableItems = false;
 
     private String globalCacheKey;
