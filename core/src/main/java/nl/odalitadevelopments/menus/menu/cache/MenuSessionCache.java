@@ -43,6 +43,8 @@ public final class MenuSessionCache {
     private PlaceableItemDragAction placeableItemDragAction = null;
 
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
+    private Runnable closeActionBefore = null;
+    private Runnable closeActionAfter = null;
 
     private final Map<String, MenuFrameData> frames = Maps.newConcurrentMap();
     private final Collection<Integer> frameOverlaySlots = Sets.newConcurrentHashSet();

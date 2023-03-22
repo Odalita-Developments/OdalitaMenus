@@ -94,7 +94,7 @@ final class PaginationImpl implements Pagination {
 
         if (this.currentPage + 1 <= this.lastPage()) {
             this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-                this.contents.setAsync(slot, item.get());
+                this.contents.set(slot, item.get());
             });
         }
 
@@ -137,7 +137,7 @@ final class PaginationImpl implements Pagination {
         this.currentPage = page;
 
         this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-            this.contents.setAsync(slot, item.get());
+            this.contents.set(slot, item.get());
         });
 
         return this;

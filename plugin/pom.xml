@@ -6,7 +6,7 @@
     <parent>
         <groupId>nl.odalitadevelopments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.1.5</version>
+        <version>0.1.6</version>
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus</groupId>
@@ -17,12 +17,12 @@
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus</groupId>
             <artifactId>core</artifactId>
-            <version>0.1.5</version>
+            <version>0.1.6</version>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>OdalitaMenusPlugin-${version}</finalName>
+        <finalName>OdalitaMenusPlugin-${project.version}</finalName>
         <defaultGoal>clean install</defaultGoal>
 
         <resources>
@@ -52,6 +52,15 @@
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
+
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>

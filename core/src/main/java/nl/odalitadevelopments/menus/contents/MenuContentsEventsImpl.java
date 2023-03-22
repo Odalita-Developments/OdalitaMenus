@@ -35,4 +35,22 @@ record MenuContentsEventsImpl(MenuContentsImpl inventoryContents) implements Men
 
         this.inventoryContents.cache.setPlayerInventoryClickAction(eventConsumer);
     }
+
+    @Override
+    public void onClose(boolean beforePlaceableItemRemoveAction, @NotNull Runnable action) {
+        if (this.inventoryContents.menuFrameData() != null) {
+            throw new UnsupportedOperationException("Close event is not supported in frames.");
+        }
+
+        if (beforePlaceableItemRemoveAction) {
+            this.inventoryContents.cache.setCloseActionBefore(action);
+        } else {
+            this.inventoryContents.cache.setCloseActionAfter(action);
+        }
+    }
+
+    @Override
+    public void onClose(@NotNull Runnable action) {
+        this.onClose(true, action);
+    }
 }

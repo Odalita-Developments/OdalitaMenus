@@ -24,11 +24,6 @@ public final class InventoryUtils {
 
     public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {
-            if (inventory.getViewers().isEmpty()) {
-                inventory.setItem(slot, itemStack);
-                return;
-            }
-
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
             int windowId = WINDOW_ID_FIELD.getInt(activeContainer);

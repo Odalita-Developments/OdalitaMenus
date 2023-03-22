@@ -65,7 +65,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
 
         if (this.initialized) {
             this.calculateSlotPosWithoutOffset(index).ifPresent((slotPos) -> {
-                this.contents.setAsync(SlotPos.of(slotPos), menuItemSupplier.get());
+                this.contents.set(SlotPos.of(slotPos), menuItemSupplier.get());
             });
         }
 
@@ -217,7 +217,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
         }
 
         this.contents.menuSession().getCache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-            this.contents.setAsync(slot, item.get());
+            this.contents.set(slot, item.get());
         });
 
         return this;
@@ -259,14 +259,14 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     private void clearMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
-                this.contents.menuSession().getContents()[row][column] = null;
+                this.contents.menuSession().contents[row][column] = null;
             }
         }
     }
 
     private void updateItem(int slot, Supplier<MenuItem> menuItemSupplier) {
         MenuItem menuItem = (menuItemSupplier == null) ? DisplayItem.of(new ItemStack(Material.AIR)) : menuItemSupplier.get();
-        this.contents.setAsync(slot, menuItem);
+        this.contents.set(slot, menuItem);
     }
 
     private int updateCurrentAxis(int newAxis, ScrollableDirection direction) {

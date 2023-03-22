@@ -20,11 +20,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
 
     @Override
     public void runGlobally(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick) {
-        for (MenuSession menuSession : this.updatableItems.getRowMap().keySet()) {
-            if (menuSession.isClosed()) {
-                this.updatableItems.getRowMap().remove(menuSession);
-            }
-        }
+        this.updatableItems.getRowMap().keySet().removeIf(MenuSession::isClosed);
     }
 
     @Override
@@ -33,7 +29,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
 
         int updatableItems = 0;
 
-        MenuItem[][] contents = session.getContents();
+        MenuItem[][] contents = session.contents;
         for (int row = 0; row < contents.length; row++) {
             for (int column = 0; column < contents[0].length; column++) {
                 MenuItem menuItem = contents[row][column];
