@@ -54,13 +54,13 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private @NotNull MenuObjectIterator<T> set0(@NotNull T value, @Nullable MenuItem item, int slot) {
         if (item == null) item = this.menuItemCreatorFunction.apply(value);
 
-        this.contents.setAsync(slot, item);
+        this.contents.set(slot, item);
         this.slotPositions.put(value, slot);
         return this;
     }
 
     private void clearItem(int slot) {
-        this.contents.setAsync(slot, DisplayItem.of(new ItemStack(Material.AIR)));
+        this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
     }
 
     private static final class MenuObjectIteratorSet<T> extends TreeSet<T> {

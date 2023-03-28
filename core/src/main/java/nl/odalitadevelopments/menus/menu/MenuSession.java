@@ -42,9 +42,9 @@ public final class MenuSession {
     private final MenuSessionCache cache;
 
     @Setter(AccessLevel.PACKAGE)
-    private boolean opened = false;
+    private volatile boolean opened = false;
 
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
     MenuSession(OdalitaMenus instance, Player player, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
