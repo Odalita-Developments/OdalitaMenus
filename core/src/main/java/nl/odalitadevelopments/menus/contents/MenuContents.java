@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.contents;
 
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
@@ -7,7 +8,6 @@ import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
-import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
@@ -233,28 +233,20 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
 
     /* FRAME */
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, @NotNull SlotPos slotPos, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int row, int column, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int slot, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     boolean loadFrame(@NotNull String id, Object @NotNull ... arguments);
 
-    @ApiStatus.Experimental
     void unloadFrame(@NotNull String id);
 
-    @ApiStatus.Experimental
     void registerFrameOverlaySlots(SlotPos @NotNull ... slots);
 
-    @ApiStatus.Experimental
     void registerFrameOverlaySlots(int... slots);
 
-    @ApiStatus.Experimental
     @Nullable String loadedFrameId();
 
 
