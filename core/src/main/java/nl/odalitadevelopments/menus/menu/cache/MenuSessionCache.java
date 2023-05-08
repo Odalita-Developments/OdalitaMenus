@@ -34,7 +34,7 @@ public final class MenuSessionCache {
     private final Map<String, Pagination> paginationMap = Maps.newConcurrentMap();
     private final Map<String, Scrollable> scrollableMap = Maps.newConcurrentMap();
     private final Map<Integer, Supplier<MenuItem>> refreshableItems = Maps.newConcurrentMap();
-    private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = Maps.newConcurrentMap();
+    private final Map<Integer, MenuItem> pageSwitchUpdateItems = Maps.newConcurrentMap();
 
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
