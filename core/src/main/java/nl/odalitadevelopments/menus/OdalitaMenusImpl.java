@@ -6,6 +6,7 @@ import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.listeners.InventoryListener;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
@@ -27,7 +28,9 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -108,6 +111,31 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     }
 
     @Override
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu() {
+        return this.menuProcessor.getPlayersWithOpenMenu();
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu(@NotNull String id) {
+        return this.menuProcessor.getPlayersWithOpenMenu(id);
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions() {
+        return this.menuProcessor.getOpenMenuSessions();
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions(@NotNull String id) {
+        return this.menuProcessor.getOpenMenuSessions(id);
+    }
+
+    @Override
+    public @Nullable MenuSession getOpenMenuSession(@NotNull Player player) {
+        return this.menuProcessor.getOpenMenuSession(player);
+    }
+
+    @Override
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
         this.menuProcessor.registerProviderLoader(providerClass, loader);
     }
@@ -147,7 +175,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         if (this.javaPlugin.equals(event.getPlugin())) {
             this.menuTask.cancel(true);
 
-            for (Player player : this.menuProcessor.getOpenMenus().keySet()) {
+            for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
             }
 

@@ -9,8 +9,11 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,6 +78,46 @@ public final class MenuProcessor {
 
 
         return new MenuOpenerBuilderImpl<>(this, this.itemProcessor, this.supportedMenuTypes, menuProvider, player, providerLoader);
+    }
+
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu() {
+        return this.openMenus.keySet();
+    }
+
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu(@NotNull String id) {
+        if (id.isEmpty() || id.isBlank()) return new HashSet<>();
+
+        Collection<Player> players = new HashSet<>();
+        for (Map.Entry<Player, MenuSession> entry : this.openMenus.entrySet()) {
+            String menuId = entry.getValue().getId();
+            if (menuId != null && menuId.equals(id)) {
+                players.add(entry.getKey());
+            }
+        }
+
+        return players;
+    }
+
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions() {
+        return this.openMenus.values();
+    }
+
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions(@NotNull String id) {
+        if (id.isEmpty() || id.isBlank()) return new HashSet<>();
+
+        Collection<MenuSession> sessions = new HashSet<>();
+        for (Map.Entry<Player, MenuSession> entry : this.openMenus.entrySet()) {
+            String menuId = entry.getValue().getId();
+            if (menuId != null && menuId.equals(id)) {
+                sessions.add(entry.getValue());
+            }
+        }
+
+        return sessions;
+    }
+
+    public @Nullable MenuSession getOpenMenuSession(@NotNull Player player) {
+        return this.openMenus.get(player);
     }
 
     Class<?> findProviderLoader(Class<?> menuProviderClass, Class<?> providerClass) {

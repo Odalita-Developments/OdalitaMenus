@@ -27,6 +27,7 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final Player player;
 
+    private final String id;
     @Setter(AccessLevel.NONE)
     private SupportedMenuType menuType;
     @Setter(AccessLevel.NONE)
@@ -46,9 +47,11 @@ public final class MenuSession {
 
     private boolean closed = false;
 
-    MenuSession(OdalitaMenus instance, Player player, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
         this.player = player;
+
+        this.id = id;
         this.menuType = menuType;
 
         this.inventory = inventory;

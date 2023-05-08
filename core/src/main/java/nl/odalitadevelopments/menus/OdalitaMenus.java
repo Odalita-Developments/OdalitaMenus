@@ -3,11 +3,12 @@ package nl.odalitadevelopments.menus;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.MenuSession;
+import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
-import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
@@ -16,6 +17,9 @@ import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public sealed interface OdalitaMenus permits OdalitaMenusImpl {
 
@@ -46,6 +50,16 @@ public sealed interface OdalitaMenus permits OdalitaMenusImpl {
     @NotNull ProvidersContainer getProvidersContainer();
 
     @NotNull CooldownContainer getCooldownContainer();
+
+    @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu();
+
+    @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu(@NotNull String id);
+
+    @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions();
+
+    @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions(@NotNull String id);
+
+    @Nullable MenuSession getOpenMenuSession(@NotNull Player player);
 
     <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader);
 

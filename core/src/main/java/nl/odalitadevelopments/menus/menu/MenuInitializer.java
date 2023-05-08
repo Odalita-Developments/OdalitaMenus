@@ -30,7 +30,8 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             SupportedMenuType menuType = this.supportedMenuTypes().getSupportedMenuType(annotation.type());
             Inventory inventory = menuType.createInventory(inventoryTitle);
 
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuType, inventory, annotation.title(), annotation.globalCacheKey());
+            String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuId, menuType, inventory, annotation.title(), annotation.globalCacheKey());
 
             MenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);

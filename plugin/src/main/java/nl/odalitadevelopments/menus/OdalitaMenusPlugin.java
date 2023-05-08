@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus;
 
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
@@ -12,6 +13,9 @@ import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public final class OdalitaMenusPlugin extends JavaPlugin {
 
@@ -40,6 +44,26 @@ public final class OdalitaMenusPlugin extends JavaPlugin {
 
     public @NotNull ProvidersContainer getProvidersContainer() {
         return this.odalitaMenus.getProvidersContainer();
+    }
+
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu() {
+        return this.odalitaMenus.getPlayersWithOpenMenu();
+    }
+
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu(@NotNull String id) {
+        return this.odalitaMenus.getPlayersWithOpenMenu(id);
+    }
+
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions() {
+        return this.odalitaMenus.getOpenMenuSessions();
+    }
+
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions(@NotNull String id) {
+        return this.odalitaMenus.getOpenMenuSessions(id);
+    }
+
+    public @Nullable MenuSession getOpenMenuSession(@NotNull Player player) {
+        return this.odalitaMenus.getOpenMenuSession(player);
     }
 
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
