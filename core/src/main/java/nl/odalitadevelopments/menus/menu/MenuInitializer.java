@@ -60,7 +60,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
     }
 
     private void openInventory(@NotNull Player player, @NotNull MenuSession menuSession) {
-        player.openInventory(menuSession.getInventory());
         this.menuProcessor.getOpenMenus().put(player, menuSession);
+        player.openInventory(menuSession.getInventory());
     }
 }

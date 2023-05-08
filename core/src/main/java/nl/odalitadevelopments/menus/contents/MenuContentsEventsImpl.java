@@ -7,45 +7,45 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-record MenuContentsEventsImpl(MenuContentsImpl inventoryContents) implements MenuContentsEvents {
+record MenuContentsEventsImpl(MenuContentsImpl menuContents) implements MenuContentsEvents {
 
     @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemClickAction action) {
-        if (this.inventoryContents.menuFrameData() != null) {
+        if (this.menuContents.menuFrameData() != null) {
             throw new UnsupportedOperationException("Placeable items are not supported in frames.");
         }
 
-        this.inventoryContents.cache.setPlaceableItemClickAction(action);
+        this.menuContents.cache.setPlaceableItemClickAction(action);
     }
 
     @Override
     public void onPlaceableItemDrag(@NotNull PlaceableItemDragAction action) {
-        if (this.inventoryContents.menuFrameData() != null) {
+        if (this.menuContents.menuFrameData() != null) {
             throw new UnsupportedOperationException("Placeable items are not supported in frames.");
         }
 
-        this.inventoryContents.cache.setPlaceableItemDragAction(action);
+        this.menuContents.cache.setPlaceableItemDragAction(action);
     }
 
     @Override
     public void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer) {
-        if (this.inventoryContents.menuFrameData() != null) {
+        if (this.menuContents.menuFrameData() != null) {
             throw new UnsupportedOperationException("Player inventory click event is not supported in frames.");
         }
 
-        this.inventoryContents.cache.setPlayerInventoryClickAction(eventConsumer);
+        this.menuContents.cache.setPlayerInventoryClickAction(eventConsumer);
     }
 
     @Override
     public void onClose(boolean beforePlaceableItemRemoveAction, @NotNull Runnable action) {
-        if (this.inventoryContents.menuFrameData() != null) {
+        if (this.menuContents.menuFrameData() != null) {
             throw new UnsupportedOperationException("Close event is not supported in frames.");
         }
 
         if (beforePlaceableItemRemoveAction) {
-            this.inventoryContents.cache.setCloseActionBefore(action);
+            this.menuContents.cache.setCloseActionBefore(action);
         } else {
-            this.inventoryContents.cache.setCloseActionAfter(action);
+            this.menuContents.cache.setCloseActionAfter(action);
         }
     }
 

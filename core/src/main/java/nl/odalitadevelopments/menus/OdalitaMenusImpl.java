@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.listeners.InventoryListener;
+import nl.odalitadevelopments.menus.listeners.InventoryPacketListener;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
@@ -96,10 +97,12 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.patternContainer = new PatternContainer();
 
-        this.providersContainer = new ProvidersContainer();
+        this.providersContainer = new ProvidersContainer(this);
         this.cooldownContainer = new CooldownContainer();
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
+        new InventoryPacketListener(this, this.menuProcessor);
+
         javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.globalSessionCache, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
@@ -178,6 +181,8 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
             }
+
+            this.providersContainer.close(this);
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalSessionCache);

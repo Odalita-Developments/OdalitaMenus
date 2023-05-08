@@ -61,5 +61,12 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.92.Final</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

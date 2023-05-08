@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.utils;
 
+import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
 import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.ChatColor;
@@ -37,6 +38,44 @@ public final class InventoryUtils {
             SET_LIST.invoke(contents, slot, nmsItemStack);
 
             Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
+            sendPacket(player, packetPlayOutSetSlot);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    public static synchronized void updateItemPlayerInventory(Player player, int slot, ItemStack itemStack, boolean updateServer) {
+        if (slot < 9) {
+            slot += 36;
+        } else if (slot > 39) {
+            slot += 5; // Offhand
+        } else if (slot > 35) {
+            slot = 8 - (slot - 36);
+        }
+
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            Object playerContainer = PLAYER_CONTAINER_FIELD.get(entityPlayer);
+            int windowId = WINDOW_ID_FIELD.getInt(playerContainer);
+
+            Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
+
+            if (updateServer) {
+                Object craftInventory = CRAFT_INVENTORY.cast(player.getInventory());
+                Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+                Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
+                SET_LIST.invoke(contents, slot, nmsItemStack);
+            }
+
+            Object packetPlayOutSetSlot;
+            if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
+                // From 1.17.1 it is required to add a 'stateId' as parameter to the packet
+                Object stateId = WINDOW_STATE_ID_METHOD.invoke(playerContainer);
+                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, nmsItemStack);
+            } else {
+                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
+            }
+
             sendPacket(player, packetPlayOutSetSlot);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -85,6 +124,26 @@ public final class InventoryUtils {
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+        }
+    }
+
+    public static Channel getPacketChannel(Player player) {
+        try {
+            Object networkManager = getNetworkManager(player);
+
+            Object channel;
+            if (ProtocolVersion.getServerVersion().isLowerOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
+                channel = NETWORK_MANAGER.getField("channel").get(networkManager);
+            } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_18_1)) {
+                channel = NETWORK_MANAGER.getField("k").get(networkManager);
+            } else {
+                channel = NETWORK_MANAGER.getField("m").get(networkManager);
+            }
+
+            return (Channel) channel;
+        } catch (Throwable exception) {
+            exception.printStackTrace();
+            return null;
         }
     }
 

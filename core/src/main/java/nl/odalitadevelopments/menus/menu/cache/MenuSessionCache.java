@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.contents.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.MenuTask;
+import nl.odalitadevelopments.menus.contents.action.PlayerInventoryLoreApplier;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
@@ -45,6 +46,8 @@ public final class MenuSessionCache {
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
     private Runnable closeActionBefore = null;
     private Runnable closeActionAfter = null;
+
+    private PlayerInventoryLoreApplier loreApplier = null;
 
     private final Map<String, MenuFrameData> frames = Maps.newConcurrentMap();
     private final Collection<Integer> frameOverlaySlots = Sets.newConcurrentHashSet();

@@ -1,6 +1,8 @@
 package nl.odalitadevelopments.menus.listeners;
 
+import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.action.PlayerInventoryLoreApplier;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
@@ -9,6 +11,8 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
+import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,36 +21,37 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcessor) implements Listener {
+@AllArgsConstructor
+public final class InventoryListener implements Listener {
+
+    private final OdalitaMenus instance;
+    private final MenuProcessor menuProcessor;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuSession == null) return;
+        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
+        if (menuSession == null) return;
 
         if (event.getAction() == InventoryAction.HOTBAR_SWAP || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD || event.getClick() == ClickType.DOUBLE_CLICK) {
             event.setCancelled(true);
             return;
         }
 
-        SupportedMenuType menuType = openMenuSession.getMenuType();
+        SupportedMenuType menuType = menuSession.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (event.getView().getTopInventory().equals(openMenuSession.getInventory()) && event.getRawSlot() >= 0) {
+        if (event.getView().getTopInventory().equals(menuSession.getInventory()) && event.getRawSlot() >= 0) {
             boolean clickedTopInventory = event.getView().getTopInventory().equals(clickedInventory);
-            if (!clickedTopInventory && event.getCurrentItem() != null && openMenuSession.getCache().getPlayerInventoryClickAction() != null) {
+            if (!clickedTopInventory && event.getCurrentItem() != null && menuSession.getCache().getPlayerInventoryClickAction() != null) {
                 event.setCancelled(true); // Cancel event by default
-                openMenuSession.getCache().getPlayerInventoryClickAction().accept(event);
+                menuSession.getCache().getPlayerInventoryClickAction().accept(event);
                 return;
             }
 
-            List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+            List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
             if (event.getClick().isShiftClick() && !clickedTopInventory) {
                 event.setCancelled(true);
                 return;
@@ -54,7 +59,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
 
             if (!placeableItems.isEmpty() && !clickedTopInventory) return;
             if (placeableItems.contains(event.getRawSlot())) {
-                PlaceableItemClickAction placeableItemAction = openMenuSession.getCache().getPlaceableItemClickAction();
+                PlaceableItemClickAction placeableItemAction = menuSession.getCache().getPlaceableItemClickAction();
                 if (placeableItemAction != null && !placeableItemAction.shouldPlace(
                         SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()),
                         event)) {
@@ -66,7 +71,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
 
             event.setCancelled(true);
 
-            MenuItem menuItem = openMenuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
+            MenuItem menuItem = menuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
                 menuItem.onClick(this.instance).accept(event);
             }
@@ -76,16 +81,16 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
-        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuSession == null) return;
+        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
+        if (menuSession == null) return;
 
-        SupportedMenuType menuType = openMenuSession.getMenuType();
-        List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+        SupportedMenuType menuType = menuSession.getMenuType();
+        List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
 
-        if (event.getView().getTopInventory().equals(openMenuSession.getInventory())) {
+        if (event.getView().getTopInventory().equals(menuSession.getInventory())) {
             Set<Integer> inventorySlots = event.getRawSlots();
 
-            boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (openMenuSession.getInventory().getSize() - 1));
+            boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (menuSession.getInventory().getSize() - 1));
             if (!placeableItems.isEmpty() && fitsInMenu) return;
 
             boolean matchAllSlots = new HashSet<>(placeableItems).containsAll(inventorySlots);
@@ -94,7 +99,7 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
                 return;
             }
 
-            PlaceableItemDragAction placeableItemAction = openMenuSession.getCache().getPlaceableItemDragAction();
+            PlaceableItemDragAction placeableItemAction = menuSession.getCache().getPlaceableItemDragAction();
             if (placeableItemAction == null) {
                 event.setCancelled(true);
                 return;
@@ -112,21 +117,49 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        Player player = (Player) event.getPlayer();
+        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
+        if (menuSession == null) return;
+
+        PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
+        if (loreApplier != null) {
+            Map<Integer, ItemStack> itemsToUpdate = new HashMap<>();
+            for (int i = 0; i < 36; i++) {
+                ItemStack item = player.getInventory().getItem(i);
+
+                if (item != null && !item.getType().isAir()) {
+                    ItemStack newItem = loreApplier.apply(i, item.clone());
+                    if (newItem.getType() != item.getType()) continue;
+
+                    itemsToUpdate.put(i, newItem);
+                }
+            }
+
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), () -> {
+                for (Map.Entry<Integer, ItemStack> entry : itemsToUpdate.entrySet()) {
+                    InventoryUtils.updateItemPlayerInventory(player, entry.getKey(), entry.getValue(), false);
+                }
+            }, 1L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        MenuSession openMenuSession = this.menuProcessor.getOpenMenus().get(player);
-        if (openMenuSession == null) return;
+        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
+        if (menuSession == null) return;
 
         Inventory inventory = event.getInventory();
-        if (openMenuSession.getInventory().equals(inventory)) {
-            Runnable closeActionBefore = openMenuSession.getCache().getCloseActionBefore();
+        if (menuSession.getInventory().equals(inventory)) {
+            Runnable closeActionBefore = menuSession.getCache().getCloseActionBefore();
             if (closeActionBefore != null) {
                 closeActionBefore.run();
             }
 
-            PlaceableItemsCloseAction placeableItemsCloseAction = openMenuSession.getCache().getPlaceableItemsCloseAction();
+            PlaceableItemsCloseAction placeableItemsCloseAction = menuSession.getCache().getPlaceableItemsCloseAction();
             if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
-                List<Integer> placeableItems = openMenuSession.getCache().getPlaceableItems();
+                List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
 
                 placeableItems.forEach(integer -> {
                     ItemStack item = inventory.getItem(integer);
@@ -134,13 +167,15 @@ public record InventoryListener(OdalitaMenus instance, MenuProcessor menuProcess
                 });
             }
 
-            Runnable closeActionAfter = openMenuSession.getCache().getCloseActionAfter();
+            Runnable closeActionAfter = menuSession.getCache().getCloseActionAfter();
             if (closeActionAfter != null) {
                 closeActionAfter.run();
             }
 
-            openMenuSession.setClosed(true);
+            menuSession.setClosed(true);
             this.menuProcessor.getOpenMenus().remove(player);
+
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), player::updateInventory, 1L);
         }
     }
 }

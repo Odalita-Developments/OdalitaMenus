@@ -34,19 +34,22 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     final MenuSession menuSession;
     final MenuSessionCache cache;
     final MenuContentsScheduler scheduler;
+    final MenuContentsActions actions;
     final MenuContentsEvents events;
 
     MenuContentsImpl(MenuSession menuSession) {
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
         this.scheduler = new MenuContentsSchedulerImpl(this);
+        actions = new MenuContentsActionsImpl(this);
         this.events = new MenuContentsEventsImpl(this);
     }
 
-    MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsEvents events) {
+    MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsActions actions, MenuContentsEvents events) {
         this.menuSession = menuSession;
         this.cache = cache;
         this.scheduler = scheduler;
+        this.actions = actions;
         this.events = events;
     }
 
@@ -58,6 +61,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public @NotNull MenuContentsScheduler scheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    public @NotNull MenuContentsActions actions() {
+        return this.actions;
     }
 
     @Override
@@ -650,7 +658,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
-        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.events);
+        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.actions, this.events);
         loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
