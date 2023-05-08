@@ -759,7 +759,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
         if (item instanceof PageUpdatableItem) {
-            this.cache.getPageSwitchUpdateItems().put(originalSlot, () -> item);
+            this.cache.getPageSwitchUpdateItems().put(originalSlot, item);
         }
 
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
