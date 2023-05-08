@@ -5,10 +5,12 @@ import nl.odalitadevelopments.menus.providers.processors.ColorProcessor;
 import nl.odalitadevelopments.menus.providers.processors.CooldownProcessor;
 import nl.odalitadevelopments.menus.providers.processors.DefaultItemProcessor;
 import nl.odalitadevelopments.menus.providers.processors.packet.OdalitaPacketListenerProcessor;
+import nl.odalitadevelopments.menus.providers.processors.packet.ProtocolLibPacketListenerProcessor;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.providers.providers.CooldownProvider;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +25,12 @@ public final class ProvidersContainer {
         this.colorProvider = new ColorProcessor();
         this.cooldownProvider = new CooldownProcessor();
         this.defaultItemProvider = new DefaultItemProcessor();
-        this.packetListenerProvider = new OdalitaPacketListenerProcessor(instance);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+            this.packetListenerProvider = new ProtocolLibPacketListenerProcessor(instance);
+        } else {
+            this.packetListenerProvider = new OdalitaPacketListenerProcessor(instance);
+        }
     }
 
     public void close(@NotNull OdalitaMenus instance) {
