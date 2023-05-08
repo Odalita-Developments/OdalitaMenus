@@ -3,10 +3,7 @@ package nl.odalitadevelopments.menus.providers.processors.packet;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
@@ -27,15 +24,37 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
     private static final Map<OdalitaMenus, Map<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>>> packetListenersClientbound = new HashMap<>();
 
     private final OdalitaMenus instance;
+    private final ProtocolManager protocolManager;
+
+    private final PacketListener setSlotListener;
+    private final PacketListener windowItemsListener;
 
     public ProtocolLibPacketListenerProcessor(OdalitaMenus instance) {
         this.instance = instance;
 
         packetListenersClientbound.put(instance, new HashMap<>());
 
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        this.protocolManager = ProtocolLibrary.getProtocolManager();
 
-        protocolManager.addPacketListener(new PacketAdapter(
+        this.protocolManager.addPacketListener(this.setSlotListener = this.listenSetSlot());
+        this.protocolManager.addPacketListener(this.windowItemsListener = this.listenWindowItems());
+    }
+
+    @Override
+    public void close(@NotNull OdalitaMenus instance) {
+        packetListenersClientbound.remove(instance);
+
+        this.protocolManager.removePacketListener(this.setSlotListener);
+        this.protocolManager.removePacketListener(this.windowItemsListener);
+    }
+
+    @Override
+    public void listenClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiConsumer<@NotNull Player, @NotNull OdalitaMenuPacket> packetConsumer) {
+        packetListenersClientbound.get(this.instance).put(clientboundPacketType, packetConsumer);
+    }
+
+    private PacketListener listenSetSlot() {
+        return new PacketAdapter(
                 instance.getJavaPlugin(),
                 ListenerPriority.NORMAL,
                 PacketType.Play.Server.SET_SLOT
@@ -63,9 +82,11 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     }
                 }
             }
-        });
+        };
+    }
 
-        protocolManager.addPacketListener(new PacketAdapter(
+    private PacketListener listenWindowItems() {
+        return new PacketAdapter(
                 instance.getJavaPlugin(),
                 ListenerPriority.NORMAL,
                 PacketType.Play.Server.WINDOW_ITEMS
@@ -93,16 +114,6 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     }
                 }
             }
-        });
-    }
-
-    @Override
-    public void close(@NotNull OdalitaMenus instance) {
-        packetListenersClientbound.remove(instance);
-    }
-
-    @Override
-    public void listenClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiConsumer<@NotNull Player, @NotNull OdalitaMenuPacket> packetConsumer) {
-        packetListenersClientbound.get(this.instance).put(clientboundPacketType, packetConsumer);
+        };
     }
 }

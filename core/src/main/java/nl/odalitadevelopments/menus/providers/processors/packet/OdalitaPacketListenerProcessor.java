@@ -33,6 +33,10 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
         packetListenersClientbound.put(instance, new HashMap<>());
 
         Bukkit.getPluginManager().registerEvents(this, instance.getJavaPlugin());
+
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            this.inject(all); // If registered later, we still want online players to be injected
+        }
     }
 
     @Override
@@ -61,14 +65,18 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
 
     @EventHandler
     private void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-        Channel channel = InventoryUtils.getPacketChannel(event.getPlayer());
+        this.inject(event.getPlayer());
+    }
+
+    private void inject(Player player) {
+        Channel channel = InventoryUtils.getPacketChannel(player);
         if (channel == null) return;
 
         ChannelPipeline pipeline = channel.pipeline();
         if (pipeline == null) return;
 
         if (pipeline.get(ODALITA_PACKET_HANDLER) != null) return;
-        pipeline.addBefore(PACKET_HANDLER, ODALITA_PACKET_HANDLER, this.createChannelDuplexHandler(event.getPlayer()));
+        pipeline.addBefore(PACKET_HANDLER, ODALITA_PACKET_HANDLER, this.createChannelDuplexHandler(player));
     }
 
     private ChannelDuplexHandler createChannelDuplexHandler(Player player) {

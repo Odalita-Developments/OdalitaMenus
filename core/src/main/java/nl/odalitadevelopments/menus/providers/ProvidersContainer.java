@@ -16,12 +16,16 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ProvidersContainer {
 
+    private final OdalitaMenus instance;
+
     private ColorProvider colorProvider;
     private CooldownProvider cooldownProvider;
     private DefaultItemProvider defaultItemProvider;
     private PacketListenerProvider packetListenerProvider;
 
     public ProvidersContainer(@NotNull OdalitaMenus instance) {
+        this.instance = instance;
+
         this.colorProvider = new ColorProcessor();
         this.cooldownProvider = new CooldownProcessor();
         this.defaultItemProvider = new DefaultItemProcessor();
@@ -50,6 +54,7 @@ public final class ProvidersContainer {
     }
 
     public void setPacketListenerProvider(@NotNull PacketListenerProvider packetListenerProvider) {
+        this.packetListenerProvider.close(this.instance);
         this.packetListenerProvider = packetListenerProvider;
     }
 
