@@ -40,9 +40,10 @@ public final class InventoryPacketListener {
             if (isEmpty(itemStack)) return false;
 
             int slot = packet.slot();
-            if (slot < 0) return false;
+            int topInventorySize = menuSession.getInventory().getSize();
+            if (slot < topInventorySize) return false;
 
-            loreApplier.apply(slot, itemStack);
+            loreApplier.apply(this.convertSlot(topInventorySize, slot), itemStack);
             return false;
         });
     }
@@ -64,7 +65,7 @@ public final class InventoryPacketListener {
                 ItemStack itemStack = items.get(i);
                 if (isEmpty(itemStack)) continue;
 
-                loreApplier.apply(i, itemStack);
+                loreApplier.apply(this.convertSlot(topInventorySize, i), itemStack);
             }
 
             return false;
@@ -73,5 +74,27 @@ public final class InventoryPacketListener {
 
     private boolean isEmpty(ItemStack itemStack) {
         return itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() <= 0;
+    }
+
+    private int convertSlot(int topSize, int rawSlot) {
+        // Index from the top inventory as having slots from [0,size]
+        if (rawSlot < topSize) {
+            return rawSlot;
+        }
+
+        // Move down the slot index by the top size
+        int slot = rawSlot - topSize;
+
+        // 27 = 36 - 9
+        if (slot >= 27) {
+            // Put into hotbar section
+            slot -= 27;
+        } else {
+            // Take out of hotbar section
+            // 9 = 36 - 27
+            slot += 9;
+        }
+
+        return slot;
     }
 }
