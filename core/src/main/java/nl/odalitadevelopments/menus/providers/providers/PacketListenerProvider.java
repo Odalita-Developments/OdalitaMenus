@@ -5,11 +5,11 @@ import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 public interface PacketListenerProvider {
 
-    void interceptClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiFunction<@NotNull Player, @NotNull OdalitaMenuPacket, @NotNull Boolean> packetFunction);
+    void listenClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiConsumer<@NotNull Player, @NotNull OdalitaMenuPacket> packetConsumer);
 
     default void close(@NotNull OdalitaMenus instance) {
     }

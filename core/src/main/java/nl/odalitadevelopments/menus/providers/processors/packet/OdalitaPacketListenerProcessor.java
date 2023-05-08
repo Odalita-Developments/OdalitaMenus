@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 public final class OdalitaPacketListenerProcessor implements PacketListenerProvider, Listener {
 
     private static final String PACKET_HANDLER = "packet_handler";
     private static final String ODALITA_PACKET_HANDLER = "odalita_packet_handler";
 
-    private static final Map<OdalitaMenus, Map<ClientboundPacketType, BiFunction<Player, OdalitaMenuPacket, Boolean>>> packetListenersClientbound = new HashMap<>();
+    private static final Map<OdalitaMenus, Map<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>>> packetListenersClientbound = new HashMap<>();
 
     private final OdalitaMenus instance;
 
@@ -55,8 +55,8 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     @Override
-    public void interceptClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiFunction<@NotNull Player, @NotNull OdalitaMenuPacket, @NotNull Boolean> packetFunction) {
-        packetListenersClientbound.get(this.instance).put(clientboundPacketType, packetFunction);
+    public void listenClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiConsumer<@NotNull Player, @NotNull OdalitaMenuPacket> packetConsumer) {
+        packetListenersClientbound.get(this.instance).put(clientboundPacketType, packetConsumer);
     }
 
     @EventHandler
@@ -88,11 +88,10 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
                     return;
                 }
 
-                for (Map<ClientboundPacketType, BiFunction<Player, OdalitaMenuPacket, Boolean>> map : packetListenersClientbound.values()) {
-                    BiFunction<Player, OdalitaMenuPacket, Boolean> function = map.get(clientboundPacketType);
-                    if (function != null && function.apply(player, packet)) {
-                        // If function returns true, cancel the packet
-                        return;
+                for (Map<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> map : packetListenersClientbound.values()) {
+                    BiConsumer<Player, OdalitaMenuPacket> function = map.get(clientboundPacketType);
+                    if (function != null) {
+                        function.accept(player, packet);
                     }
 
                     PacketConverter.updateClientboundPacket(clientboundPacketType, packet, packetObject);

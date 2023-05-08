@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface PlayerInventoryLoreApplier {
 
-    @NotNull ItemStack apply(@NotNull Integer slot, @NotNull ItemStack current);
+    void apply(@NotNull Integer slot, @NotNull ItemStack current);
 }

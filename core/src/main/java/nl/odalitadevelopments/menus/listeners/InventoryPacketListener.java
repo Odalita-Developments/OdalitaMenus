@@ -27,36 +27,35 @@ public final class InventoryPacketListener {
     }
 
     private void listenSetSlot() {
-        this.instance.getProvidersContainer().getPacketListenerProvider().interceptClientbound(PacketListenerProvider.ClientboundPacketType.SET_SLOT, (player, odalitaMenuPacket) -> {
-            if (!(odalitaMenuPacket instanceof OdalitaSetSlotPacket packet)) return false;
+        this.instance.getProvidersContainer().getPacketListenerProvider().listenClientbound(PacketListenerProvider.ClientboundPacketType.SET_SLOT, (player, odalitaMenuPacket) -> {
+            if (!(odalitaMenuPacket instanceof OdalitaSetSlotPacket packet)) return;
 
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
-            if (menuSession == null) return false;
+            if (menuSession == null) return;
 
             PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-            if (loreApplier == null) return false; // No lore applier, no need to intercept
+            if (loreApplier == null) return;
 
             ItemStack itemStack = packet.item();
-            if (isEmpty(itemStack)) return false;
+            if (isEmpty(itemStack)) return;
 
             int slot = packet.slot();
             int topInventorySize = menuSession.getInventory().getSize();
-            if (slot < topInventorySize) return false;
+            if (slot < topInventorySize) return;
 
             loreApplier.apply(this.convertSlot(topInventorySize, slot), itemStack);
-            return false;
         });
     }
 
     private void listenWindowItems() {
-        this.instance.getProvidersContainer().getPacketListenerProvider().interceptClientbound(PacketListenerProvider.ClientboundPacketType.WINDOW_ITEMS, (player, odalitaMenuPacket) -> {
-            if (!(odalitaMenuPacket instanceof OdalitaWindowItemsPacket packet)) return false;
+        this.instance.getProvidersContainer().getPacketListenerProvider().listenClientbound(PacketListenerProvider.ClientboundPacketType.WINDOW_ITEMS, (player, odalitaMenuPacket) -> {
+            if (!(odalitaMenuPacket instanceof OdalitaWindowItemsPacket packet)) return;
 
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
-            if (menuSession == null) return false;
+            if (menuSession == null) return;
 
             PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-            if (loreApplier == null) return false; // No lore applier, no need to intercept
+            if (loreApplier == null) return;
 
             List<@NotNull ItemStack> items = packet.items();
 
@@ -67,8 +66,6 @@ public final class InventoryPacketListener {
 
                 loreApplier.apply(this.convertSlot(topInventorySize, i), itemStack);
             }
-
-            return false;
         });
     }
 
