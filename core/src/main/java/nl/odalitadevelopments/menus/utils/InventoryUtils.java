@@ -12,8 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static nl.odalitadevelopments.menus.utils.ReflectionUtils.*;
 
@@ -23,7 +25,7 @@ public final class InventoryUtils {
     private InventoryUtils() {
     }
 
-    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
+    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory, boolean updateServer) {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
@@ -32,12 +34,29 @@ public final class InventoryUtils {
 
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
 
-            Object craftInventory = CRAFT_INVENTORY.cast(inventory);
-            Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
-            Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
-            SET_LIST.invoke(contents, slot, nmsItemStack);
+            if (updateServer) {
+                Object craftInventory = CRAFT_INVENTORY.cast(inventory);
+                Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+                Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
+                SET_LIST.invoke(contents, slot, nmsItemStack);
+            }
 
-            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
+            updateItem(player, windowId, slot, itemStack, activeContainer);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
+        updateItem(player, slot, itemStack, inventory, true);
+    }
+
+    public static synchronized void updateItem(Player player, int windowId, int slot, ItemStack itemStack, Object containerObject) {
+        try {
+            Object container = (containerObject == null) ? getPlayerContainer(player) : containerObject;
+            Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
+
+            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, container);
             sendPacket(player, packetPlayOutSetSlot);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -54,8 +73,7 @@ public final class InventoryUtils {
         }
 
         try {
-            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
-            Object playerContainer = PLAYER_CONTAINER_FIELD.get(entityPlayer);
+            Object playerContainer = getPlayerContainer(player);
             int windowId = WINDOW_ID_FIELD.getInt(playerContainer);
 
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
@@ -67,16 +85,17 @@ public final class InventoryUtils {
                 SET_LIST.invoke(contents, slot, nmsItemStack);
             }
 
-            Object packetPlayOutSetSlot;
-            if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
-                // From 1.17.1 it is required to add a 'stateId' as parameter to the packet
-                Object stateId = WINDOW_STATE_ID_METHOD.invoke(playerContainer);
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, stateId, slot, nmsItemStack);
-            } else {
-                packetPlayOutSetSlot = PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR.newInstance(windowId, slot, nmsItemStack);
-            }
+            updateItem(player, windowId, slot, itemStack, playerContainer);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 
-            sendPacket(player, packetPlayOutSetSlot);
+    public static synchronized void updateActiveInventory(Player player) {
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+            refreshInventory(entityPlayer, activeContainer);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -127,6 +146,11 @@ public final class InventoryUtils {
         }
     }
 
+    public static Object getPlayerContainer(Player player) throws Throwable {
+        Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+        return PLAYER_CONTAINER_FIELD.get(entityPlayer);
+    }
+
     public static Channel getPacketChannel(Player player) {
         try {
             Object networkManager = getNetworkManager(player);
@@ -145,6 +169,29 @@ public final class InventoryUtils {
             exception.printStackTrace();
             return null;
         }
+    }
+
+    public static void changeItems(Inventory inventory, Map<Integer, ItemStack> items) {
+        try {
+            Object craftInventory = CRAFT_INVENTORY.cast(inventory);
+            Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+            Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
+
+            for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
+                Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, entry.getValue());
+                SET_LIST.invoke(contents, entry.getKey(), nmsItemStack);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public static Object toNMS(ItemStack itemStack) throws InvocationTargetException, IllegalAccessException {
+        return GET_NMS_ITEM_STACK.invoke(null, itemStack);
+    }
+
+    public static ItemStack fromNMS(Object item) throws InvocationTargetException, IllegalAccessException {
+        return (ItemStack) GET_ITEM_STACK_FROM_NMS.invoke(null, item);
     }
 
     public static ItemStack createItemStack(Material material, String displayName, String... lore) {

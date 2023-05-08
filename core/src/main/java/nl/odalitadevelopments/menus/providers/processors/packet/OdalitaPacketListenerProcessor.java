@@ -1,12 +1,11 @@
 package nl.odalitadevelopments.menus.providers.processors.packet;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
+import nl.odalitadevelopments.menus.utils.packet.PacketConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,23 +23,25 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     private static final String PACKET_HANDLER = "packet_handler";
     private static final String ODALITA_PACKET_HANDLER = "odalita_packet_handler";
 
-    private static final Map<OdalitaMenus, Map<ServerboundPacketType, BiFunction<Player, Object, Boolean>>> packetListenersServerbound = new HashMap<>();
+    private static final Map<OdalitaMenus, Map<ClientboundPacketType, BiFunction<Player, OdalitaMenuPacket, Boolean>>> packetListenersClientbound = new HashMap<>();
 
     private final OdalitaMenus instance;
 
     public OdalitaPacketListenerProcessor(OdalitaMenus instance) {
         this.instance = instance;
-        packetListenersServerbound.put(instance, new HashMap<>());
+
+        packetListenersClientbound.put(instance, new HashMap<>());
 
         Bukkit.getPluginManager().registerEvents(this, instance.getJavaPlugin());
     }
 
     @Override
     public void close(@NotNull OdalitaMenus instance) {
-        packetListenersServerbound.remove(instance);
+        packetListenersClientbound.remove(instance);
+
         HandlerList.unregisterAll(this);
 
-        if (packetListenersServerbound.isEmpty()) {
+        if (packetListenersClientbound.isEmpty()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 Channel channel = InventoryUtils.getPacketChannel(player);
                 if (channel == null) continue;
@@ -54,8 +55,8 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     @Override
-    public void interceptServerbound(@NotNull ServerboundPacketType serverboundPacketType, @NotNull BiFunction<@NotNull Player, @NotNull Object, @NotNull Boolean> packetFunction) {
-        packetListenersServerbound.get(this.instance).put(serverboundPacketType, packetFunction);
+    public void interceptClientbound(@NotNull ClientboundPacketType clientboundPacketType, @NotNull BiFunction<@NotNull Player, @NotNull OdalitaMenuPacket, @NotNull Boolean> packetFunction) {
+        packetListenersClientbound.get(this.instance).put(clientboundPacketType, packetFunction);
     }
 
     @EventHandler
@@ -73,30 +74,42 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     private ChannelDuplexHandler createChannelDuplexHandler(Player player) {
         return new ChannelDuplexHandler() {
             @Override
-            public void channelRead(ChannelHandlerContext ctx, Object packetObject) throws Exception {
+            public void write(ChannelHandlerContext ctx, Object packetObject, ChannelPromise promise) throws Exception {
                 String packetClassName = packetObject.getClass().getSimpleName();
-                ServerboundPacketType serverboundPacketType = getPacketType(packetClassName);
-                if (serverboundPacketType == null) {
-                    super.channelRead(ctx, packetObject);
+                ClientboundPacketType clientboundPacketType = getClientboundPacketType(packetClassName);
+                if (clientboundPacketType == null) {
+                    super.write(ctx, packetObject, promise);
                     return;
                 }
 
-                for (Map<ServerboundPacketType, BiFunction<Player, Object, Boolean>> map : packetListenersServerbound.values()) {
-                    BiFunction<Player, Object, Boolean> function = map.get(serverboundPacketType);
-                    if (function != null && function.apply(player, packetObject)) {
+                OdalitaMenuPacket packet = PacketConverter.convertClientboundPacket(clientboundPacketType, packetObject);
+                if (packet == null) {
+                    super.write(ctx, packetObject, promise);
+                    return;
+                }
+
+                for (Map<ClientboundPacketType, BiFunction<Player, OdalitaMenuPacket, Boolean>> map : packetListenersClientbound.values()) {
+                    BiFunction<Player, OdalitaMenuPacket, Boolean> function = map.get(clientboundPacketType);
+                    if (function != null && function.apply(player, packet)) {
                         // If function returns true, cancel the packet
                         return;
                     }
+
+                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet, packetObject);
                 }
 
-                super.channelRead(ctx, packetObject);
+                super.write(ctx, packetObject, promise);
             }
         };
     }
 
-    private ServerboundPacketType getPacketType(String packetClassName) {
-        if (packetClassName.equals("PacketPlayInWindowClick")) {
-            return ServerboundPacketType.CLICK_WINDOW;
+    private ClientboundPacketType getClientboundPacketType(String packetClassName) {
+        if (packetClassName.equals("PacketPlayOutSetSlot")) {
+            return ClientboundPacketType.SET_SLOT;
+        }
+
+        if (packetClassName.equals("PacketPlayOutWindowItems")) {
+            return ClientboundPacketType.WINDOW_ITEMS;
         }
 
         return null;

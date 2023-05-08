@@ -56,6 +56,7 @@ final class ReflectionUtils {
     static Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
 
     static Method GET_NMS_ITEM_STACK;
+    static Method GET_ITEM_STACK_FROM_NMS;
     static Method GET_NMS_INVENTORY;
     static Method GET_NMS_INVENTORY_TYPE;
     static Method GET_NMS_INVENTORY_CONTENTS;
@@ -107,6 +108,7 @@ final class ReflectionUtils {
             PACKET_PLAY_OUT_OPEN_WINDOW = nmsClass("network.protocol.game", "PacketPlayOutOpenWindow");
 
             GET_NMS_ITEM_STACK = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
+            GET_ITEM_STACK_FROM_NMS = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", ITEM_STACK);
             GET_NMS_INVENTORY = CRAFT_INVENTORY.getMethod("getInventory");
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);

@@ -2,7 +2,6 @@ package nl.odalitadevelopments.menus.listeners;
 
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.action.PlayerInventoryLoreApplier;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
@@ -11,7 +10,6 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +19,10 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 public final class InventoryListener implements Listener {
@@ -116,33 +117,33 @@ public final class InventoryListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryOpen(InventoryOpenEvent event) {
-        Player player = (Player) event.getPlayer();
-        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
-        if (menuSession == null) return;
-
-        PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-        if (loreApplier != null) {
-            Map<Integer, ItemStack> itemsToUpdate = new HashMap<>();
-            for (int i = 0; i < 36; i++) {
-                ItemStack item = player.getInventory().getItem(i);
-
-                if (item != null && !item.getType().isAir()) {
-                    ItemStack newItem = loreApplier.apply(i, item.clone());
-                    if (newItem.getType() != item.getType()) continue;
-
-                    itemsToUpdate.put(i, newItem);
-                }
-            }
-
-            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), () -> {
-                for (Map.Entry<Integer, ItemStack> entry : itemsToUpdate.entrySet()) {
-                    InventoryUtils.updateItemPlayerInventory(player, entry.getKey(), entry.getValue(), false);
-                }
-            }, 1L);
-        }
-    }
+    //    @EventHandler(priority = EventPriority.HIGHEST)
+    //    public void onInventoryOpen(InventoryOpenEvent event) {
+    //        Player player = (Player) event.getPlayer();
+    //        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
+    //        if (menuSession == null) return;
+    //
+    //        PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
+    //        if (loreApplier != null) {
+    //            Map<Integer, ItemStack> itemsToUpdate = new HashMap<>();
+    //            for (int i = 0; i < 36; i++) {
+    //                ItemStack item = player.getInventory().getItem(i);
+    //
+    //                if (item != null && !item.getType().isAir()) {
+    //                    ItemStack newItem = loreApplier.apply(i, item.clone());
+    //                    if (newItem.getType() != item.getType()) continue;
+    //
+    //                    itemsToUpdate.put(i, newItem);
+    //                }
+    //            }
+    //
+    //            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), () -> {
+    //                for (Map.Entry<Integer, ItemStack> entry : itemsToUpdate.entrySet()) {
+    //                    InventoryUtils.updateItemPlayerInventory(player, entry.getKey(), entry.getValue(), false);
+    //                }
+    //            }, 1L);
+    //        }
+    //    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
