@@ -1,9 +1,9 @@
 package nl.odalitadevelopments.menus.contents;
 
-import nl.odalitadevelopments.menus.contents.action.PlayerInventoryLoreApplier;
+import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import org.jetbrains.annotations.NotNull;
 
 public sealed interface MenuContentsActions permits MenuContentsActionsImpl {
 
-    void applyLoreToPlayerInventoryItemsOnOpen(@NotNull PlayerInventoryLoreApplier loreApplier);
+    void changeItemMetaInPlayerInventory(@NotNull PlayerInventoryItemMetaChanger itemMetaChanger);
 }

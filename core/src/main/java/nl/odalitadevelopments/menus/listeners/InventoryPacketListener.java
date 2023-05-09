@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.listeners;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.action.PlayerInventoryLoreApplier;
+import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
@@ -33,8 +33,8 @@ public final class InventoryPacketListener {
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
             if (menuSession == null) return;
 
-            PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-            if (loreApplier == null) return;
+            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.getCache().getItemMetaChanger();
+            if (itemMetaChanger == null) return;
 
             ItemStack itemStack = packet.item();
             if (isEmpty(itemStack)) return;
@@ -43,7 +43,7 @@ public final class InventoryPacketListener {
             int topInventorySize = menuSession.getInventory().getSize();
             if (slot < topInventorySize) return;
 
-            loreApplier.apply(this.convertSlot(topInventorySize, slot), itemStack);
+            itemMetaChanger.apply(this.convertSlot(topInventorySize, slot), itemStack);
         });
     }
 
@@ -54,8 +54,8 @@ public final class InventoryPacketListener {
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
             if (menuSession == null) return;
 
-            PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-            if (loreApplier == null) return;
+            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.getCache().getItemMetaChanger();
+            if (itemMetaChanger == null) return;
 
             List<@NotNull ItemStack> items = packet.items();
 
@@ -64,7 +64,7 @@ public final class InventoryPacketListener {
                 ItemStack itemStack = items.get(i);
                 if (isEmpty(itemStack)) continue;
 
-                loreApplier.apply(this.convertSlot(topInventorySize, i), itemStack);
+                itemMetaChanger.apply(this.convertSlot(topInventorySize, i), itemStack);
             }
         });
     }

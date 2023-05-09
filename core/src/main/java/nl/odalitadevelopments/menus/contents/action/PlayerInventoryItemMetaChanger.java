@@ -4,7 +4,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface PlayerInventoryLoreApplier {
+public interface PlayerInventoryItemMetaChanger {
 
     void apply(@NotNull Integer slot, @NotNull ItemStack current);
 }
