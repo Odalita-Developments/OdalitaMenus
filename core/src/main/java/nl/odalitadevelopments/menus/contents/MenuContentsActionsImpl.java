@@ -1,9 +1,13 @@
 package nl.odalitadevelopments.menus.contents;
 
+import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import org.jetbrains.annotations.NotNull;
 
-record MenuContentsActionsImpl(MenuContentsImpl menuContents) implements MenuContentsActions {
+@AllArgsConstructor
+final class MenuContentsActionsImpl implements MenuContentsActions {
+
+    private final MenuContentsImpl menuContents;
 
     @Override
     public void changeItemMetaInPlayerInventory(@NotNull PlayerInventoryItemMetaChanger itemMetaChanger) {

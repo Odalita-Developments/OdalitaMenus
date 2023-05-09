@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.contents;
 
+import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -7,7 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-record MenuContentsEventsImpl(MenuContentsImpl menuContents) implements MenuContentsEvents {
+@AllArgsConstructor
+final class MenuContentsEventsImpl implements MenuContentsEvents {
+
+    private final MenuContentsImpl menuContents;
 
     @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemClickAction action) {
