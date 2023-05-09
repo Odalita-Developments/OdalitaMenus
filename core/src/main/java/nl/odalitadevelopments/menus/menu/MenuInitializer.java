@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.menu;
 
+import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.annotations.Menu;
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
@@ -13,9 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, ItemProcessor itemProcessor,
-                                               SupportedMenuTypes supportedMenuTypes,
-                                               MenuOpenerBuilderImpl<P> builder) {
+@AllArgsConstructor
+final class MenuInitializer<P extends MenuProvider> {
+
+    private final MenuProcessor menuProcessor;
+    private final ItemProcessor itemProcessor;
+    private final SupportedMenuTypes supportedMenuTypes;
+    private final MenuOpenerBuilderImpl<P> builder;
 
     void initializeMenu() {
         P menuProvider = this.builder.getProvider();
@@ -27,7 +32,7 @@ record MenuInitializer<P extends MenuProvider>(MenuProcessor menuProcessor, Item
             ColorProvider colorProvider = this.menuProcessor.getInstance().getProvidersContainer().getColorProvider();
             String inventoryTitle = colorProvider.handle(annotation.title());
 
-            SupportedMenuType menuType = this.supportedMenuTypes().getSupportedMenuType(annotation.type());
+            SupportedMenuType menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type());
             Inventory inventory = menuType.createInventory(inventoryTitle);
 
             String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
