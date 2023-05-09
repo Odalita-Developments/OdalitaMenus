@@ -117,34 +117,6 @@ public final class InventoryListener implements Listener {
         }
     }
 
-    //    @EventHandler(priority = EventPriority.HIGHEST)
-    //    public void onInventoryOpen(InventoryOpenEvent event) {
-    //        Player player = (Player) event.getPlayer();
-    //        MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
-    //        if (menuSession == null) return;
-    //
-    //        PlayerInventoryLoreApplier loreApplier = menuSession.getCache().getLoreApplier();
-    //        if (loreApplier != null) {
-    //            Map<Integer, ItemStack> itemsToUpdate = new HashMap<>();
-    //            for (int i = 0; i < 36; i++) {
-    //                ItemStack item = player.getInventory().getItem(i);
-    //
-    //                if (item != null && !item.getType().isAir()) {
-    //                    ItemStack newItem = loreApplier.apply(i, item.clone());
-    //                    if (newItem.getType() != item.getType()) continue;
-    //
-    //                    itemsToUpdate.put(i, newItem);
-    //                }
-    //            }
-    //
-    //            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), () -> {
-    //                for (Map.Entry<Integer, ItemStack> entry : itemsToUpdate.entrySet()) {
-    //                    InventoryUtils.updateItemPlayerInventory(player, entry.getKey(), entry.getValue(), false);
-    //                }
-    //            }, 1L);
-    //        }
-    //    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
