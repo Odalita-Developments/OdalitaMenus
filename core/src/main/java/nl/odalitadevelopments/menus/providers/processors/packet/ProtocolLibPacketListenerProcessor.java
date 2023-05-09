@@ -70,7 +70,7 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     for (Map.Entry<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> entry : map.entrySet()) {
                         if (entry.getKey() == ClientboundPacketType.SET_SLOT) {
                             int windowId = packet.getIntegers().read(0);
-                            int stateId = (is1171) ? -1 : packet.getIntegers().read(1);
+                            int stateId = (is1171) ? packet.getIntegers().read(1) : -1;
                             int slot = packet.getIntegers().read((is1171) ? 2 : 1);
                             ItemStack item = packet.getItemModifier().read(0);
 
@@ -102,9 +102,9 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     for (Map.Entry<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> entry : map.entrySet()) {
                         if (entry.getKey() == ClientboundPacketType.WINDOW_ITEMS) {
                             int windowId = packet.getIntegers().read(0);
-                            int stateId = (is1171) ? -1 : packet.getIntegers().read(1);
+                            int stateId = (is1171) ? packet.getIntegers().read(1) : -1;
                             List<ItemStack> items = packet.getItemListModifier().read(0);
-                            ItemStack carriedItem = packet.getItemModifier().read(0);
+                            ItemStack carriedItem = (is1171) ? packet.getItemModifier().read(0) : null;
 
                             OdalitaWindowItemsPacket odalitaWindowItemsPacket = new OdalitaWindowItemsPacket(windowId, stateId, items, carriedItem);
                             entry.getValue().accept(player, odalitaWindowItemsPacket);
