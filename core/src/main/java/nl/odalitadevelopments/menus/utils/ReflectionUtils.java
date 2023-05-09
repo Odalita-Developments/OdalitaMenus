@@ -38,7 +38,9 @@ final class ReflectionUtils {
     static Class<?> ENTITY_PLAYER;
     static Class<?> ENTITY_HUMAN;
     static Class<?> PLAYER_CONNECTION;
+    static Class<?> NETWORK_MANAGER;
     static Class<?> CONTAINER;
+    static Class<?> PLAYER_CONTAINER;
     static Class<?> CONTAINERS;
     static Class<?> IINVENTORY;
     static Class<?> NON_NULL_LIST;
@@ -54,6 +56,7 @@ final class ReflectionUtils {
     static Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
 
     static Method GET_NMS_ITEM_STACK;
+    static Method GET_ITEM_STACK_FROM_NMS;
     static Method GET_NMS_INVENTORY;
     static Method GET_NMS_INVENTORY_TYPE;
     static Method GET_NMS_INVENTORY_CONTENTS;
@@ -64,6 +67,7 @@ final class ReflectionUtils {
     static Field GET_NMS_CONTAINER_ITEMS_1165;
 
     static Field ACTIVE_CONTAINER_FIELD;
+    static Field PLAYER_CONTAINER_FIELD;
     static Field WINDOW_ID_FIELD;
     static Field TITLE_FIELD;
     static Field MINECRAFT_INVENTORY_TITLE_FIELD;
@@ -74,6 +78,7 @@ final class ReflectionUtils {
 
     static MethodHandle GET_PLAYER_HANDLE_METHOD;
     static MethodHandle GET_PLAYER_CONNECTION_METHOD;
+    static MethodHandle GET_NETWORK_MANAGER_METHOD;
     static MethodHandle SEND_PACKET_METHOD;
 
     static {
@@ -85,7 +90,9 @@ final class ReflectionUtils {
             ENTITY_PLAYER = nmsClass("server.level", "EntityPlayer");
             ENTITY_HUMAN = nmsClass("world.entity.player", "EntityHuman");
             PLAYER_CONNECTION = nmsClass("server.network", "PlayerConnection");
+            NETWORK_MANAGER = nmsClass("network", "NetworkManager");
             CONTAINER = nmsClass("world.inventory", "Container");
+            PLAYER_CONTAINER = nmsClass("world.inventory", "ContainerPlayer");
             CONTAINERS = nmsClass("world.inventory", "Containers");
             IINVENTORY = nmsClass("world", "IInventory");
             NON_NULL_LIST = nmsClass("core", "NonNullList");
@@ -101,6 +108,7 @@ final class ReflectionUtils {
             PACKET_PLAY_OUT_OPEN_WINDOW = nmsClass("network.protocol.game", "PacketPlayOutOpenWindow");
 
             GET_NMS_ITEM_STACK = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
+            GET_ITEM_STACK_FROM_NMS = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", ITEM_STACK);
             GET_NMS_INVENTORY = CRAFT_INVENTORY.getMethod("getInventory");
             GET_NMS_INVENTORY_CONTENTS = IINVENTORY.getMethod("getContents");
             SET_LIST = List.class.getMethod("set", int.class, Object.class);
@@ -115,10 +123,14 @@ final class ReflectionUtils {
                     .filter(field -> field.getType().isAssignableFrom(CONTAINER))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
 
+            PLAYER_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
+                    .filter(field -> field.getType().isAssignableFrom(PLAYER_CONTAINER))
+                    .findFirst().orElseThrow(NoSuchFieldException::new);
+
             if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
                 GET_NMS_INVENTORY_TYPE = CONTAINER.getMethod("a");
                 REFRESH_INVENTORY = CONTAINER.getMethod("b");
-                WINDOW_STATE_ID_METHOD = CONTAINER.getMethod("j");
+                WINDOW_STATE_ID_METHOD = CONTAINER.getMethod("k");
 
                 WINDOW_ID_FIELD = CONTAINER.getField("j");
 
@@ -159,12 +171,17 @@ final class ReflectionUtils {
                     .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
 
+            Field networkManagerField = Arrays.stream((version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_3)) ? PLAYER_CONNECTION.getDeclaredFields() : ENTITY_PLAYER.getDeclaredFields())
+                    .filter(field -> NETWORK_MANAGER.isAssignableFrom(field.getType()))
+                    .findFirst().orElseThrow(NoSuchFieldException::new);
+
             Method sendPacketMethod = Arrays.stream(PLAYER_CONNECTION.getMethods())
                     .filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0] == PACKET)
                     .findFirst().orElseThrow(NoSuchMethodException::new);
 
             GET_PLAYER_HANDLE_METHOD = lookup.findVirtual(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
             GET_PLAYER_CONNECTION_METHOD = lookup.unreflectGetter(playerConnectionField);
+            GET_NETWORK_MANAGER_METHOD = lookup.unreflectGetter(networkManagerField);
             SEND_PACKET_METHOD = lookup.unreflect(sendPacketMethod);
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -180,6 +197,17 @@ final class ReflectionUtils {
             throwable.printStackTrace();
         }
     }
+
+    static Object getNetworkManager(Player player) throws Throwable {
+        Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_3)) {
+            Object playerConnection = GET_PLAYER_CONNECTION_METHOD.invoke(entityPlayer);
+            return GET_NETWORK_MANAGER_METHOD.invoke(playerConnection);
+        } else {
+            return GET_NETWORK_MANAGER_METHOD.invoke(entityPlayer);
+        }
+    }
+
 
     static Object createPacketPlayOutSetSlotPacket(int windowId, int slot, Object itemStack, Object activeContainer) throws Exception {
         Object packetPlayOutSetSlot;

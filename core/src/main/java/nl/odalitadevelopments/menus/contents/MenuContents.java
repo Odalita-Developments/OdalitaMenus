@@ -44,6 +44,9 @@ public sealed interface MenuContents permits MenuContentsImpl {
     MenuContentsScheduler scheduler();
 
     @NotNull
+    MenuContentsActions actions();
+
+    @NotNull
     MenuContentsEvents events();
 
     @Nullable
