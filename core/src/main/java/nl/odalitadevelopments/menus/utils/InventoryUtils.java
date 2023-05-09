@@ -15,7 +15,6 @@ import org.jetbrains.annotations.ApiStatus;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static nl.odalitadevelopments.menus.utils.ReflectionUtils.*;
 
@@ -25,7 +24,7 @@ public final class InventoryUtils {
     private InventoryUtils() {
     }
 
-    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory, boolean updateServer) {
+    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
@@ -34,68 +33,13 @@ public final class InventoryUtils {
 
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
 
-            if (updateServer) {
-                Object craftInventory = CRAFT_INVENTORY.cast(inventory);
-                Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
-                Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
-                SET_LIST.invoke(contents, slot, nmsItemStack);
-            }
+            Object craftInventory = CRAFT_INVENTORY.cast(inventory);
+            Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
+            Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
+            SET_LIST.invoke(contents, slot, nmsItemStack);
 
-            updateItem(player, windowId, slot, itemStack, activeContainer);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
-    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
-        updateItem(player, slot, itemStack, inventory, true);
-    }
-
-    public static synchronized void updateItem(Player player, int windowId, int slot, ItemStack itemStack, Object containerObject) {
-        try {
-            Object container = (containerObject == null) ? getPlayerContainer(player) : containerObject;
-            Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
-
-            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, container);
+            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
             sendPacket(player, packetPlayOutSetSlot);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
-    public static synchronized void updateItemPlayerInventory(Player player, int slot, ItemStack itemStack, boolean updateServer) {
-        if (slot < 9) {
-            slot += 36;
-        } else if (slot > 39) {
-            slot += 5; // Offhand
-        } else if (slot > 35) {
-            slot = 8 - (slot - 36);
-        }
-
-        try {
-            Object playerContainer = getPlayerContainer(player);
-            int windowId = WINDOW_ID_FIELD.getInt(playerContainer);
-
-            Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
-
-            if (updateServer) {
-                Object craftInventory = CRAFT_INVENTORY.cast(player.getInventory());
-                Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
-                Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
-                SET_LIST.invoke(contents, slot, nmsItemStack);
-            }
-
-            updateItem(player, windowId, slot, itemStack, playerContainer);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
-    public static synchronized void updateActiveInventory(Player player) {
-        try {
-            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
-            Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
-            refreshInventory(entityPlayer, activeContainer);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -168,21 +112,6 @@ public final class InventoryUtils {
         } catch (Throwable exception) {
             exception.printStackTrace();
             return null;
-        }
-    }
-
-    public static void changeItems(Inventory inventory, Map<Integer, ItemStack> items) {
-        try {
-            Object craftInventory = CRAFT_INVENTORY.cast(inventory);
-            Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
-            Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
-
-            for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
-                Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, entry.getValue());
-                SET_LIST.invoke(contents, entry.getKey(), nmsItemStack);
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
     }
 
