@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
@@ -70,6 +71,14 @@ public final class MenuSession {
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
         InventoryUtils.changeTitle(this.inventory, title);
+    }
+
+    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+        if (this.menuType.type() != property.getMenuType()) {
+            throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
+        }
+
+        InventoryUtils.setProperty(this.inventory, property, value);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
