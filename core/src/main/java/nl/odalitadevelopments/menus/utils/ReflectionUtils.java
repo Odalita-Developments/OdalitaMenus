@@ -40,7 +40,6 @@ final class ReflectionUtils {
     static Class<?> PLAYER_CONNECTION;
     static Class<?> NETWORK_MANAGER;
     static Class<?> CONTAINER;
-    static Class<?> PLAYER_CONTAINER;
     static Class<?> CONTAINERS;
     static Class<?> IINVENTORY;
     static Class<?> NON_NULL_LIST;
@@ -53,6 +52,7 @@ final class ReflectionUtils {
     static Class<?> CRAFT_ITEM_STACK;
 
     static Class<?> PACKET_PLAY_OUT_SET_SLOT;
+    static Class<?> PACKET_PLAY_OUT_WINDOW_DATA;
     static Class<?> PACKET_PLAY_OUT_OPEN_WINDOW;
 
     static Method GET_NMS_ITEM_STACK;
@@ -67,13 +67,13 @@ final class ReflectionUtils {
     static Field GET_NMS_CONTAINER_ITEMS_1165;
 
     static Field ACTIVE_CONTAINER_FIELD;
-    static Field PLAYER_CONTAINER_FIELD;
     static Field WINDOW_ID_FIELD;
     static Field TITLE_FIELD;
     static Field MINECRAFT_INVENTORY_TITLE_FIELD;
     static Field PAPER_MINECRAFT_INVENTORY_TITLE_FIELD;
 
     static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
+    static Constructor<?> PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR;
     static Constructor<?> PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR;
 
     static MethodHandle GET_PLAYER_HANDLE_METHOD;
@@ -92,7 +92,6 @@ final class ReflectionUtils {
             PLAYER_CONNECTION = nmsClass("server.network", "PlayerConnection");
             NETWORK_MANAGER = nmsClass("network", "NetworkManager");
             CONTAINER = nmsClass("world.inventory", "Container");
-            PLAYER_CONTAINER = nmsClass("world.inventory", "ContainerPlayer");
             CONTAINERS = nmsClass("world.inventory", "Containers");
             IINVENTORY = nmsClass("world", "IInventory");
             NON_NULL_LIST = nmsClass("core", "NonNullList");
@@ -105,6 +104,7 @@ final class ReflectionUtils {
             CRAFT_ITEM_STACK = obcClass("inventory.CraftItemStack");
 
             PACKET_PLAY_OUT_SET_SLOT = nmsClass("network.protocol.game", "PacketPlayOutSetSlot");
+            PACKET_PLAY_OUT_WINDOW_DATA = nmsClass("network.protocol.game", "PacketPlayOutWindowData");
             PACKET_PLAY_OUT_OPEN_WINDOW = nmsClass("network.protocol.game", "PacketPlayOutOpenWindow");
 
             GET_NMS_ITEM_STACK = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
@@ -121,10 +121,6 @@ final class ReflectionUtils {
 
             ACTIVE_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
                     .filter(field -> field.getType().isAssignableFrom(CONTAINER))
-                    .findFirst().orElseThrow(NoSuchFieldException::new);
-
-            PLAYER_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
-                    .filter(field -> field.getType().isAssignableFrom(PLAYER_CONTAINER))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
 
             if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
@@ -165,6 +161,7 @@ final class ReflectionUtils {
                 PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR = PACKET_PLAY_OUT_SET_SLOT.getConstructor(int.class, int.class, ITEM_STACK);
             }
 
+            PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR = PACKET_PLAY_OUT_WINDOW_DATA.getConstructor(int.class, int.class, int.class);
             PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR = PACKET_PLAY_OUT_OPEN_WINDOW.getConstructor(int.class, CONTAINERS, CHAT_BASE_COMPONENT);
 
             Field playerConnectionField = Arrays.stream(ENTITY_PLAYER.getFields())

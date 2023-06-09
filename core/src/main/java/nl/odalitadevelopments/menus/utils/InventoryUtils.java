@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.utils;
 
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
+import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -90,9 +91,22 @@ public final class InventoryUtils {
         }
     }
 
-    public static Object getPlayerContainer(Player player) throws Throwable {
-        Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
-        return PLAYER_CONTAINER_FIELD.get(entityPlayer);
+    public static synchronized void setProperty(Inventory inventory, MenuProperty property, int value) {
+        try {
+            for (HumanEntity viewer : inventory.getViewers()) {
+                if (!(viewer instanceof Player player)) continue;
+
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+                Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+                int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
+                if (windowId <= 0) return;
+
+                Object packetPlayOutWindowData = PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR.newInstance(windowId, property.getIndex(), value);
+                sendPacket(player, packetPlayOutWindowData);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     public static Channel getPacketChannel(Player player) {
