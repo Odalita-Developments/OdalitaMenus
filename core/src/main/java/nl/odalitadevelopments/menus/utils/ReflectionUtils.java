@@ -181,7 +181,8 @@ final class ReflectionUtils {
 
             GET_PLAYER_HANDLE_METHOD = lookup.findVirtual(CRAFT_PLAYER, "getHandle", MethodType.methodType(ENTITY_PLAYER));
             GET_PLAYER_CONNECTION_METHOD = lookup.unreflectGetter(playerConnectionField);
-            GET_NETWORK_MANAGER_METHOD = lookup.unreflectGetter(networkManagerField);
+            MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn((version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_3)) ? PLAYER_CONNECTION : ENTITY_PLAYER, lookup);
+            GET_NETWORK_MANAGER_METHOD = privateLookup.unreflectGetter(networkManagerField);
             SEND_PACKET_METHOD = lookup.unreflect(sendPacketMethod);
         } catch (Exception exception) {
             exception.printStackTrace();
