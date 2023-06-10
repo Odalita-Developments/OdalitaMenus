@@ -91,26 +91,6 @@ public sealed interface MenuContents permits MenuContentsImpl {
     void fill(@NotNull MenuItem item);
 
 
-    /* DEFAULT ASYNC */
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int row, int column, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int row, int column, @NotNull MenuItem item);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int slot, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int slot, @NotNull MenuItem item);
-
-
     /* DEFAULT REFRESHABLE */
     void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item, boolean override);
 

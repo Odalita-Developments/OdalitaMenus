@@ -214,42 +214,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
-        this.set(slotPos, item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
-        this.set(slotPos, item, true);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
-        this.set(SlotPos.of(row, column), item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int row, int column, @NotNull MenuItem item) {
-        this.set(row, column, item, true);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int slot, @NotNull MenuItem item, boolean override) {
-        this.set(SlotPos.of(slot), item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int slot, @NotNull MenuItem item) {
-        this.set(slot, item, true);
-    }
-
-    @Override
     public void setRefreshable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull MenuItem> item, boolean override) {
         this.set(slotPos, item.get(), override);
         this.cache.getRefreshableItems().put(slotPos.getSlot(), item);
