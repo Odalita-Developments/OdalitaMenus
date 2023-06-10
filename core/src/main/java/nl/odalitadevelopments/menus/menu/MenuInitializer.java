@@ -10,6 +10,7 @@ import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ final class MenuInitializer<P extends MenuProvider> {
 
             MenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
+            menuSession.initialized();
 
             this.builder.getPaginationPages().forEach((id, page) -> {
                 Pagination pagination = menuSession.getCache().getPaginationMap().get(id);
@@ -58,7 +60,8 @@ final class MenuInitializer<P extends MenuProvider> {
             this.itemProcessor.initializeItems(menuSession, contents);
 
             this.openInventory(player, menuSession);
-            menuSession.setOpened(true);
+
+            Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
         } catch (Exception exception) {
             exception.printStackTrace();
         }

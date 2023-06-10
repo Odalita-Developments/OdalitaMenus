@@ -81,6 +81,14 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         this.set(slotPos, item, override, (slot) -> {
+            if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
+                this.menuSession.getOpenActions().add(() -> {
+                    this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
+                    InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+                });
+                return;
+            }
+
             this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
 
             if (this.menuSession.isOpened()) {

@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.menu;
 
+import com.google.common.collect.Sets;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 @Getter
@@ -43,10 +46,11 @@ public final class MenuSession {
     private String globalCacheKey;
     private final MenuSessionCache cache;
 
-    @Setter(AccessLevel.PACKAGE)
-    private boolean opened = false;
+    private volatile boolean initialized = false;
+    private volatile boolean opened = false;
+    private volatile boolean closed = false;
 
-    private boolean closed = false;
+    private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
     MenuSession(OdalitaMenus instance, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
@@ -63,6 +67,18 @@ public final class MenuSession {
         this.cache = new MenuSessionCache(this);
 
         this.menuContents = MenuContents.create(this);
+    }
+
+    void initialized() {
+        this.initialized = true;
+    }
+
+    void opened() {
+        this.opened = true;
+
+        for (Runnable action : this.openActions) {
+            action.run();
+        }
     }
 
     public synchronized void setTitle(@NotNull String title) {
