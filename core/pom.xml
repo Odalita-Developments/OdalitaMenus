@@ -6,7 +6,7 @@
     <parent>
         <groupId>nl.odalitadevelopments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1</version>
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus</groupId>
