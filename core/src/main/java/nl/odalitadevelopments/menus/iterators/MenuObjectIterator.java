@@ -1,0 +1,102 @@
+package nl.odalitadevelopments.menus.iterators;
+
+import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.pagination.ObjectPagination;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Function;
+
+public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObjectIterator<T>> {
+
+    private final List<T> objects;
+    private final Function<T, MenuItem> menuItemCreatorFunction;
+
+    private boolean batch = false;
+    private Comparator<T> comparator;
+
+    private ObjectPagination<T> pagination = null;
+
+    public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
+        super(contents, type, startRow, startColumn);
+
+        this.objects = new ArrayList<>();
+        this.menuItemCreatorFunction = menuItemCreatorFunction;
+    }
+
+    @Override
+    protected @NotNull MenuObjectIterator<T> self() {
+        return this;
+    }
+
+    public @NotNull MenuObjectIterator<T> comparator(@NotNull Comparator<@NotNull T> comparator) {
+        this.comparator = comparator;
+        return this;
+    }
+
+    public void createBatch() {
+        this.batch = true;
+    }
+
+    public void endBatch() {
+        this.batch = false;
+
+        if (this.comparator != null) {
+            this.sort(this.comparator);
+        }
+    }
+
+    public void add(@NotNull T value) {
+        this.objects.add(value);
+
+        if (this.comparator != null && !this.batch) {
+            this.sort(this.comparator);
+        }
+    }
+
+    public void sort(@NotNull Comparator<@NotNull T> comparator) {
+        if (this.pagination != null && !this.contents.menuSession().isInitialized()) return;
+
+        super.reset();
+        this.objects.sort(comparator);
+
+        if (this.pagination == null) {
+            for (T value : this.objects) {
+                if (this.hasNext()) {
+                    MenuItem item = this.menuItemCreatorFunction.apply(value);
+                    if (item == null) continue;
+
+                    int slot = this.next();
+                    this.contents.set(slot, item);
+                }
+            }
+        } else {
+            // If we use it as a pagination, we need to reopen the pagination on the current page
+            this.pagination.open(this.pagination.currentPage());
+        }
+
+        this.comparator = comparator;
+    }
+
+    @ApiStatus.Internal
+    public @NotNull List<T> getObjects() {
+        return List.copyOf(this.objects);
+    }
+
+    @ApiStatus.Internal
+    public @UnknownNullability MenuItem createMenuItem(@NotNull T value) {
+        return this.menuItemCreatorFunction.apply(value);
+    }
+
+    @ApiStatus.Internal
+    public void pagination(@NotNull ObjectPagination<T> pagination) {
+        if (this.pagination == null) {
+            this.pagination = pagination;
+        }
+    }
+}

@@ -7,6 +7,7 @@ import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -44,7 +45,7 @@ final class MenuInitializer<P extends MenuProvider> {
             menuSession.initialized();
 
             this.builder.getPaginationPages().forEach((id, page) -> {
-                Pagination pagination = menuSession.getCache().getPaginationMap().get(id);
+                IPagination<?, ?> pagination = menuSession.getCache().getPaginationMap().get(id);
                 if (pagination == null) return;
 
                 pagination.setPage(page);

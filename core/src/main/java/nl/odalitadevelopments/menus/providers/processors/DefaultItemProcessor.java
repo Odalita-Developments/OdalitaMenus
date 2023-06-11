@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.providers.processors;
 
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
@@ -22,12 +23,12 @@ public final class DefaultItemProcessor implements DefaultItemProvider {
     }
 
     @Override
-    public @NotNull ItemStack nextPageItem(@NotNull Pagination pagination) {
+    public @NotNull ItemStack nextPageItem(@NotNull IPagination<?, ?> pagination) {
         return InventoryUtils.createItemStack(Material.ARROW, "&bNext page");
     }
 
     @Override
-    public @NotNull ItemStack previousPageItem(@NotNull Pagination pagination) {
+    public @NotNull ItemStack previousPageItem(@NotNull IPagination<?, ?> pagination) {
         return InventoryUtils.createItemStack(Material.ARROW, "&bPrevious page");
     }
 

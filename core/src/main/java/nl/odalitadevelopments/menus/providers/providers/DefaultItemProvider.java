@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.providers.providers;
 
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
@@ -12,9 +13,9 @@ public interface DefaultItemProvider {
 
     @NotNull ItemStack backItem(@NotNull MenuProvider menuProvider);
 
-    @NotNull ItemStack nextPageItem(@NotNull Pagination pagination);
+    @NotNull ItemStack nextPageItem(@NotNull IPagination<?, ?> pagination);
 
-    @NotNull ItemStack previousPageItem(@NotNull Pagination pagination);
+    @NotNull ItemStack previousPageItem(@NotNull IPagination<?, ?> pagination);
 
     @NotNull ItemStack scrollUpItem(@NotNull Scrollable scrollable);
 

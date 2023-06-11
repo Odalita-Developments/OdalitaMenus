@@ -6,6 +6,7 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
+import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public sealed interface MenuContents permits MenuContentsImpl {
@@ -178,6 +180,10 @@ public sealed interface MenuContents permits MenuContentsImpl {
     void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
                               @NotNull List<@NotNull MenuItem> menuItems, int... blacklisted);
 
+    @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                            @NotNull Class<T> clazz,
+                                                            @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
+
     <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems);
 
     void createPatternIterator(@NotNull Class<? extends IteratorPattern> clazz, @NotNull List<@NotNull MenuItem> menuItems);
@@ -202,7 +208,9 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
 
     /* PAGINATION & SCROLLABLE */
-    @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
+    @NotNull PaginationBuilder.ItemPaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
+
+    @NotNull <T> PaginationBuilder.ObjectPaginationBuilder<T> pagination(@NotNull String id, int itemsPerPage, @NotNull MenuObjectIterator<T> iterator);
 
     @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage);
 
