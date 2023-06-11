@@ -216,7 +216,9 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
             });
         }
 
-        this.contents.menuSession().getCache().getPageSwitchUpdateItems().forEach(this.contents::set);
+        this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+            this.contents.set(slot, item.get());
+        });
 
         return this;
     }

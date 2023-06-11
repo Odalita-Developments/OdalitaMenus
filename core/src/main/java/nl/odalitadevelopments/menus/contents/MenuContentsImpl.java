@@ -565,22 +565,23 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    public void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull PageUpdatableItem menuItem) {
+    public void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem) {
         if (!this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.PAGINATION)
                 && !this.menuSession.getMenuType().isFeatureAllowed(SupportedFeatures.SCROLLABLE)) {
             throw new IllegalStateException("The menu type '" + this.menuSession.getMenuType().type() + "' does not support pagination and scrollable!");
         }
 
-        this.set(slotPos, menuItem, true);
+        this.set(slotPos, menuItem.get(), true);
+        this.cache.getPageSwitchUpdateItems().put(slotPos.getSlot(), menuItem);
     }
 
     @Override
-    public void setPageSwitchUpdateItem(int row, int column, @NotNull PageUpdatableItem menuItem) {
+    public void setPageSwitchUpdateItem(int row, int column, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem) {
         this.setPageSwitchUpdateItem(SlotPos.of(row, column), menuItem);
     }
 
     @Override
-    public void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem) {
+    public void setPageSwitchUpdateItem(int slot, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem) {
         this.setPageSwitchUpdateItem(SlotPos.of(slot), menuItem);
     }
 
@@ -752,10 +753,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
-
-        if (item instanceof PageUpdatableItem) {
-            this.cache.getPageSwitchUpdateItems().put(originalSlot, item);
-        }
 
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
             this.menuSession.setHasUpdatableItems(true);

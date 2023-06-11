@@ -216,11 +216,11 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     @NotNull ScrollableBuilder scrollable(@NotNull String id, int showYAxis, int showXAxis);
 
-    void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull PageUpdatableItem menuItem);
+    void setPageSwitchUpdateItem(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem);
 
-    void setPageSwitchUpdateItem(int row, int column, @NotNull PageUpdatableItem menuItem);
+    void setPageSwitchUpdateItem(int row, int column, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem);
 
-    void setPageSwitchUpdateItem(int slot, @NotNull PageUpdatableItem menuItem);
+    void setPageSwitchUpdateItem(int slot, @NotNull Supplier<@NotNull PageUpdatableItem> menuItem);
 
 
     /* FRAME */

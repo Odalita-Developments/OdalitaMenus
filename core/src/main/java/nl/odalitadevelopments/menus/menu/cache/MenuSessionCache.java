@@ -12,10 +12,10 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAct
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
-import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public final class MenuSessionCache {
     private final Map<String, IPagination<?, ?>> paginationMap = Maps.newConcurrentMap();
     private final Map<String, Scrollable> scrollableMap = Maps.newConcurrentMap();
     private final Map<Integer, Supplier<MenuItem>> refreshableItems = Maps.newConcurrentMap();
-    private final Map<Integer, MenuItem> pageSwitchUpdateItems = Maps.newConcurrentMap();
+    private final Map<Integer, Supplier<PageUpdatableItem>> pageSwitchUpdateItems = Maps.newConcurrentMap();
 
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
