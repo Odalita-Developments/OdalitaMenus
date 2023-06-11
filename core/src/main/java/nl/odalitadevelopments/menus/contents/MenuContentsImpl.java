@@ -433,9 +433,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
-                                                                   @NotNull Collection<@NotNull T> values,
                                                                    @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction) {
-        return new MenuObjectIterator<>(this, menuIteratorType, startRow, startColumn, values, menuItemCreatorFunction);
+        return new MenuObjectIterator<>(this, menuIteratorType, startRow, startColumn, menuItemCreatorFunction);
     }
 
     @Override
@@ -535,9 +534,15 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    public @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator) {
+    public @NotNull PaginationBuilder.ItemPaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator) {
         return this.pagination(id, itemsPerPage)
                 .iterator(iterator);
+    }
+
+    @Override
+    public <T> PaginationBuilder.@NotNull ObjectPaginationBuilder<T> pagination(@NotNull String id, int itemsPerPage, @NotNull MenuObjectIterator<T> iterator) {
+        return this.pagination(id, itemsPerPage)
+                .objectIterator(iterator);
     }
 
     @Override

@@ -4,6 +4,7 @@ import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.inventory.Inventory;
@@ -22,7 +23,7 @@ public final class ItemProcessor {
 
         MenuItem[][] contents = menuSession.contents;
 
-        for (Pagination pagination : menuSession.getCache().getPaginationMap().values()) {
+        for (IPagination<?, ?> pagination : menuSession.getCache().getPaginationMap().values()) {
             List<Supplier<MenuItem>> itemsOnPage = pagination.getItemsOnPage();
             if (itemsOnPage.isEmpty()) {
                 pagination.setInitialized();

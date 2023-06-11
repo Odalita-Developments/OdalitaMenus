@@ -25,7 +25,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -182,7 +181,6 @@ public sealed interface MenuContents permits MenuContentsImpl {
                               @NotNull List<@NotNull MenuItem> menuItems, int... blacklisted);
 
     @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
-                                                            @NotNull Collection<@NotNull T> values,
                                                             @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
 
     <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems);
@@ -209,7 +207,9 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
 
     /* PAGINATION & SCROLLABLE */
-    @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
+    @NotNull PaginationBuilder.ItemPaginationBuilder pagination(@NotNull String id, int itemsPerPage, @NotNull MenuIterator iterator);
+
+    @NotNull <T> PaginationBuilder.ObjectPaginationBuilder<T> pagination(@NotNull String id, int itemsPerPage, @NotNull MenuObjectIterator<T> iterator);
 
     @NotNull PaginationBuilder pagination(@NotNull String id, int itemsPerPage);
 

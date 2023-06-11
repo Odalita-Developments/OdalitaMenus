@@ -2,10 +2,11 @@ package nl.odalitadevelopments.menus.iterators;
 
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -18,21 +19,16 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private boolean batch = false;
     private Comparator<T> comparator;
 
-    public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn,
-                              Collection<T> objects, Function<T, MenuItem> menuItemCreatorFunction) {
+    public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
         super(contents, type, startRow, startColumn);
 
-        this.objects = new ArrayList<>(objects);
+        this.objects = new ArrayList<>();
         this.menuItemCreatorFunction = menuItemCreatorFunction;
     }
 
     @Override
     protected @NotNull MenuObjectIterator<T> self() {
         return this;
-    }
-
-    public int size() {
-        return this.objects.size();
     }
 
     public void createBatch() {
@@ -78,5 +74,15 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
 
     private void sort0(Comparator<T> comparator) {
         this.objects.sort(comparator);
+    }
+
+    @ApiStatus.Internal
+    public @NotNull List<T> getObjects() {
+        return List.copyOf(this.objects);
+    }
+
+    @ApiStatus.Internal
+    public @UnknownNullability MenuItem createMenuItem(@NotNull T value) {
+        return this.menuItemCreatorFunction.apply(value);
     }
 }
