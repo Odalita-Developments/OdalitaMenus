@@ -58,7 +58,6 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
 
         List<T> objects = this.iterator.getObjects();
         List<T> pageList = objects.subList(page * this.itemsPerPage, Math.min(objects.size(), (page + 1) * this.itemsPerPage));
-        System.out.println(pageList);
 
         for (T value : pageList) {
             MenuItem menuItem = this.iterator.createMenuItem(value);
