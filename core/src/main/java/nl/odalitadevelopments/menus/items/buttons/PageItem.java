@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
@@ -15,52 +16,52 @@ import java.util.function.Consumer;
 
 public final class PageItem extends PageUpdatableItem {
 
-    public static @NotNull PageItem previous(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnFirstPage) {
+    public static @NotNull PageItem previous(@NotNull IPagination<?, ?> pagination, @NotNull ItemStack itemStack, boolean showOnFirstPage) {
         return new PageItem(Type.PREVIOUS, pagination, itemStack, showOnFirstPage);
     }
 
-    public static @NotNull PageItem previous(@NotNull Pagination pagination, boolean showOnFirstPage) {
+    public static @NotNull PageItem previous(@NotNull IPagination<?, ?> pagination, boolean showOnFirstPage) {
         return new PageItem(Type.PREVIOUS, pagination, showOnFirstPage);
     }
 
-    public static @NotNull PageItem previous(@NotNull Pagination pagination, @NotNull ItemStack itemStack) {
+    public static @NotNull PageItem previous(@NotNull IPagination<?, ?> pagination, @NotNull ItemStack itemStack) {
         return new PageItem(Type.PREVIOUS, pagination, itemStack, false);
     }
 
-    public static @NotNull PageItem previous(@NotNull Pagination pagination) {
+    public static @NotNull PageItem previous(@NotNull IPagination<?, ?> pagination) {
         return new PageItem(Type.PREVIOUS, pagination, false);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination, @NotNull ItemStack itemStack, boolean showOnLastPage) {
+    public static @NotNull PageItem next(@NotNull IPagination<?, ?> pagination, @NotNull ItemStack itemStack, boolean showOnLastPage) {
         return new PageItem(Type.NEXT, pagination, itemStack, showOnLastPage);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination, boolean showOnLastPage) {
+    public static @NotNull PageItem next(@NotNull IPagination<?, ?> pagination, boolean showOnLastPage) {
         return new PageItem(Type.NEXT, pagination, showOnLastPage);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination, @NotNull ItemStack itemStack) {
+    public static @NotNull PageItem next(@NotNull IPagination<?, ?> pagination, @NotNull ItemStack itemStack) {
         return new PageItem(Type.NEXT, pagination, itemStack, false);
     }
 
-    public static @NotNull PageItem next(@NotNull Pagination pagination) {
+    public static @NotNull PageItem next(@NotNull IPagination<?, ?> pagination) {
         return new PageItem(Type.NEXT, pagination, false);
     }
 
     private final Type type;
-    private final Pagination pagination;
+    private final IPagination<?, ?> pagination;
     private final boolean showOnFirstOrLastPage;
 
     private ItemStack itemStack;
 
-    private PageItem(Type type, Pagination pagination, ItemStack itemStack, boolean showOnFirstOrLastPage) {
+    private PageItem(Type type, IPagination<?, ?> pagination, ItemStack itemStack, boolean showOnFirstOrLastPage) {
         this.type = type;
         this.pagination = pagination;
         this.itemStack = itemStack;
         this.showOnFirstOrLastPage = showOnFirstOrLastPage;
     }
 
-    private PageItem(Type type, Pagination pagination, boolean showOnFirstOrLastPage) {
+    private PageItem(Type type, IPagination<?, ?> pagination, boolean showOnFirstOrLastPage) {
         this(type, pagination, null, showOnFirstOrLastPage);
     }
 
@@ -106,18 +107,18 @@ public final class PageItem extends PageUpdatableItem {
 
         PREVIOUS {
             @Override
-            void handle(@NotNull Pagination pagination) {
+            void handle(@NotNull IPagination<?, ?> pagination) {
                 pagination.previousPage();
             }
         },
 
         NEXT {
             @Override
-            void handle(@NotNull Pagination pagination) {
+            void handle(@NotNull IPagination<?, ?> pagination) {
                 pagination.nextPage();
             }
         };
 
-        abstract void handle(@NotNull Pagination pagination);
+        abstract void handle(@NotNull IPagination<?, ?> pagination);
     }
 }

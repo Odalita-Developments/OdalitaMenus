@@ -181,6 +181,7 @@ public sealed interface MenuContents permits MenuContentsImpl {
                               @NotNull List<@NotNull MenuItem> menuItems, int... blacklisted);
 
     @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                            @NotNull Class<T> clazz,
                                                             @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
 
     <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems);

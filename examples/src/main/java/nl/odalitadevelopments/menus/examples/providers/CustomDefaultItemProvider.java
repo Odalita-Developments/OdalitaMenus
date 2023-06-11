@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.examples.providers;
 
 import nl.odalitadevelopments.menus.examples.common.ItemBuilder;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
-import nl.odalitadevelopments.menus.pagination.Pagination;
+import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.Material;
@@ -24,12 +24,12 @@ public final class CustomDefaultItemProvider implements DefaultItemProvider {
     }
 
     @Override
-    public @NotNull ItemStack nextPageItem(@NotNull Pagination pagination) {
+    public @NotNull ItemStack nextPageItem(@NotNull IPagination<?, ?> pagination) {
         return ItemBuilder.of(Material.BARRIER, "&eNext &b(" + (pagination.currentPage() + 1) + " / " + pagination.lastPage() + ")").build();
     }
 
     @Override
-    public @NotNull ItemStack previousPageItem(@NotNull Pagination pagination) {
+    public @NotNull ItemStack previousPageItem(@NotNull IPagination<?, ?> pagination) {
         return ItemBuilder.of(Material.BARRIER, "&ePrevious &b(" + (pagination.currentPage() - 1) + " / " + pagination.lastPage() + ")").build();
     }
 

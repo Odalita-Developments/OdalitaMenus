@@ -7,6 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -37,6 +38,12 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
         return this;
     }
 
+    @Override
+    public void sort(@NotNull Comparator<@NotNull T> comparator) {
+        // Sort items
+        this.iterator.sort(comparator);
+    }
+
     @ApiStatus.Internal
     @Override
     public @NotNull List<Supplier<MenuItem>> getItemsOnPage() {
@@ -51,6 +58,7 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
 
         List<T> objects = this.iterator.getObjects();
         List<T> pageList = objects.subList(page * this.itemsPerPage, Math.min(objects.size(), (page + 1) * this.itemsPerPage));
+        System.out.println(pageList);
 
         for (T value : pageList) {
             MenuItem menuItem = this.iterator.createMenuItem(value);

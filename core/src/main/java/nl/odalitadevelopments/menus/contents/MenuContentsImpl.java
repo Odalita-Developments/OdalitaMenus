@@ -433,6 +433,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                                   @NotNull Class<T> clazz,
                                                                    @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction) {
         return new MenuObjectIterator<>(this, menuIteratorType, startRow, startColumn, menuItemCreatorFunction);
     }

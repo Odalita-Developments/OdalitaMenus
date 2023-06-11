@@ -102,6 +102,8 @@ final class PaginationBuilderImpl implements PaginationBuilder {
             }
 
             ObjectPaginationImpl<T> pagination = new ObjectPaginationImpl<>(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator);
+            this.iterator.pagination(pagination);
+
             this.objects.forEach(pagination::addItem);
 
             this.builder.contents.menuSession().getCache().getPaginationMap().put(this.builder.id, pagination);

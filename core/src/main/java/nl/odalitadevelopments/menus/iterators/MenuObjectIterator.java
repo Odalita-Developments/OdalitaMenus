@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.iterators;
 
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.pagination.ObjectPagination;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
@@ -19,6 +20,8 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private boolean batch = false;
     private Comparator<T> comparator;
 
+    private ObjectPagination<T> pagination = null;
+
     public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
         super(contents, type, startRow, startColumn);
 
@@ -28,6 +31,11 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
 
     @Override
     protected @NotNull MenuObjectIterator<T> self() {
+        return this;
+    }
+
+    public @NotNull MenuObjectIterator<T> comparator(@NotNull Comparator<@NotNull T> comparator) {
+        this.comparator = comparator;
         return this;
     }
 
@@ -52,15 +60,21 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     }
 
     public void sort(@NotNull Comparator<@NotNull T> comparator) {
-        this.reset();
+        if (this.pagination != null && !this.contents.menuSession().isInitialized()) return;
 
+        this.reset();
         this.sort0(comparator);
 
-        for (T value : this.objects) {
-            if (this.hasNext()) {
-                int slot = this.next();
-                this.set0(value, slot);
+        if (this.pagination == null) {
+            for (T value : this.objects) {
+                if (this.hasNext()) {
+                    int slot = this.next();
+                    this.set0(value, slot);
+                }
             }
+        } else {
+            // If we use it as a pagination, we need to reopen the pagination on the current page
+            this.pagination.open(this.pagination.currentPage());
         }
 
         this.comparator = comparator;
@@ -84,5 +98,12 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     @ApiStatus.Internal
     public @UnknownNullability MenuItem createMenuItem(@NotNull T value) {
         return this.menuItemCreatorFunction.apply(value);
+    }
+
+    @ApiStatus.Internal
+    public void pagination(@NotNull ObjectPagination<T> pagination) {
+        if (this.pagination == null) {
+            this.pagination = pagination;
+        }
     }
 }
