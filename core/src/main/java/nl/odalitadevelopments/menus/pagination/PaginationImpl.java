@@ -26,13 +26,13 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
     }
 
     @Override
-    public int lastPage() {
-        return Math.max(0, this.items.size() - 1);
+    public @NotNull MenuIterator iterator() {
+        return this.iterator;
     }
 
     @Override
-    public @NotNull MenuIterator iterator() {
-        return this.iterator;
+    public int lastPage() {
+        return Math.max(0, this.items.size() - 1);
     }
 
     @Override
