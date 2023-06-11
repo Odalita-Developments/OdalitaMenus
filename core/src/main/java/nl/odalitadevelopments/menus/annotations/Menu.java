@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Menu {
 
+    String id() default "";
+
     String title();
 
     MenuType type() default MenuType.CHEST_3_ROW;

@@ -36,19 +36,22 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     final MenuSession menuSession;
     final MenuSessionCache cache;
     final MenuContentsScheduler scheduler;
+    final MenuContentsActions actions;
     final MenuContentsEvents events;
 
     MenuContentsImpl(MenuSession menuSession) {
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
         this.scheduler = new MenuContentsSchedulerImpl(this);
+        actions = new MenuContentsActionsImpl(this);
         this.events = new MenuContentsEventsImpl(this);
     }
 
-    MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsEvents events) {
+    MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsActions actions, MenuContentsEvents events) {
         this.menuSession = menuSession;
         this.cache = cache;
         this.scheduler = scheduler;
+        this.actions = actions;
         this.events = events;
     }
 
@@ -60,6 +63,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public @NotNull MenuContentsScheduler scheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    public @NotNull MenuContentsActions actions() {
+        return this.actions;
     }
 
     @Override
@@ -75,6 +83,14 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
         this.set(slotPos, item, override, (slot) -> {
+            if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
+                this.menuSession.getOpenActions().add(() -> {
+                    this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
+                    InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+                });
+                return;
+            }
+
             this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
 
             if (this.menuSession.isOpened()) {
@@ -205,42 +221,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 this.set(slotPos, item);
             }
         }
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
-        this.set(slotPos, item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item) {
-        this.set(slotPos, item, true);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int row, int column, @NotNull MenuItem item, boolean override) {
-        this.set(SlotPos.of(row, column), item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int row, int column, @NotNull MenuItem item) {
-        this.set(row, column, item, true);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int slot, @NotNull MenuItem item, boolean override) {
-        this.set(SlotPos.of(slot), item, override);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    public void setAsync(int slot, @NotNull MenuItem item) {
-        this.set(slot, item, true);
     }
 
     @Override
@@ -659,7 +639,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
-        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.events);
+        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.actions, this.events);
         loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
@@ -768,7 +748,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
         if (item instanceof PageUpdatableItem) {
-            this.cache.getPageSwitchUpdateItems().put(originalSlot, () -> item);
+            this.cache.getPageSwitchUpdateItems().put(originalSlot, item);
         }
 
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {

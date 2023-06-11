@@ -6,7 +6,7 @@
 
     <groupId>nl.odalitadevelopments</groupId>
     <artifactId>odalitamenus</artifactId>
-    <version>0.1.6</version>
+    <version>0.2.1</version>
     <packaging>pom</packaging>
     <name>OdalitaMenus</name>
     <modules>
@@ -30,6 +30,10 @@
         <repository>
             <id>destroystokyo-repo</id>
             <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
     </repositories>
 
@@ -59,6 +63,20 @@
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.92.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

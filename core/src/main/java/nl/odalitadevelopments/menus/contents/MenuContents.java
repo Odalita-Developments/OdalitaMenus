@@ -47,6 +47,9 @@ public sealed interface MenuContents permits MenuContentsImpl {
     MenuContentsScheduler scheduler();
 
     @NotNull
+    MenuContentsActions actions();
+
+    @NotNull
     MenuContentsEvents events();
 
     @Nullable
@@ -89,26 +92,6 @@ public sealed interface MenuContents permits MenuContentsImpl {
     void fillBorders(@NotNull MenuItem item);
 
     void fill(@NotNull MenuItem item);
-
-
-    /* DEFAULT ASYNC */
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(@NotNull SlotPos slotPos, @NotNull MenuItem item);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int row, int column, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int row, int column, @NotNull MenuItem item);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int slot, @NotNull MenuItem item, boolean override);
-
-    @Deprecated(forRemoval = true, since = "0.1.6")
-    void setAsync(int slot, @NotNull MenuItem item);
 
 
     /* DEFAULT REFRESHABLE */
@@ -240,28 +223,20 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
 
     /* FRAME */
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, @NotNull SlotPos slotPos, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int row, int column, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int slot, @NotNull Class<F> frame);
 
-    @ApiStatus.Experimental
     boolean loadFrame(@NotNull String id, Object @NotNull ... arguments);
 
-    @ApiStatus.Experimental
     void unloadFrame(@NotNull String id);
 
-    @ApiStatus.Experimental
     void registerFrameOverlaySlots(SlotPos @NotNull ... slots);
 
-    @ApiStatus.Experimental
     void registerFrameOverlaySlots(int... slots);
 
-    @ApiStatus.Experimental
     @Nullable String loadedFrameId();
 
 

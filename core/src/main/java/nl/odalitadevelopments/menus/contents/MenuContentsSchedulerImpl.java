@@ -1,8 +1,12 @@
 package nl.odalitadevelopments.menus.contents;
 
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-record MenuContentsSchedulerImpl(MenuContentsImpl inventoryContents) implements MenuContentsScheduler {
+@AllArgsConstructor
+final class MenuContentsSchedulerImpl implements MenuContentsScheduler {
+
+    private final MenuContentsImpl menuContents;
 
     @Override
     public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
@@ -10,15 +14,15 @@ record MenuContentsSchedulerImpl(MenuContentsImpl inventoryContents) implements 
             throw new IllegalArgumentException("Delay, period must be positive");
         }
 
-        synchronized (this.inventoryContents.cache.getTasks()) {
+        synchronized (this.menuContents.cache.getTasks()) {
             runTimes = Math.max(runTimes, 0);
 
-            if (this.inventoryContents.cache.getTasks().containsKey(id)) {
+            if (this.menuContents.cache.getTasks().containsKey(id)) {
                 throw new IllegalArgumentException("Task with id '" + id + "' already exists");
             }
 
             MenuTask task = new MenuTask(this, id, runnable, ticksDelay, ticksPeriod, runTimes);
-            this.inventoryContents.cache.getTasks().put(task.getId(), task);
+            this.menuContents.cache.getTasks().put(task.getId(), task);
             return task;
         }
     }
@@ -45,15 +49,15 @@ record MenuContentsSchedulerImpl(MenuContentsImpl inventoryContents) implements 
 
     @Override
     public boolean isRunning(@NotNull String id) {
-        synchronized (this.inventoryContents.cache.getTasks()) {
-            return this.inventoryContents.cache.getTasks().containsKey(id);
+        synchronized (this.menuContents.cache.getTasks()) {
+            return this.menuContents.cache.getTasks().containsKey(id);
         }
     }
 
     @Override
     public void cancel(@NotNull String id) {
-        synchronized (this.inventoryContents.cache.getTasks()) {
-            this.inventoryContents.cache.getTasks().remove(id);
+        synchronized (this.menuContents.cache.getTasks()) {
+            this.menuContents.cache.getTasks().remove(id);
         }
     }
 }

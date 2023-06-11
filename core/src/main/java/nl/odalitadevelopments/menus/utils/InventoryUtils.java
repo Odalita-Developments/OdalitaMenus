@@ -1,6 +1,8 @@
 package nl.odalitadevelopments.menus.utils;
 
+import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
+import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +89,52 @@ public final class InventoryUtils {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+    }
+
+    public static synchronized void setProperty(Inventory inventory, MenuProperty property, int value) {
+        try {
+            for (HumanEntity viewer : inventory.getViewers()) {
+                if (!(viewer instanceof Player player)) continue;
+
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+                Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+                int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
+                if (windowId <= 0) return;
+
+                Object packetPlayOutWindowData = PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR.newInstance(windowId, property.getIndex(), value);
+                sendPacket(player, packetPlayOutWindowData);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    public static Channel getPacketChannel(Player player) {
+        try {
+            Object networkManager = getNetworkManager(player);
+
+            Object channel;
+            if (ProtocolVersion.getServerVersion().isLowerOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
+                channel = NETWORK_MANAGER.getField("channel").get(networkManager);
+            } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_18_1)) {
+                channel = NETWORK_MANAGER.getField("k").get(networkManager);
+            } else {
+                channel = NETWORK_MANAGER.getField("m").get(networkManager);
+            }
+
+            return (Channel) channel;
+        } catch (Throwable exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Object toNMS(ItemStack itemStack) throws InvocationTargetException, IllegalAccessException {
+        return GET_NMS_ITEM_STACK.invoke(null, itemStack);
+    }
+
+    public static ItemStack fromNMS(Object item) throws InvocationTargetException, IllegalAccessException {
+        return (ItemStack) GET_ITEM_STACK_FROM_NMS.invoke(null, item);
     }
 
     public static ItemStack createItemStack(Material material, String displayName, String... lore) {

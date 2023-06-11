@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.contents.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.MenuTask;
+import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
@@ -33,7 +34,7 @@ public final class MenuSessionCache {
     private final Map<String, Pagination> paginationMap = Maps.newConcurrentMap();
     private final Map<String, Scrollable> scrollableMap = Maps.newConcurrentMap();
     private final Map<Integer, Supplier<MenuItem>> refreshableItems = Maps.newConcurrentMap();
-    private final Map<Integer, Supplier<MenuItem>> pageSwitchUpdateItems = Maps.newConcurrentMap();
+    private final Map<Integer, MenuItem> pageSwitchUpdateItems = Maps.newConcurrentMap();
 
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
@@ -45,6 +46,8 @@ public final class MenuSessionCache {
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
     private Runnable closeActionBefore = null;
     private Runnable closeActionAfter = null;
+
+    private PlayerInventoryItemMetaChanger itemMetaChanger = null;
 
     private final Map<String, MenuFrameData> frames = Maps.newConcurrentMap();
     private final Collection<Integer> frameOverlaySlots = Sets.newConcurrentHashSet();

@@ -104,7 +104,7 @@ public final class ScrollItem extends PageUpdatableItem {
 
         if (this.itemStack == null) {
             DefaultItemProvider defaultItemProvider = instance.getProvidersContainer().getDefaultItemProvider();
-            this.itemStack = switch (this.direction) {
+            return switch (this.direction) {
                 case UP -> defaultItemProvider.scrollUpItem(this.scrollable);
                 case DOWN -> defaultItemProvider.scrollDownItem(this.scrollable);
                 case LEFT -> defaultItemProvider.scrollLeftItem(this.scrollable);

@@ -1,10 +1,12 @@
 package nl.odalitadevelopments.menus.menu;
 
+import com.google.common.collect.Sets;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 
 @Getter
@@ -27,6 +30,7 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final Player player;
 
+    private final String id;
     @Setter(AccessLevel.NONE)
     private SupportedMenuType menuType;
     @Setter(AccessLevel.NONE)
@@ -41,14 +45,17 @@ public final class MenuSession {
     private String globalCacheKey;
     private final MenuSessionCache cache;
 
-    @Setter(AccessLevel.PACKAGE)
+    private volatile boolean initialized = false;
     private volatile boolean opened = false;
-
     private volatile boolean closed = false;
 
-    MenuSession(OdalitaMenus instance, Player player, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
+
+    MenuSession(OdalitaMenus instance, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
         this.player = player;
+
+        this.id = id;
         this.menuType = menuType;
 
         this.inventory = inventory;
@@ -61,12 +68,32 @@ public final class MenuSession {
         this.menuContents = MenuContents.create(this);
     }
 
+    void initialized() {
+        this.initialized = true;
+    }
+
+    void opened() {
+        this.opened = true;
+
+        for (Runnable action : this.openActions) {
+            action.run();
+        }
+    }
+
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
         InventoryUtils.changeTitle(this.inventory, title);
+    }
+
+    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+        if (this.menuType.type() != property.getMenuType()) {
+            throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
+        }
+
+        InventoryUtils.setProperty(this.inventory, property, value);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {

@@ -4,8 +4,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.listeners.InventoryListener;
+import nl.odalitadevelopments.menus.listeners.InventoryPacketListener;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.GlobalSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
@@ -27,7 +29,9 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -93,10 +97,12 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.patternContainer = new PatternContainer();
 
-        this.providersContainer = new ProvidersContainer();
+        this.providersContainer = new ProvidersContainer(this);
         this.cooldownContainer = new CooldownContainer();
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
+        new InventoryPacketListener(this, this.menuProcessor);
+
         javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.globalSessionCache, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
@@ -105,6 +111,31 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
 
         INSTANCES.put(javaPlugin, this);
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu() {
+        return this.menuProcessor.getPlayersWithOpenMenu();
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull Player> getPlayersWithOpenMenu(@NotNull String id) {
+        return this.menuProcessor.getPlayersWithOpenMenu(id);
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions() {
+        return this.menuProcessor.getOpenMenuSessions();
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull MenuSession> getOpenMenuSessions(@NotNull String id) {
+        return this.menuProcessor.getOpenMenuSessions(id);
+    }
+
+    @Override
+    public @Nullable MenuSession getOpenMenuSession(@NotNull Player player) {
+        return this.menuProcessor.getOpenMenuSession(player);
     }
 
     @Override
@@ -147,9 +178,11 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         if (this.javaPlugin.equals(event.getPlugin())) {
             this.menuTask.cancel(true);
 
-            for (Player player : this.menuProcessor.getOpenMenus().keySet()) {
+            for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
             }
+
+            this.providersContainer.close(this);
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalSessionCache);

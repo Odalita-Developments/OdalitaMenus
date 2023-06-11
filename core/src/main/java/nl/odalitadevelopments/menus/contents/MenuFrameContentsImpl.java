@@ -18,8 +18,8 @@ final class MenuFrameContentsImpl extends MenuContentsImpl {
 
     private final MenuFrameData frameData;
 
-    MenuFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, MenuContentsScheduler scheduler, MenuContentsEvents events) {
-        super(menuSession, cache, scheduler, events);
+    MenuFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, MenuContentsScheduler scheduler, MenuContentsActions actions, MenuContentsEvents events) {
+        super(menuSession, cache, scheduler, actions, events);
 
         this.frameData = frameData;
     }

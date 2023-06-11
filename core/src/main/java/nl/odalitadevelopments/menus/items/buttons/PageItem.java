@@ -1,9 +1,9 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
-import nl.odalitadevelopments.menus.pagination.Pagination;
-import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.pagination.Pagination;
+import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -72,7 +72,7 @@ public final class PageItem extends PageUpdatableItem {
 
         if (this.itemStack == null) {
             DefaultItemProvider defaultItemProvider = instance.getProvidersContainer().getDefaultItemProvider();
-            this.itemStack = switch (this.type) {
+            return switch (this.type) {
                 case PREVIOUS -> defaultItemProvider.previousPageItem(this.pagination);
                 case NEXT -> defaultItemProvider.nextPageItem(this.pagination);
             };
