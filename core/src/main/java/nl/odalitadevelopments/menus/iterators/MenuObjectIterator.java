@@ -68,9 +68,10 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
         if (this.pagination == null) {
             for (T value : this.objects) {
                 if (this.hasNext()) {
-                    int slot = this.next();
-
                     MenuItem item = this.menuItemCreatorFunction.apply(value);
+                    if (item == null) continue;
+
+                    int slot = this.next();
                     this.contents.set(slot, item);
                 }
             }
