@@ -11,7 +11,7 @@ public final class MenuIterator extends AbstractMenuIterator<MenuIterator> {
     }
 
     @Override
-    protected @NotNull MenuIterator getInstance() {
+    protected @NotNull MenuIterator self() {
         return this;
     }
 
@@ -25,17 +25,7 @@ public final class MenuIterator extends AbstractMenuIterator<MenuIterator> {
         return this;
     }
 
-    public synchronized @NotNull MenuIterator setNextAsync(MenuItem menuItem) {
-        this.contents.set(super.next(), menuItem);
-        return this;
-    }
-
     public @NotNull MenuIterator setPrevious(MenuItem menuItem) {
-        this.contents.set(super.previous(), menuItem);
-        return this;
-    }
-
-    public synchronized @NotNull MenuIterator setPreviousAsync(MenuItem menuItem) {
         this.contents.set(super.previous(), menuItem);
         return this;
     }

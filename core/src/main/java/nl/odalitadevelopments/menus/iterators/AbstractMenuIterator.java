@@ -26,7 +26,7 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
     protected boolean override = false;
 
     protected AbstractMenuIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn) {
-        this.instance = this.getInstance();
+        this.instance = this.self();
 
         this.contents = contents;
         this.type = type;
@@ -34,7 +34,7 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
         this.startColumn = startColumn;
     }
 
-    protected abstract @NotNull T getInstance();
+    protected abstract @NotNull T self();
 
     public boolean hasNext() {
         this.init(this.type);
