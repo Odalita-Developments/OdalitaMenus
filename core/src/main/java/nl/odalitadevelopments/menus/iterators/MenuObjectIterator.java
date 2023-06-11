@@ -62,14 +62,16 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     public void sort(@NotNull Comparator<@NotNull T> comparator) {
         if (this.pagination != null && !this.contents.menuSession().isInitialized()) return;
 
-        this.reset();
-        this.sort0(comparator);
+        super.reset();
+        this.objects.sort(comparator);
 
         if (this.pagination == null) {
             for (T value : this.objects) {
                 if (this.hasNext()) {
                     int slot = this.next();
-                    this.set0(value, slot);
+
+                    MenuItem item = this.menuItemCreatorFunction.apply(value);
+                    this.contents.set(slot, item);
                 }
             }
         } else {
@@ -78,16 +80,6 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
         }
 
         this.comparator = comparator;
-    }
-
-    private void set0(@NotNull T value, int slot) {
-        MenuItem item = this.menuItemCreatorFunction.apply(value);
-
-        this.contents.set(slot, item);
-    }
-
-    private void sort0(Comparator<T> comparator) {
-        this.objects.sort(comparator);
     }
 
     @ApiStatus.Internal
