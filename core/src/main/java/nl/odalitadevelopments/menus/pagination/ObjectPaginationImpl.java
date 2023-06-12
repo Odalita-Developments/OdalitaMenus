@@ -29,7 +29,7 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
 
     @Override
     public int lastPage() {
-        return (int) (Math.ceil((double) this.iterator.getObjects().size() / (double) this.itemsPerPage) - 1);
+        return Math.min(0, (int) (Math.ceil((double) this.iterator.getObjects().size() / (double) this.itemsPerPage) - 1));
     }
 
     @Override

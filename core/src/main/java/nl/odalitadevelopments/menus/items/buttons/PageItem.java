@@ -52,7 +52,7 @@ public final class PageItem extends PageUpdatableItem {
     private final IPagination<?, ?> pagination;
     private final boolean showOnFirstOrLastPage;
 
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     private PageItem(Type type, IPagination<?, ?> pagination, ItemStack itemStack, boolean showOnFirstOrLastPage) {
         this.type = type;
