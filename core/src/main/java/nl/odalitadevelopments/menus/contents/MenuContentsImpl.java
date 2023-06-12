@@ -664,8 +664,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not loaded!");
         }
 
-        for (int row = frameData.startRow(); row < Math.max(6, frameData.startRow() + frameData.height()); row++) {
-            for (int column = frameData.startColumn(); column < Math.max(9, frameData.startColumn() + frameData.width()); column++) {
+        for (int row = frameData.startRow(); row < Math.min(this.maxRows(), frameData.startRow() + frameData.height()); row++) {
+            for (int column = frameData.startColumn(); column < Math.min(this.maxColumns(), frameData.startColumn() + frameData.width()); column++) {
                 int slot = SlotPos.of(row, column).getSlot();
                 if (this.menuSession.getCache().getFrameOverlaySlots().contains(slot)) continue;
 
