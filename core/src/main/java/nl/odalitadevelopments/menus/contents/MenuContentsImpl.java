@@ -82,6 +82,10 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
+        if (item instanceof PageUpdatableItem pageUpdatableItem) {
+            this.cache.getPageSwitchUpdateItems().putIfAbsent(slotPos.getSlot(), () -> pageUpdatableItem);
+        }
+
         this.set(slotPos, item, override, (slot) -> {
             if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
                 this.menuSession.getOpenActions().add(() -> {
