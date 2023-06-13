@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<T>, MenuObjectIterator<T>> implements ObjectPagination<T> {
@@ -39,9 +40,42 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
     }
 
     @Override
-    public void sort(@NotNull Comparator<@NotNull T> comparator) {
-        // Sort items
-        this.iterator.sort(comparator);
+    public @NotNull ObjectPagination<T> filter(@NotNull String id, @NotNull Predicate<T> predicate) {
+        this.iterator.filter(id, predicate);
+        return this;
+    }
+
+    @Override
+    public @NotNull ObjectPagination<T> sorter(int priority, @NotNull Comparator<@NotNull T> comparator) {
+        this.iterator.sorter(priority, comparator);
+        return this;
+    }
+
+    @Override
+    public @NotNull ObjectPagination<T> removeFilter(@NotNull String id) {
+        this.iterator.removeFilter(id);
+        return this;
+    }
+
+    @Override
+    public @NotNull ObjectPagination<T> removeSorter(int priority) {
+        this.iterator.removeSorter(priority);
+        return this;
+    }
+
+    @Override
+    public void apply() {
+        this.iterator.apply();
+    }
+
+    @Override
+    public void createBatch() {
+        this.iterator.createBatch();
+    }
+
+    @Override
+    public void endBatch() {
+        this.iterator.endBatch();
     }
 
     @ApiStatus.Internal
