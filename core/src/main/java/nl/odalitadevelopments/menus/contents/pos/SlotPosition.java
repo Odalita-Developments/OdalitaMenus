@@ -41,6 +41,18 @@ public abstract class SlotPosition {
     }
 
     @Override
+    public String toString() {
+        return "SlotPosition{" +
+                "height=" + this.height +
+                ", width=" + this.width +
+                ", row=" + this.row +
+                ", column=" + this.column +
+                ", slot=" + this.slot +
+                ", createdFromSlot=" + this.createdFromSlot +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object object) {
         if (object instanceof SlotPosition slotPosition) {
             return slotPosition.getHeight() == this.height && slotPosition.getWidth() == this.width
