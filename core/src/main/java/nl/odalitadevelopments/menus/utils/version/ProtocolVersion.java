@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_20_1(763),
     MINECRAFT_1_20(763),
     MINECRAFT_1_19_4(762),
     MINECRAFT_1_19_3(761),
@@ -20,9 +21,20 @@ public enum ProtocolVersion {
     NOT_SUPPORTED(0);
 
     private final int number;
+    private final String format;
 
     ProtocolVersion(int number) {
         this.number = number;
+
+        if (number == 0) {
+            this.format = "Not supported";
+        } else {
+            this.format = this.name().substring(10).replaceAll("\\_", ".");
+        }
+    }
+
+    public @NotNull String format() {
+        return this.format;
     }
 
     public int getNumber() {
@@ -70,5 +82,9 @@ public enum ProtocolVersion {
         }
 
         return NOT_SUPPORTED;
+    }
+
+    public static @NotNull ProtocolVersion LATEST() {
+        return ProtocolVersion.values()[0];
     }
 }

@@ -73,7 +73,7 @@ public final class InventoryUtils {
                 Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
                 Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
-                if (windowId <= 0) return;
+                if (windowId <= 0) continue;
 
                 Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(activeContainer);
                 Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, titleComponent);
@@ -99,7 +99,7 @@ public final class InventoryUtils {
                 Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
                 Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
-                if (windowId <= 0) return;
+                if (windowId <= 0) continue;
 
                 Object packetPlayOutWindowData = PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR.newInstance(windowId, property.getIndex(), value);
                 sendPacket(player, packetPlayOutWindowData);

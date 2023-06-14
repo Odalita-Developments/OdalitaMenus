@@ -84,7 +84,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         }
 
         if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.NOT_SUPPORTED)) {
-            throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: 1.16.5 - 1.19.3)");
+            throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_16_5.format() + " - " + ProtocolVersion.LATEST().format() + ")");
         }
 
         this.javaPlugin = javaPlugin;

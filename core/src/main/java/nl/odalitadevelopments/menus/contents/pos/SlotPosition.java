@@ -35,7 +35,7 @@ public abstract class SlotPosition {
         this.height = height;
         this.width = width;
         this.slot = slot;
-        this.row = slot / this.width;
+        this.row = (this.width == 0) ? slot : slot / this.width;
         this.column = slot - (this.width * this.row);
         this.createdFromSlot = true;
     }
