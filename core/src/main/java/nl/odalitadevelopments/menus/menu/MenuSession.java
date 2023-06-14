@@ -78,6 +78,8 @@ public final class MenuSession {
         for (Runnable action : this.openActions) {
             action.run();
         }
+
+        this.openActions.clear();
     }
 
     public synchronized void setTitle(@NotNull String title) {
