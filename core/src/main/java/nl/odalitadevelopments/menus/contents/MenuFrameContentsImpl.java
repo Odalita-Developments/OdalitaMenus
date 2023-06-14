@@ -2,7 +2,6 @@ package nl.odalitadevelopments.menus.contents;
 
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
-import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 final class MenuFrameContentsImpl extends MenuContentsImpl {
 
@@ -131,16 +129,9 @@ final class MenuFrameContentsImpl extends MenuContentsImpl {
     }
 
     @Override
-    protected void set(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, Consumer<SlotPos> setter) {
+    protected SlotPos calculateSlotPos(SlotPos slotPos) {
         slotPos = slotPos.convertTo(this.maxRows(), this.maxColumns());
-        slotPos = slotPos.convertFromFrame(this.menuSession.getRows(), this.menuSession.getColumns(), this.frameData);
-
-        super.set(slotPos, originalSlot, item, override, setter);
-    }
-
-    @Override
-    protected SlotPos convertSlotPos(SlotPos slotPos) {
-        return slotPos; // Already converted
+        return slotPos.convertFromFrame(this.menuSession.getRows(), this.menuSession.getColumns(), this.frameData);
     }
 
     @Override

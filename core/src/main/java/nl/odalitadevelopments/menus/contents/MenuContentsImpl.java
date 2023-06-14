@@ -82,25 +82,15 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override) {
-        if (item instanceof PageUpdatableItem pageUpdatableItem) {
-            this.cache.getPageSwitchUpdateItems().putIfAbsent(slotPos.getSlot(), () -> pageUpdatableItem);
+        if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
+            SlotPos calculateSlotPos = this.calculateSlotPos(slotPos);
+            this.menuSession.getOpenActions().add(() -> {
+                this.set0(calculateSlotPos, slotPos.getSlot(), item, override, true);
+            });
+            return;
         }
 
-        this.set(slotPos, item, override, (slot) -> {
-            if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
-                this.menuSession.getOpenActions().add(() -> {
-                    this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
-                    InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
-                });
-                return;
-            }
-
-            this.menuSession.contents[slot.getRow()][slot.getColumn()] = item;
-
-            if (this.menuSession.isOpened()) {
-                InventoryUtils.updateItem(this.menuSession.getPlayer(), slot.getSlot(), item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
-            }
-        });
+        this.set0(slotPos, item, override, false);
     }
 
     @Override
@@ -151,17 +141,17 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
-    public boolean isEmpty(@NotNull SlotPos slotPos) { // TODO override
+    public boolean isEmpty(@NotNull SlotPos slotPos) {
         return this.menuSession.getContent(slotPos) == null;
     }
 
     @Override
-    public boolean isEmpty(int row, int column) { // TODO override
+    public boolean isEmpty(int row, int column) {
         return this.isEmpty(SlotPos.of(row, column));
     }
 
     @Override
-    public boolean isEmpty(int slot) { // TODO override
+    public boolean isEmpty(int slot) {
         return this.isEmpty(SlotPos.of(slot));
     }
 
@@ -748,8 +738,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         player.closeInventory();
     }
 
-    protected void set(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, Consumer<SlotPos> setter) {
-        slotPos = this.convertSlotPos(slotPos);
+    protected void set0(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, boolean calculated) {
+        if (!calculated) slotPos = this.calculateSlotPos(slotPos);
         int slot = slotPos.getSlot();
 
         if (!this.menuSession.fits(slot)) {
@@ -762,14 +752,22 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
             this.menuSession.setHasUpdatableItems(true);
         }
 
-        setter.accept(slotPos);
+        if (item instanceof PageUpdatableItem pageUpdatableItem) {
+            this.cache.getPageSwitchUpdateItems().putIfAbsent(originalSlot, () -> pageUpdatableItem);
+        }
+
+        this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
+
+        if (this.menuSession.isOpened()) {
+            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+        }
     }
 
-    private void set(SlotPos slotPos, MenuItem item, boolean override, Consumer<SlotPos> setter) {
-        this.set(slotPos, slotPos.getSlot(), item, override, setter);
+    private void set0(SlotPos slotPos, MenuItem item, boolean override, boolean calculated) {
+        this.set0(slotPos, slotPos.getSlot(), item, override, calculated);
     }
 
-    protected SlotPos convertSlotPos(SlotPos slotPos) {
+    protected SlotPos calculateSlotPos(SlotPos slotPos) {
         return slotPos.convertTo(
                 this.maxRows(),
                 this.maxColumns()
