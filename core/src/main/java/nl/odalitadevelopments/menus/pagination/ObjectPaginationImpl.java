@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -36,6 +37,18 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
     @Override
     public @NotNull ObjectPagination<T> addItem(@NotNull T value) {
         this.iterator.add(value);
+        return this;
+    }
+
+    @Override
+    public @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Consumer<MenuContents> consumer) {
+        this.iterator.emptyFilteredItemsAction(consumer);
+        return this;
+    }
+
+    @Override
+    public @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Runnable runnable) {
+        this.iterator.emptyFilteredItemsAction(runnable);
         return this;
     }
 

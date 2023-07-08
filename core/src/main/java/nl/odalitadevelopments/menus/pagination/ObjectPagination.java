@@ -1,14 +1,20 @@
 package nl.odalitadevelopments.menus.pagination;
 
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public sealed interface ObjectPagination<T> extends IPagination<ObjectPagination<T>, MenuObjectIterator<T>> permits ObjectPaginationImpl {
 
     @NotNull ObjectPagination<T> addItem(@NotNull T value);
+
+    @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Consumer<MenuContents> consumer);
+
+    @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Runnable runnable);
 
     @NotNull ObjectPagination<T> filter(@NotNull String id, @NotNull Predicate<T> predicate);
 

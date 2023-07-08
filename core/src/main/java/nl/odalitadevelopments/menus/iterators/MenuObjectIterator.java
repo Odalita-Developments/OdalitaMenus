@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -21,6 +22,7 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private final Map<Integer, Comparator<T>> sorters = new TreeMap<>();
 
     private List<T> filteredObjects;
+    private Consumer<MenuContents> emptyFilteredItemsConsumer = null;
 
     private ObjectPagination<T> pagination = null;
 
@@ -33,6 +35,16 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
 
     @Override
     protected @NotNull MenuObjectIterator<T> self() {
+        return this;
+    }
+
+    public @NotNull MenuObjectIterator<T> emptyFilteredItemsAction(@NotNull Consumer<MenuContents> consumer) {
+        this.emptyFilteredItemsConsumer = consumer;
+        return this;
+    }
+
+    public @NotNull MenuObjectIterator<T> emptyFilteredItemsAction(@NotNull Runnable runnable) {
+        this.emptyFilteredItemsConsumer = ($) -> runnable.run();
         return this;
     }
 
@@ -110,6 +122,10 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
         } else {
             // If we use it as a pagination, we need to reopen the pagination on the current page
             this.pagination.open(this.pagination.currentPage());
+        }
+
+        if (this.filteredObjects.isEmpty() && this.emptyFilteredItemsConsumer != null) {
+            this.emptyFilteredItemsConsumer.accept(this.contents);
         }
     }
 
