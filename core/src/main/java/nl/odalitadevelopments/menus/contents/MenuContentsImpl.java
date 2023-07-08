@@ -738,7 +738,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         player.closeInventory();
     }
 
-    protected void set0(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, boolean calculated) {
+    protected final void set0(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, boolean calculated) {
         if (!calculated) slotPos = this.calculateSlotPos(slotPos);
         int slot = slotPos.getSlot();
 
@@ -747,6 +747,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
+
+        this.removeCache(originalSlot);
 
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
             this.menuSession.setHasUpdatableItems(true);
@@ -765,6 +767,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     private void set0(SlotPos slotPos, MenuItem item, boolean override, boolean calculated) {
         this.set0(slotPos, slotPos.getSlot(), item, override, calculated);
+    }
+
+    private void removeCache(int slot) {
+        this.cache.getPageSwitchUpdateItems().remove(slot);
+        this.cache.getRefreshableItems().remove(slot);
     }
 
     protected SlotPos calculateSlotPos(SlotPos slotPos) {
