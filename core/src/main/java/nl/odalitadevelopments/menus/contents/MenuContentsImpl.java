@@ -664,6 +664,10 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 if (this.menuSession.getCache().getFrameOverlaySlots().contains(slot)) continue;
 
                 this.menuSession.contents[row][column] = null;
+
+                this.cache.getRefreshableItems().remove(slot);
+                this.cache.getPageSwitchUpdateItems().remove(slot);
+
                 InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
             }
         }
@@ -748,8 +752,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
-        this.removeCache(originalSlot);
-
         if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
             this.menuSession.setHasUpdatableItems(true);
         }
@@ -767,11 +769,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     private void set0(SlotPos slotPos, MenuItem item, boolean override, boolean calculated) {
         this.set0(slotPos, slotPos.getSlot(), item, override, calculated);
-    }
-
-    private void removeCache(int slot) {
-        this.cache.getPageSwitchUpdateItems().remove(slot);
-        this.cache.getRefreshableItems().remove(slot);
     }
 
     protected SlotPos calculateSlotPos(SlotPos slotPos) {
