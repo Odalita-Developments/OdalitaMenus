@@ -93,6 +93,8 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
             if (itemSupplier == null) {
                 reusableItems.add(this.iterator.getSlot());
                 int slot = this.iterator.next();
+                if (this.contents.isEmpty(slot)) continue;
+
                 this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
                 continue;
             }
