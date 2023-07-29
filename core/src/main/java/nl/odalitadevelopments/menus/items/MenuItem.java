@@ -12,7 +12,7 @@ public abstract class MenuItem {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
 
-    private final int id = ID_COUNTER.getAndIncrement();
+    private final int id = ID_COUNTER.get() >= 10_000 ? ID_COUNTER.getAndSet(0) : ID_COUNTER.getAndIncrement();
 
     public abstract @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance);
 
