@@ -111,14 +111,13 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
             for (Supplier<MenuItem> itemSupplier : itemsOnPage) {
                 int slot = this.iterator.next();
 
-                if (itemSupplier == null) {
-                    if (this.contents.isEmpty(slot)) continue;
-
+                if (!this.contents.isEmpty(slot)) {
                     this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
-                    continue;
                 }
 
-                pageItems.put(slot, itemSupplier);
+                if (itemSupplier != null) {
+                    pageItems.put(slot, itemSupplier);
+                }
             }
 
             for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
