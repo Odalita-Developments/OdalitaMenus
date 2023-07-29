@@ -22,6 +22,14 @@ final class PaginationBuilderImpl implements PaginationBuilder {
     final String id;
     final int itemsPerPage;
 
+    boolean async = false;
+
+    @Override
+    public @NotNull PaginationBuilder asyncPageSwitching(boolean async) {
+        this.async = async;
+        return this;
+    }
+
     @Override
     public @NotNull ItemPaginationBuilder iterator(@NotNull MenuIterator iterator) {
         return new ItemPaginationBuilderImpl(this, iterator);
@@ -72,7 +80,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
                 throw new IllegalStateException("You have to set an iterator before creating the pagination");
             }
 
-            PaginationImpl pagination = new PaginationImpl(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator);
+            PaginationImpl pagination = new PaginationImpl(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator, this.builder.async);
             this.items.forEach(pagination::addItem);
 
             this.builder.contents.menuSession().getCache().getPaginationMap().put(this.builder.id, pagination);
@@ -101,7 +109,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
                 throw new IllegalStateException("You have to set an iterator before creating the pagination");
             }
 
-            ObjectPaginationImpl<T> pagination = new ObjectPaginationImpl<>(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator);
+            ObjectPaginationImpl<T> pagination = new ObjectPaginationImpl<>(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator, this.builder.async);
             this.iterator.pagination(pagination);
 
             this.objects.forEach(pagination::addItem);

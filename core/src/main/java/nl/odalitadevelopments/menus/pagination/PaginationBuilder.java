@@ -1,8 +1,8 @@
 package nl.odalitadevelopments.menus.pagination;
 
 import nl.odalitadevelopments.menus.contents.MenuContents;
-import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +16,8 @@ public sealed interface PaginationBuilder permits PaginationBuilderImpl {
     static @NotNull PaginationBuilder builder(@NotNull MenuContents contents, @NotNull String id, int itemsPerPage) {
         return new PaginationBuilderImpl(contents, id, itemsPerPage);
     }
+
+    @NotNull PaginationBuilder asyncPageSwitching(boolean async);
 
     @NotNull ItemPaginationBuilder iterator(@NotNull MenuIterator iterator);
 

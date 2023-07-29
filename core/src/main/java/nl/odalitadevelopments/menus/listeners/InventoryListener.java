@@ -10,7 +10,7 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
-import org.bukkit.Bukkit;
+import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -148,7 +148,7 @@ public final class InventoryListener implements Listener {
             menuSession.setClosed(true);
             this.menuProcessor.getOpenMenus().remove(player);
 
-            Bukkit.getScheduler().runTaskLaterAsynchronously(this.instance.getJavaPlugin(), player::updateInventory, 1L);
+            BukkitThreadHelper.runAsync(this.instance.getJavaPlugin(), player::updateInventory);
         }
     }
 }

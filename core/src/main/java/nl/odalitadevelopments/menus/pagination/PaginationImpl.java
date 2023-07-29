@@ -16,8 +16,8 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
 
     private final Map<Integer, List<Supplier<MenuItem>>> items = new HashMap<>();
 
-    PaginationImpl(MenuContents contents, String id, int itemsPerPage, MenuIterator iterator) {
-        super(contents, id, itemsPerPage, iterator);
+    PaginationImpl(MenuContents contents, String id, int itemsPerPage, MenuIterator iterator, boolean async) {
+        super(contents, id, itemsPerPage, iterator, async);
     }
 
     @Override

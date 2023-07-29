@@ -4,13 +4,15 @@ import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.AbstractMenuIterator;
+import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I extends AbstractMenuIterator<I>> implements IPagination<T, I> {
@@ -25,15 +27,19 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
 
     protected boolean initialized = false;
 
+    private final boolean async;
+    private volatile boolean switchingPage = false;
+
     private final T instance;
 
-    AbstractPagination(MenuContents contents, String id, int itemsPerPage, I iterator) {
+    AbstractPagination(MenuContents contents, String id, int itemsPerPage, I iterator, boolean async) {
         this.instance = this.self();
 
         this.contents = contents;
         this.id = id;
         this.itemsPerPage = itemsPerPage;
         this.iterator = iterator;
+        this.async = async;
     }
 
     protected abstract T self();
@@ -80,35 +86,45 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
 
     @Override
     public final @NotNull T open(int page) {
-        if (page < 0 || page > this.lastPage()) return this.instance;
+        if (this.switchingPage || page < 0 || page > this.lastPage()) return this.instance;
 
-        this.iterator.reset();
+        this.switchingPage = true;
 
-        List<Supplier<MenuItem>> itemsOnPage = this.getItemsOnPage(page);
-        if (itemsOnPage.isEmpty()) return this.instance;
-
-        List<Integer> reusableItems = new ArrayList<>();
-
-        for (Supplier<MenuItem> itemSupplier : itemsOnPage) {
-            if (itemSupplier == null) {
-                reusableItems.add(this.iterator.getSlot());
-                int slot = this.iterator.next();
-                if (this.contents.isEmpty(slot)) continue;
-
-                this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
-                continue;
+        BukkitThreadHelper.runCondition(this.async, this.contents.menuSession().getInstance().getJavaPlugin(), () -> {
+            List<Supplier<MenuItem>> itemsOnPage = this.getItemsOnPage(page);
+            if (itemsOnPage.isEmpty()) {
+                this.switchingPage = false;
+                return;
             }
 
-            int slot = this.iterator.next();
-            this.contents.set(slot, itemSupplier.get());
-        }
+            this.iterator.reset();
 
-        reusableItems.forEach(this.iterator::addReusableSlot);
+            this.currentPage = page;
 
-        this.currentPage = page;
+            this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+                this.contents.set(slot, item.get());
+            });
 
-        this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-            this.contents.set(slot, item.get());
+            Map<Integer, Supplier<MenuItem>> pageItems = new TreeMap<>();
+
+            for (Supplier<MenuItem> itemSupplier : itemsOnPage) {
+                int slot = this.iterator.next();
+
+                if (itemSupplier == null) {
+                    if (this.contents.isEmpty(slot)) continue;
+
+                    this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
+                    continue;
+                }
+
+                pageItems.put(slot, itemSupplier);
+            }
+
+            for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
+                this.contents.set(entry.getKey(), entry.getValue().get());
+            }
+
+            this.switchingPage = false;
         });
 
         return this.instance;
