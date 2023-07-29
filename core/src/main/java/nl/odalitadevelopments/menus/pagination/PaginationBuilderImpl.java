@@ -80,7 +80,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
                 throw new IllegalStateException("You have to set an iterator before creating the pagination");
             }
 
-            PaginationImpl pagination = new PaginationImpl(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator, this.builder.async);
+            PaginationImpl pagination = new PaginationImpl(this.builder, this.iterator);
             this.items.forEach(pagination::addItem);
 
             this.builder.contents.menuSession().getCache().getPaginationMap().put(this.builder.id, pagination);
@@ -109,7 +109,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
                 throw new IllegalStateException("You have to set an iterator before creating the pagination");
             }
 
-            ObjectPaginationImpl<T> pagination = new ObjectPaginationImpl<>(this.builder.contents, this.builder.id, this.builder.itemsPerPage, this.iterator, this.builder.async);
+            ObjectPaginationImpl<T> pagination = new ObjectPaginationImpl<>(this.builder, this.iterator);
             this.iterator.pagination(pagination);
 
             this.objects.forEach(pagination::addItem);

@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 
 final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<T>, MenuObjectIterator<T>> implements ObjectPagination<T> {
 
-    ObjectPaginationImpl(MenuContents contents, String id, int itemsPerPage, MenuObjectIterator<T> iterator, boolean async) {
-        super(contents, id, itemsPerPage, iterator, async);
+    ObjectPaginationImpl(PaginationBuilderImpl builder, MenuObjectIterator<T> iterator) {
+        super(builder, iterator);
     }
 
     @Override

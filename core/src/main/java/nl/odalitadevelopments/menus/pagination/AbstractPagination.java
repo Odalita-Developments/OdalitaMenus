@@ -27,19 +27,20 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
 
     protected boolean initialized = false;
 
-    private final boolean async;
+    protected final boolean async;
     private volatile boolean switchingPage = false;
 
     private final T instance;
 
-    AbstractPagination(MenuContents contents, String id, int itemsPerPage, I iterator, boolean async) {
+    AbstractPagination(PaginationBuilderImpl builder, I iterator) {
         this.instance = this.self();
 
-        this.contents = contents;
-        this.id = id;
-        this.itemsPerPage = itemsPerPage;
+        this.contents = builder.contents;
+        this.id = builder.id;
+        this.itemsPerPage = builder.itemsPerPage;
+        this.async = builder.async;
+
         this.iterator = iterator;
-        this.async = async;
     }
 
     protected abstract T self();

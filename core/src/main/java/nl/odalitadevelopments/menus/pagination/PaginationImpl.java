@@ -1,6 +1,5 @@
 package nl.odalitadevelopments.menus.pagination;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,8 +15,8 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
 
     private final Map<Integer, List<Supplier<MenuItem>>> items = new HashMap<>();
 
-    PaginationImpl(MenuContents contents, String id, int itemsPerPage, MenuIterator iterator, boolean async) {
-        super(contents, id, itemsPerPage, iterator, async);
+    PaginationImpl(PaginationBuilderImpl builder, MenuIterator iterator) {
+        super(builder, iterator);
     }
 
     @Override
