@@ -5,7 +5,6 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.pagination.ObjectPagination;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -120,8 +119,11 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
                 }
             }
         } else {
-            // If we use it as a pagination, we need to reopen the pagination on the current page
-            this.pagination.open(this.pagination.currentPage());
+            // If we use it as a pagination, we need to reopen the pagination to apply the changes.
+            // If there is a filter present open the on the first page, to make sure the changes are visible.
+            // Else open it on the current page.
+            int page = !this.filters.isEmpty() ? 0 : this.pagination.currentPage();
+            this.pagination.open(page);
         }
 
         if (this.filteredObjects.isEmpty() && this.emptyFilteredItemsConsumer != null) {
@@ -135,7 +137,7 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     }
 
     @ApiStatus.Internal
-    public @UnknownNullability MenuItem createMenuItem(@NotNull T value) {
+    public MenuItem createMenuItem(@NotNull T value) {
         return this.menuItemCreatorFunction.apply(value);
     }
 
