@@ -19,7 +19,6 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
     protected final int startColumn;
 
     protected final List<Integer> availableSlotPositions = new ArrayList<>();
-    protected final List<Integer> canStillUse = new ArrayList<>();
     protected final Set<Integer> blacklist = new HashSet<>();
 
     protected int index = 0;
@@ -38,59 +37,26 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
 
     public boolean hasNext() {
         this.init(this.type);
-
-        Iterator<Integer> iterator = this.canStillUse.iterator();
-        if (iterator.hasNext()) return true;
         return this.availableSlotPositions.size() > (this.index + 1);
     }
 
     public int getSlot() {
         this.init(this.type);
-
-        Iterator<Integer> iterator = this.canStillUse.iterator();
-        if (iterator.hasNext()) {
-            Integer slot = iterator.next();
-            iterator.remove();
-            return slot;
-        }
-
         return this.availableSlotPositions.get(this.index);
     }
 
     public int next() {
         this.init(this.type);
-
-        Iterator<Integer> iterator = this.canStillUse.iterator();
-        if (iterator.hasNext()) {
-            Integer slot = iterator.next();
-            iterator.remove();
-            return slot;
-        }
-
         return this.availableSlotPositions.get(this.index++);
     }
 
     public int previous() {
         this.init(this.type);
-
-        Iterator<Integer> iterator = this.canStillUse.iterator();
-        if (iterator.hasNext()) {
-            Integer slot = iterator.next();
-            iterator.remove();
-            return slot;
-        }
-
         return this.availableSlotPositions.get(--this.index);
-    }
-
-    public @NotNull T addReusableSlot(int slot) {
-        this.canStillUse.add(this.getCorrectSlotPos(slot).getSlot());
-        return this.instance;
     }
 
     public @NotNull T reset() {
         this.index = 0;
-        this.canStillUse.clear();
         return this.instance;
     }
 
