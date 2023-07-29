@@ -24,7 +24,7 @@ public sealed interface ObjectPagination<T> extends IPagination<ObjectPagination
 
     @NotNull ObjectPagination<T> removeSorter(int priority);
 
-    void apply();
+    boolean apply();
 
     void createBatch();
 

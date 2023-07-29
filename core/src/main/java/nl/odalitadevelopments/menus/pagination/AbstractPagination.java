@@ -130,6 +130,11 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
         return this.instance;
     }
 
+    @Override
+    public boolean isAsync() {
+        return this.async;
+    }
+
     protected abstract List<Supplier<MenuItem>> getItemsOnPage(int page);
 
     @ApiStatus.Internal

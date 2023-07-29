@@ -1,8 +1,10 @@
 package nl.odalitadevelopments.menus.iterators;
 
+import com.google.common.collect.Lists;
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.pagination.ObjectPagination;
+import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,15 +22,17 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private final Map<String, Predicate<T>> filters = new HashMap<>();
     private final Map<Integer, Comparator<T>> sorters = new TreeMap<>();
 
-    private List<T> filteredObjects;
+    private volatile List<T> filteredObjects;
     private Consumer<MenuContents> emptyFilteredItemsConsumer = null;
 
     private ObjectPagination<T> pagination = null;
 
+    private volatile boolean isApplying = false;
+
     public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
         super(contents, type, startRow, startColumn);
 
-        this.allObjects = new ArrayList<>();
+        this.allObjects = Lists.newCopyOnWriteArrayList();
         this.menuItemCreatorFunction = menuItemCreatorFunction;
     }
 
@@ -84,51 +88,59 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
         }
     }
 
-    public void apply() {
-        if (this.pagination != null && !this.contents.menuSession().isInitialized()) return;
+    public boolean apply() {
+        if (this.isApplying || (this.pagination != null && !this.contents.menuSession().isInitialized())) return false;
 
         super.reset();
 
-        this.filteredObjects = new ArrayList<>(this.allObjects);
-        for (Predicate<T> filter : this.filters.values()) {
-            this.filteredObjects.removeIf(filter.negate());
-        }
+        BukkitThreadHelper.runCondition(this.pagination != null && this.pagination.isAsync(), this.contents.menuSession().getInstance().getJavaPlugin(), () -> {
+            this.isApplying = true;
 
-        Comparator<T> comparator = null;
-        for (Comparator<T> sorter : this.sorters.values()) {
-            if (comparator == null) {
-                comparator = sorter;
-                continue;
+            this.filteredObjects = new ArrayList<>(this.allObjects);
+            for (Predicate<T> filter : this.filters.values()) {
+                this.filteredObjects.removeIf(filter.negate());
             }
 
-            comparator = comparator.thenComparing(sorter);
-        }
-
-        if (comparator != null) {
-            this.filteredObjects.sort(comparator);
-        }
-
-        if (this.pagination == null) {
-            for (T value : this.allObjects) {
-                if (super.hasNext()) {
-                    MenuItem item = this.menuItemCreatorFunction.apply(value);
-                    if (item == null) continue;
-
-                    int slot = super.next();
-                    this.contents.set(slot, item);
+            Comparator<T> comparator = null;
+            for (Comparator<T> sorter : this.sorters.values()) {
+                if (comparator == null) {
+                    comparator = sorter;
+                    continue;
                 }
-            }
-        } else {
-            // If we use it as a pagination, we need to reopen the pagination to apply the changes.
-            // If there is a filter present open the on the first page, to make sure the changes are visible.
-            // Else open it on the current page.
-            int page = !this.filters.isEmpty() ? 0 : this.pagination.currentPage();
-            this.pagination.open(page);
-        }
 
-        if (this.filteredObjects.isEmpty() && this.emptyFilteredItemsConsumer != null) {
-            this.emptyFilteredItemsConsumer.accept(this.contents);
-        }
+                comparator = comparator.thenComparing(sorter);
+            }
+
+            if (comparator != null) {
+                this.filteredObjects.sort(comparator);
+            }
+
+            if (this.pagination == null) {
+                for (T value : this.allObjects) {
+                    if (super.hasNext()) {
+                        MenuItem item = this.menuItemCreatorFunction.apply(value);
+                        if (item == null) continue;
+
+                        int slot = super.next();
+                        this.contents.set(slot, item);
+                    }
+                }
+            } else {
+                // If we use it as a pagination, we need to reopen the pagination to apply the changes.
+                // If there is a filter present open the on the first page, to make sure the changes are visible
+                // Else open it on the current page.
+                int page = !this.filters.isEmpty() ? 0 : this.pagination.currentPage();
+                this.pagination.open(page);
+            }
+
+            if (this.filteredObjects.isEmpty() && this.emptyFilteredItemsConsumer != null) {
+                this.emptyFilteredItemsConsumer.accept(this.contents);
+            }
+
+            this.isApplying = false;
+        });
+
+        return true;
     }
 
     @ApiStatus.Internal

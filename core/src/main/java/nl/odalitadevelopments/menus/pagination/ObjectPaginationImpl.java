@@ -77,8 +77,8 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
     }
 
     @Override
-    public void apply() {
-        this.iterator.apply();
+    public boolean apply() {
+        return this.iterator.apply();
     }
 
     @Override

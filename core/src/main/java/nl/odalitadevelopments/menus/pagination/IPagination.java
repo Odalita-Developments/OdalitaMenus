@@ -32,6 +32,8 @@ public sealed interface IPagination<T extends IPagination<T, I>, I extends Abstr
 
     @NotNull T open(int page);
 
+    boolean isAsync();
+
     @ApiStatus.Internal
     void setPage(int page);
 
