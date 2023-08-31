@@ -499,6 +499,16 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void allowPlaceableItemShiftClick(boolean allowShiftClick) {
+        this.cache.setAllowPlaceableItemShiftClick(allowShiftClick);
+    }
+
+    @Override
+    public void allowPlaceableItemDrag(boolean allowDrag) {
+        this.cache.setAllowPlaceableItemDrag(allowDrag);
+    }
+
+    @Override
     public void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {
         this.setForcedPlaceableItem(slotPos.getSlot(), itemStack);
     }

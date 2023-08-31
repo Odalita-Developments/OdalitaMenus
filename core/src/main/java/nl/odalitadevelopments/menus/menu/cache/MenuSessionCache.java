@@ -40,6 +40,8 @@ public final class MenuSessionCache {
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
     private final List<Integer> placeableItems = Lists.newCopyOnWriteArrayList();
+    private boolean allowPlaceableItemShiftClick = true;
+    private boolean allowPlaceableItemDrag = true;
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
     private PlaceableItemClickAction placeableItemClickAction = null;
     private PlaceableItemDragAction placeableItemDragAction = null;
