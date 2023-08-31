@@ -178,12 +178,16 @@ public final class InventoryListener implements Listener {
 
             PlaceableItemsCloseAction placeableItemsCloseAction = menuSession.getCache().getPlaceableItemsCloseAction();
             if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
-                List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
-
-                placeableItems.forEach(integer -> {
-                    ItemStack item = inventory.getItem(integer);
-                    if (item != null) player.getInventory().addItem(item);
-                });
+                List<Integer> placeableItemsSlots = menuSession.getCache().getPlaceableItems();
+                NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(inventory, placeableItemsSlots);
+                for (ItemStack item : placeableItems.values()) {
+                    if (item != null && !item.getType().isAir()) {
+                        HashMap<Integer, ItemStack> rest = player.getInventory().addItem(item);
+                        if (!rest.isEmpty()) {
+                            rest.values().forEach(itemStack -> player.getWorld().dropItem(player.getLocation(), itemStack));
+                        }
+                    }
+                }
             }
 
             Runnable closeActionAfter = menuSession.getCache().getCloseActionAfter();
