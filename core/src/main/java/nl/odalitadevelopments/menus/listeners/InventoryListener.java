@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
@@ -66,48 +67,80 @@ public final class InventoryListener implements Listener {
                     return;
                 }
 
+                ItemStack currentItemClone = currentItem.clone();
+                Map<Integer, ItemStack> slotsModified = new HashMap<>();
                 NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(menuSession.getInventory(), placeableItemsSlots);
 
                 // Check if the item is already present in one of the placeable item slots
-                for (ItemStack item : placeableItems.values()) {
+                for (Map.Entry<Integer, ItemStack> entry : placeableItems.entrySet()) {
+                    int slot = entry.getKey();
+                    ItemStack item = entry.getValue();
+
                     if (item != null && !item.getType().isAir() && item.isSimilar(currentItem)) {
                         int maxStackSize = item.getMaxStackSize();
                         int amount = item.getAmount();
-                        int amountToAdd = currentItem.getAmount();
+                        int amountToAdd = currentItemClone.getAmount();
+
+                        item = item.clone();
 
                         if (amount + amountToAdd > maxStackSize) {
                             int amountLeft = maxStackSize - amount;
                             item.setAmount(maxStackSize);
-                            currentItem.setAmount(amountToAdd - amountLeft);
+                            currentItemClone.setAmount(amountToAdd - amountLeft);
+
+                            slotsModified.put(slot, item);
                         } else {
                             item.setAmount(amount + amountToAdd);
-                            event.setCurrentItem(null);
+                            currentItemClone = null;
+
+                            slotsModified.put(slot, item);
                             break;
                         }
                     }
                 }
 
                 // Place the item in the first empty placeable item slot if it is not fully placed yet
-                if (event.getCurrentItem() != null) {
+                if (currentItemClone != null) {
                     for (Map.Entry<Integer, ItemStack> entry : placeableItems.entrySet()) {
                         int slot = entry.getKey();
                         ItemStack item = entry.getValue();
 
                         // If the slot is empty, place the item
                         if (item == null || item.getType().isAir()) {
-                            event.getView().getTopInventory().setItem(slot, currentItem);
-                            event.setCurrentItem(null);
+                            slotsModified.put(slot, currentItemClone);
+                            currentItemClone = null;
                             break;
                         }
                     }
                 }
+
+                if (!slotsModified.isEmpty()) {
+                    PlaceableItemShiftClickAction action = menuSession.getCache().getPlaceableItemShiftClickAction();
+                    boolean shouldPlace = true;
+                    if (action != null) {
+                        List<SlotPos> slotPosses = new ArrayList<>();
+                        for (Integer slot : slotsModified.keySet()) {
+                            slotPosses.add(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot));
+                        }
+
+                        shouldPlace = action.shouldPlace(slotPosses, currentItem, event);
+                    }
+
+                    if (shouldPlace) {
+                        for (Map.Entry<Integer, ItemStack> entry : slotsModified.entrySet()) {
+                            event.getView().getTopInventory().setItem(entry.getKey(), entry.getValue());
+                            event.setCurrentItem(currentItemClone);
+                        }
+                    }
+                }
+
                 return;
             }
 
             if (!placeableItemsSlots.isEmpty() && !clickedTopInventory) return;
             if (placeableItemsSlots.contains(event.getRawSlot())) {
-                PlaceableItemClickAction placeableItemAction = menuSession.getCache().getPlaceableItemClickAction();
-                if (placeableItemAction != null && !placeableItemAction.shouldPlace(
+                PlaceableItemClickAction action = menuSession.getCache().getPlaceableItemClickAction();
+                if (action != null && !action.shouldPlace(
                         SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()),
                         event)) {
                     event.setCancelled(true);
@@ -156,8 +189,8 @@ public final class InventoryListener implements Listener {
                 slotPosses.add(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot));
             }
 
-            PlaceableItemDragAction placeableItemAction = menuSession.getCache().getPlaceableItemDragAction();
-            if (placeableItemAction != null && !placeableItemAction.shouldPlace(slotPosses, event)) {
+            PlaceableItemDragAction action = menuSession.getCache().getPlaceableItemDragAction();
+            if (action != null && !action.shouldPlace(slotPosses, event)) {
                 event.setCancelled(true);
             }
         }
@@ -176,8 +209,8 @@ public final class InventoryListener implements Listener {
                 closeActionBefore.run();
             }
 
-            PlaceableItemsCloseAction placeableItemsCloseAction = menuSession.getCache().getPlaceableItemsCloseAction();
-            if (placeableItemsCloseAction != null && placeableItemsCloseAction.equals(PlaceableItemsCloseAction.RETURN)) {
+            PlaceableItemsCloseAction action = menuSession.getCache().getPlaceableItemsCloseAction();
+            if (action != null && action.equals(PlaceableItemsCloseAction.RETURN)) {
                 List<Integer> placeableItemsSlots = menuSession.getCache().getPlaceableItems();
                 NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(inventory, placeableItemsSlots);
                 for (ItemStack item : placeableItems.values()) {

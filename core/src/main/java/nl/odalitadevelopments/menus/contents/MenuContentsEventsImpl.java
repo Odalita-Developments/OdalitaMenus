@@ -3,6 +3,7 @@ package nl.odalitadevelopments.menus.contents;
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,15 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
         }
 
         this.menuContents.cache.setPlaceableItemClickAction(action);
+    }
+
+    @Override
+    public void onPlaceableItemShiftClick(@NotNull PlaceableItemShiftClickAction action) {
+        if (this.menuContents.menuFrameData() != null) {
+            throw new UnsupportedOperationException("Placeable items are not supported in frames.");
+        }
+
+        this.menuContents.cache.setPlaceableItemShiftClickAction(action);
     }
 
     @Override
