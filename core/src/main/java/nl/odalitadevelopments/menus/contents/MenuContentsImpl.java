@@ -141,6 +141,29 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void clear(@NotNull SlotPos slotPos) {
+        if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
+            SlotPos calculateSlotPos = this.calculateSlotPos(slotPos);
+            this.menuSession.getOpenActions().add(() -> {
+                this.set0(calculateSlotPos, slotPos.getSlot(), null, true, true);
+            });
+            return;
+        }
+
+        this.set0(slotPos, null, true, false);
+    }
+
+    @Override
+    public void clear(int row, int column) {
+        this.clear(SlotPos.of(row, column));
+    }
+
+    @Override
+    public void clear(int slot) {
+        this.clear(SlotPos.of(slot));
+    }
+
+    @Override
     public boolean isEmpty(@NotNull SlotPos slotPos) {
         return this.menuSession.getContent(slotPos) == null;
     }
@@ -752,7 +775,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
-        if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
+        if (item != null && !this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
             this.menuSession.setHasUpdatableItems(true);
         }
 
@@ -763,7 +786,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
         }
     }
 

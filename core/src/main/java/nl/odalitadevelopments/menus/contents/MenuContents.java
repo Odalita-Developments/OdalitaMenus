@@ -72,6 +72,12 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     @NotNull Optional<@NotNull SlotPos> firstEmptySlot();
 
+    void clear(@NotNull SlotPos slotPos);
+
+    void clear(int row, int column);
+
+    void clear(int slot);
+
     boolean isEmpty(@NotNull SlotPos slotPos);
 
     boolean isEmpty(int row, int column);
