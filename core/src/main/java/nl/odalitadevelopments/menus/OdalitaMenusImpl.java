@@ -26,6 +26,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -190,6 +191,18 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             HandlerList.unregisterAll(this);
 
             INSTANCES.remove(this.javaPlugin);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onServerCommand(ServerCommandEvent event) {
+        String command = event.getCommand().split(" ")[0].toLowerCase();
+
+        // Listen to commands that stop the server/plugin to close all menus and return placeable items to players if present.
+        if (command.endsWith("stop") || command.endsWith("restart") || command.endsWith("reload") || command.endsWith("rl")) {
+            for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
+                player.closeInventory();
+            }
         }
     }
 }
