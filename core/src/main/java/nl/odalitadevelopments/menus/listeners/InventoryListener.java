@@ -67,18 +67,10 @@ public final class InventoryListener implements Listener {
                 }
 
                 NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(menuSession.getInventory(), placeableItemsSlots);
-                for (Map.Entry<Integer, ItemStack> entry : placeableItems.entrySet()) {
-                    int slot = entry.getKey();
-                    ItemStack item = entry.getValue();
 
-                    // If the slot is empty, place the item
-                    if (item == null || item.getType().isAir()) {
-                        event.getView().getTopInventory().setItem(slot, currentItem);
-                        event.setCurrentItem(null);
-                        break;
-                    }
-
-                    if (item.isSimilar(currentItem)) {
+                // Check if the item is already present in one of the placeable item slots
+                for (ItemStack item : placeableItems.values()) {
+                    if (item != null && !item.getType().isAir() && item.isSimilar(currentItem)) {
                         int maxStackSize = item.getMaxStackSize();
                         int amount = item.getAmount();
                         int amountToAdd = currentItem.getAmount();
@@ -89,6 +81,21 @@ public final class InventoryListener implements Listener {
                             currentItem.setAmount(amountToAdd - amountLeft);
                         } else {
                             item.setAmount(amount + amountToAdd);
+                            event.setCurrentItem(null);
+                            break;
+                        }
+                    }
+                }
+
+                // Place the item in the first empty placeable item slot if it is not fully placed yet
+                if (event.getCurrentItem() != null) {
+                    for (Map.Entry<Integer, ItemStack> entry : placeableItems.entrySet()) {
+                        int slot = entry.getKey();
+                        ItemStack item = entry.getValue();
+
+                        // If the slot is empty, place the item
+                        if (item == null || item.getType().isAir()) {
+                            event.getView().getTopInventory().setItem(slot, currentItem);
                             event.setCurrentItem(null);
                             break;
                         }
