@@ -200,6 +200,10 @@ public sealed interface MenuContents permits MenuContentsImpl {
     /* PLACEABLE ITEMS */
     void registerPlaceableItemSlots(int... slots);
 
+    void allowPlaceableItemShiftClick(boolean allowShiftClick);
+
+    void allowPlaceableItemDrag(boolean allowDrag);
+
     void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack);
 
     void setForcedPlaceableItem(int row, int column, @NotNull ItemStack itemStack);
