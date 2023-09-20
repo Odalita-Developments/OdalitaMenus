@@ -760,6 +760,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void setId(@NotNull String id) {
+        this.menuSession.setId(id);
+    }
+
+    @Override
     public synchronized void setTitle(@NotNull String title) {
         this.menuSession.setTitle(title);
     }

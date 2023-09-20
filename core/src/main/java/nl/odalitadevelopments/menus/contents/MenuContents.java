@@ -268,6 +268,8 @@ public sealed interface MenuContents permits MenuContentsImpl {
     void setGlobalCacheKey(@NotNull String key);
 
     /* OTHER */
+    void setId(@NotNull String id);
+
     void setTitle(@NotNull String title);
 
     void setMenuType(@NotNull MenuType menuType);
