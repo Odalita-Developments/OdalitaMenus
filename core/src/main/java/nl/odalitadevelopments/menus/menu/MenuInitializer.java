@@ -2,19 +2,20 @@ package nl.odalitadevelopments.menus.menu;
 
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.annotations.Menu;
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.IPagination;
-import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
 
 @AllArgsConstructor
 final class MenuInitializer<P extends MenuProvider> {
@@ -38,9 +39,10 @@ final class MenuInitializer<P extends MenuProvider> {
             Inventory inventory = menuType.createInventory(inventoryTitle);
 
             String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuId, menuType, inventory, annotation.title(), annotation.globalCacheKey());
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), menuId, menuType, inventory, annotation, false); // TODO
+            menuSession.getViewers().add(player);
 
-            MenuContents contents = menuSession.getMenuContents();
+            IMenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
             menuSession.initialized();
 
@@ -64,7 +66,7 @@ final class MenuInitializer<P extends MenuProvider> {
 
             Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            this.menuProcessor.getInstance().getJavaPlugin().getLogger().log(Level.SEVERE, "An error occurred while initializing a menu for " + player.getName() + "!", exception);
         }
     }
 

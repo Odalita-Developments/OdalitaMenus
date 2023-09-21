@@ -8,6 +8,7 @@ import nl.odalitadevelopments.menus.listeners.InventoryPacketListener;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
+import nl.odalitadevelopments.menus.menu.cache.GlobalIdentitySessionCache;
 import nl.odalitadevelopments.menus.menu.cache.GlobalPlayerSessionCache;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
@@ -68,6 +69,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private final ItemProcessor itemProcessor;
     private final MenuProcessor menuProcessor;
     private final GlobalPlayerSessionCache globalPlayerSessionCache;
+    private final GlobalIdentitySessionCache globalIdentitySessionCache;
 
     private final PatternContainer patternContainer;
 
@@ -95,6 +97,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.itemProcessor = new ItemProcessor();
         this.menuProcessor = new MenuProcessor(this, this.itemProcessor, this.supportedMenuTypes);
         this.globalPlayerSessionCache = new GlobalPlayerSessionCache();
+        this.globalIdentitySessionCache = new GlobalIdentitySessionCache(this);
 
         this.patternContainer = new PatternContainer();
 
@@ -106,6 +109,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         javaPlugin.getServer().getPluginManager().registerEvents(this.inventoryListener, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.globalPlayerSessionCache, javaPlugin);
+        javaPlugin.getServer().getPluginManager().registerEvents(this.globalIdentitySessionCache, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
@@ -187,6 +191,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalPlayerSessionCache);
+            HandlerList.unregisterAll(this.globalIdentitySessionCache);
             HandlerList.unregisterAll(this.cooldownContainer);
             HandlerList.unregisterAll(this);
 

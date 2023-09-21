@@ -5,8 +5,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.annotations.Menu;
 import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.MenuIdentityContents;
 import nl.odalitadevelopments.menus.contents.action.MenuProperty;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
@@ -35,7 +38,7 @@ public final class MenuSession {
     @Setter(AccessLevel.NONE)
     private Inventory inventory;
     private String title;
-    private final MenuContents menuContents;
+    private final IMenuContents menuContents;
 
     @Getter(AccessLevel.NONE)
     public volatile MenuItem[][] contents;
@@ -50,23 +53,30 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, Player viewer, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, String id, SupportedMenuType menuType, Inventory inventory, Menu annotation, boolean identity) {
         this.instance = instance;
         this.uniqueId = UUID.randomUUID();
         this.viewers = new HashSet<>();
-        this.viewers.add(viewer);
 
         this.id = id;
         this.menuType = menuType;
 
         this.inventory = inventory;
         this.contents = new MenuItem[this.getRows()][this.getColumns()];
-        this.title = title;
+        this.title = annotation.title();
 
-        this.globalCacheKey = globalCacheKey;
+        this.globalCacheKey = annotation.globalCacheKey();
         this.cache = new MenuSessionCache(this);
 
-        this.menuContents = MenuContents.create(this);
+        if (identity) {
+            this.menuContents = MenuIdentityContents.create(this);
+        } else {
+            this.menuContents = MenuContents.create(this);
+        }
+    }
+
+    public boolean isIdentity() {
+        return this.menuContents instanceof MenuIdentityContents;
     }
 
     void initialized() {

@@ -5,13 +5,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
-import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
-import nl.odalitadevelopments.menus.contents.scheduler.MenuTask;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
+import nl.odalitadevelopments.menus.contents.scheduler.MenuTask;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
@@ -86,7 +86,11 @@ public final class MenuSessionCache {
 
     public Map<String, Object> getCache() {
         if (!this.menuSession.getGlobalCacheKey().isEmpty() && !this.menuSession.getGlobalCacheKey().isBlank()) {
-            return this.menuSession.getInstance().getGlobalSessionCache().getOrCreateCache(this.menuSession);
+            if (this.menuSession.isIdentity()) {
+                return this.menuSession.getInstance().getGlobalIdentitySessionCache().getOrCreateCache(this.menuSession);
+            }
+
+            return this.menuSession.getInstance().getGlobalPlayerSessionCache().getOrCreateCache(this.menuSession);
         }
 
         return this.cache;
