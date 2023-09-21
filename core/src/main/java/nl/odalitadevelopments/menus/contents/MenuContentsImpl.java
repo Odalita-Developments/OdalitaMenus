@@ -141,6 +141,29 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void clear(@NotNull SlotPos slotPos) {
+        if (this.menuSession.isInitialized() && !this.menuSession.isOpened()) {
+            SlotPos calculateSlotPos = this.calculateSlotPos(slotPos);
+            this.menuSession.getOpenActions().add(() -> {
+                this.set0(calculateSlotPos, slotPos.getSlot(), null, true, true);
+            });
+            return;
+        }
+
+        this.set0(slotPos, null, true, false);
+    }
+
+    @Override
+    public void clear(int row, int column) {
+        this.clear(SlotPos.of(row, column));
+    }
+
+    @Override
+    public void clear(int slot) {
+        this.clear(SlotPos.of(slot));
+    }
+
+    @Override
     public boolean isEmpty(@NotNull SlotPos slotPos) {
         return this.menuSession.getContent(slotPos) == null;
     }
@@ -476,6 +499,16 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void allowPlaceableItemShiftClick(boolean allowShiftClick) {
+        this.cache.setAllowPlaceableItemShiftClick(allowShiftClick);
+    }
+
+    @Override
+    public void allowPlaceableItemDrag(boolean allowDrag) {
+        this.cache.setAllowPlaceableItemDrag(allowDrag);
+    }
+
+    @Override
     public void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {
         this.setForcedPlaceableItem(slotPos.getSlot(), itemStack);
     }
@@ -727,6 +760,11 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void setId(@NotNull String id) {
+        this.menuSession.setId(id);
+    }
+
+    @Override
     public synchronized void setTitle(@NotNull String title) {
         this.menuSession.setTitle(title);
     }
@@ -752,7 +790,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
         if (!override && this.menuSession.getContent(slotPos) != null) return;
 
-        if (!this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
+        if (item != null && !this.menuSession.isHasUpdatableItems() && item.isUpdatable()) {
             this.menuSession.setHasUpdatableItems(true);
         }
 
@@ -763,7 +801,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
         }
     }
 

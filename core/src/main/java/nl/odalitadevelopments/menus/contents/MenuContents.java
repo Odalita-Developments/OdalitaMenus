@@ -72,6 +72,12 @@ public sealed interface MenuContents permits MenuContentsImpl {
 
     @NotNull Optional<@NotNull SlotPos> firstEmptySlot();
 
+    void clear(@NotNull SlotPos slotPos);
+
+    void clear(int row, int column);
+
+    void clear(int slot);
+
     boolean isEmpty(@NotNull SlotPos slotPos);
 
     boolean isEmpty(int row, int column);
@@ -194,6 +200,10 @@ public sealed interface MenuContents permits MenuContentsImpl {
     /* PLACEABLE ITEMS */
     void registerPlaceableItemSlots(int... slots);
 
+    void allowPlaceableItemShiftClick(boolean allowShiftClick);
+
+    void allowPlaceableItemDrag(boolean allowDrag);
+
     void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack);
 
     void setForcedPlaceableItem(int row, int column, @NotNull ItemStack itemStack);
@@ -258,6 +268,8 @@ public sealed interface MenuContents permits MenuContentsImpl {
     void setGlobalCacheKey(@NotNull String key);
 
     /* OTHER */
+    void setId(@NotNull String id);
+
     void setTitle(@NotNull String title);
 
     void setMenuType(@NotNull MenuType menuType);

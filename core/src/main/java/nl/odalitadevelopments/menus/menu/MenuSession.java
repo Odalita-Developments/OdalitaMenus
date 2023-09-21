@@ -30,8 +30,7 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final Player player;
 
-    private final String id;
-    @Setter(AccessLevel.NONE)
+    private String id;
     private SupportedMenuType menuType;
     @Setter(AccessLevel.NONE)
     private Inventory inventory;
@@ -82,20 +81,18 @@ public final class MenuSession {
         this.openActions.clear();
     }
 
+    public void setId(@NotNull String id) {
+        if (this.id.equals(id)) return;
+
+        this.id = id;
+    }
+
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
         InventoryUtils.changeTitle(this.inventory, title);
-    }
-
-    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
-        if (this.menuType.type() != property.getMenuType()) {
-            throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
-        }
-
-        InventoryUtils.setProperty(this.inventory, property, value);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -111,6 +108,14 @@ public final class MenuSession {
             this.menuType = this.instance.getSupportedMenuTypes().getSupportedMenuType(menuType);
             this.inventory = this.menuType.createInventory(this.title);
         }
+    }
+
+    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+        if (this.menuType.type() != property.getMenuType()) {
+            throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
+        }
+
+        InventoryUtils.setProperty(this.inventory, property, value);
     }
 
     public synchronized void setGlobalCacheKey(@NotNull String globalCacheKey) {

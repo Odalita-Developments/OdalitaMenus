@@ -10,6 +10,7 @@ import nl.odalitadevelopments.menus.contents.MenuTask;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
+import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
@@ -40,8 +41,11 @@ public final class MenuSessionCache {
     private final Map<String, MenuIterator> iterators = Maps.newConcurrentMap();
 
     private final List<Integer> placeableItems = Lists.newCopyOnWriteArrayList();
+    private boolean allowPlaceableItemShiftClick = true;
+    private boolean allowPlaceableItemDrag = true;
     private PlaceableItemsCloseAction placeableItemsCloseAction = null;
     private PlaceableItemClickAction placeableItemClickAction = null;
+    private PlaceableItemShiftClickAction placeableItemShiftClickAction = null;
     private PlaceableItemDragAction placeableItemDragAction = null;
 
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
