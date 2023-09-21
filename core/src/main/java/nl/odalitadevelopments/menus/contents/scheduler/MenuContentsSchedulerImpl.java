@@ -1,12 +1,13 @@
-package nl.odalitadevelopments.menus.contents;
+package nl.odalitadevelopments.menus.contents.scheduler;
 
 import lombok.AllArgsConstructor;
+import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 final class MenuContentsSchedulerImpl implements MenuContentsScheduler {
 
-    private final MenuContentsImpl menuContents;
+    private final MenuSessionCache cache;
 
     @Override
     public @NotNull MenuTask delay(@NotNull String id, @NotNull Runnable runnable, int ticksDelay, int ticksPeriod, int runTimes) {
@@ -14,15 +15,15 @@ final class MenuContentsSchedulerImpl implements MenuContentsScheduler {
             throw new IllegalArgumentException("Delay, period must be positive");
         }
 
-        synchronized (this.menuContents.cache.getTasks()) {
+        synchronized (this.cache.getTasks()) {
             runTimes = Math.max(runTimes, 0);
 
-            if (this.menuContents.cache.getTasks().containsKey(id)) {
+            if (this.cache.getTasks().containsKey(id)) {
                 throw new IllegalArgumentException("Task with id '" + id + "' already exists");
             }
 
             MenuTask task = new MenuTask(this, id, runnable, ticksDelay, ticksPeriod, runTimes);
-            this.menuContents.cache.getTasks().put(task.getId(), task);
+            this.cache.getTasks().put(task.getId(), task);
             return task;
         }
     }
@@ -49,15 +50,15 @@ final class MenuContentsSchedulerImpl implements MenuContentsScheduler {
 
     @Override
     public boolean isRunning(@NotNull String id) {
-        synchronized (this.menuContents.cache.getTasks()) {
-            return this.menuContents.cache.getTasks().containsKey(id);
+        synchronized (this.cache.getTasks()) {
+            return this.cache.getTasks().containsKey(id);
         }
     }
 
     @Override
     public void cancel(@NotNull String id) {
-        synchronized (this.menuContents.cache.getTasks()) {
-            this.menuContents.cache.getTasks().remove(id);
+        synchronized (this.cache.getTasks()) {
+            this.cache.getTasks().remove(id);
         }
     }
 }

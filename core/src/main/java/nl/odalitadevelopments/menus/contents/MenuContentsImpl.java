@@ -1,8 +1,12 @@
 package nl.odalitadevelopments.menus.contents;
 
 import nl.odalitadevelopments.menus.annotations.MenuFrame;
+import nl.odalitadevelopments.menus.contents.action.MenuContentsActions;
+import nl.odalitadevelopments.menus.contents.event.MenuContentsEvents;
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import nl.odalitadevelopments.menus.contents.scheduler.MenuContentsScheduler;
 import nl.odalitadevelopments.menus.items.*;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
@@ -42,9 +46,9 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     MenuContentsImpl(MenuSession menuSession) {
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
-        this.scheduler = new MenuContentsSchedulerImpl(this);
-        this.actions = new MenuContentsActionsImpl(this);
-        this.events = new MenuContentsEventsImpl(this);
+        this.scheduler = MenuContentsScheduler.create(this.cache);
+        this.actions = MenuContentsActions.create(menuSession);
+        this.events = MenuContentsEvents.create(this.cache);
     }
 
     MenuContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuContentsScheduler scheduler, MenuContentsActions actions, MenuContentsEvents events) {

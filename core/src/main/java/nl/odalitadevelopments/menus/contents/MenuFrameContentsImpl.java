@@ -1,6 +1,8 @@
 package nl.odalitadevelopments.menus.contents;
 
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import nl.odalitadevelopments.menus.contents.scheduler.MenuContentsScheduler;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;

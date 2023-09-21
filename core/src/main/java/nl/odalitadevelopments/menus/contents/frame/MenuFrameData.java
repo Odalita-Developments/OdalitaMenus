@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.contents;
+package nl.odalitadevelopments.menus.contents.frame;
 
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 

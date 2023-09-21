@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.iterators;
 
 import nl.odalitadevelopments.menus.contents.MenuContents;
-import nl.odalitadevelopments.menus.contents.MenuFrameData;
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.jetbrains.annotations.NotNull;
 

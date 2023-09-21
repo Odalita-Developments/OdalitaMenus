@@ -1,22 +1,21 @@
-package nl.odalitadevelopments.menus.contents;
+package nl.odalitadevelopments.menus.contents.action;
 
 import lombok.AllArgsConstructor;
-import nl.odalitadevelopments.menus.contents.action.MenuProperty;
-import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 final class MenuContentsActionsImpl implements MenuContentsActions {
 
-    private final MenuContentsImpl menuContents;
+    private final MenuSession menuSession;
 
     @Override
     public void changeItemMetaInPlayerInventory(@NotNull PlayerInventoryItemMetaChanger itemMetaChanger) {
-        this.menuContents.cache.setItemMetaChanger(itemMetaChanger);
+        this.menuSession.getCache().setItemMetaChanger(itemMetaChanger);
     }
 
     @Override
     public void setProperty(@NotNull MenuProperty property, int value) {
-        this.menuContents.menuSession.setMenuProperty(property, value);
+        this.menuSession.setMenuProperty(property, value);
     }
 }

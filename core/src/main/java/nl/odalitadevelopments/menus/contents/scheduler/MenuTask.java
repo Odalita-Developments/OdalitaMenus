@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.contents;
+package nl.odalitadevelopments.menus.contents.scheduler;
 
 import lombok.Getter;
 import lombok.Setter;

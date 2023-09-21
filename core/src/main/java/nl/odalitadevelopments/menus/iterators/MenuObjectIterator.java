@@ -2,7 +2,7 @@ package nl.odalitadevelopments.menus.iterators;
 
 import com.google.common.collect.Lists;
 import nl.odalitadevelopments.menus.contents.MenuContents;
-import nl.odalitadevelopments.menus.contents.MenuFrameData;
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.pagination.ObjectPagination;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;

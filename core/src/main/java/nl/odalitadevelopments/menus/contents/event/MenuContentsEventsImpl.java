@@ -1,9 +1,10 @@
-package nl.odalitadevelopments.menus.contents;
+package nl.odalitadevelopments.menus.contents.event;
 
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
+import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,34 +13,34 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 final class MenuContentsEventsImpl implements MenuContentsEvents {
 
-    private final MenuContentsImpl menuContents;
+    private final MenuSessionCache cache;
 
     @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemClickAction action) {
-        this.menuContents.cache.setPlaceableItemClickAction(action);
+        this.cache.setPlaceableItemClickAction(action);
     }
 
     @Override
     public void onPlaceableItemShiftClick(@NotNull PlaceableItemShiftClickAction action) {
-        this.menuContents.cache.setPlaceableItemShiftClickAction(action);
+        this.cache.setPlaceableItemShiftClickAction(action);
     }
 
     @Override
     public void onPlaceableItemDrag(@NotNull PlaceableItemDragAction action) {
-        this.menuContents.cache.setPlaceableItemDragAction(action);
+        this.cache.setPlaceableItemDragAction(action);
     }
 
     @Override
     public void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer) {
-        this.menuContents.cache.setPlayerInventoryClickAction(eventConsumer);
+        this.cache.setPlayerInventoryClickAction(eventConsumer);
     }
 
     @Override
     public void onClose(boolean beforePlaceableItemRemoveAction, @NotNull Runnable action) {
         if (beforePlaceableItemRemoveAction) {
-            this.menuContents.cache.setCloseActionBefore(action);
+            this.cache.setCloseActionBefore(action);
         } else {
-            this.menuContents.cache.setCloseActionAfter(action);
+            this.cache.setCloseActionAfter(action);
         }
     }
 

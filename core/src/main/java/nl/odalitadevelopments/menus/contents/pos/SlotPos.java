@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.contents.pos;
 
-import nl.odalitadevelopments.menus.contents.MenuFrameData;
+import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
