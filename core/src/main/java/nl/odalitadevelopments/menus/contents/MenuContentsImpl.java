@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsImpl {
+sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsImpl, MenuIdentityContentsImpl {
 
     final MenuSession menuSession;
     final MenuSessionCache cache;

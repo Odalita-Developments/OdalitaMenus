@@ -6,6 +6,7 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.patterns.DirectionPattern;
@@ -24,6 +25,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface IDefaultContents {
+
+    @NotNull
+    MenuSession menuSession();
 
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
 

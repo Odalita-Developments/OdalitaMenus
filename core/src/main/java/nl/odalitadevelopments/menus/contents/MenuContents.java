@@ -20,9 +20,6 @@ public sealed interface MenuContents
     }
 
     @NotNull
-    MenuSession menuSession();
-
-    @NotNull
     MenuContentsScheduler scheduler();
 
     @NotNull
