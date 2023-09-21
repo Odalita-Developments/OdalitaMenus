@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class GlobalSessionCache implements Listener {
+public final class GlobalPlayerSessionCache implements Listener {
 
     private final Table<UUID, String, Map<String, Object>> playerMenuCache = new Table<>();
 
     public Map<String, Object> getOrCreateCache(@NotNull MenuSession menuSession) {
-        UUID uuid = menuSession.getPlayer().getUniqueId();
+        UUID uuid = menuSession.getViewer().getUniqueId();
         String globalCacheKey = menuSession.getGlobalCacheKey();
 
         Map<String, Object> cache = this.playerMenuCache.get(uuid, globalCacheKey);

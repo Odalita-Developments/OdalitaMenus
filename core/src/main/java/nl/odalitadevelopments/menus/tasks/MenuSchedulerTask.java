@@ -4,13 +4,12 @@ import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.scheduler.MenuTask;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 final class MenuSchedulerTask implements MenuTaskRunnable {
 
     @Override
-    public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull Player player, @NotNull MenuSession session) {
+    public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull MenuSession session) {
         for (MenuTask task : session.getCache().getTasks().values()) {
             if (!task.isStarted() && task.getTicksDelay() <= 0) {
                 if (this.runAfterDelay(task, tick)) continue;

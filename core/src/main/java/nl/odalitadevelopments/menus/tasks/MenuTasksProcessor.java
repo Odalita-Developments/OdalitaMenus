@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 public final class MenuTasksProcessor implements Runnable {
 
@@ -38,19 +39,20 @@ public final class MenuTasksProcessor implements Runnable {
 
             Map<Player, MenuSession> openMenus = this.menuProcessor.getOpenMenus();
 
-            for (Map.Entry<Player, MenuSession> entry : openMenus.entrySet()) {
-                MenuSession menuSession = entry.getValue();
+            for (MenuSession menuSession : openMenus.values()) {
                 if (menuSession == null || menuSession.isClosed()) continue;
 
-                Player player = entry.getKey();
-                if (player == null || !player.isOnline()) continue;
+                if (menuSession.getViewers().size() == 1) {
+                    Player viewer = menuSession.getViewer();
+                    if (viewer == null || !viewer.isOnline()) continue;
+                }
 
                 for (MenuTaskRunnable runnable : this.tasks) {
-                    runnable.runPerSession(this.instance, this.menuProcessor, tick, player, menuSession);
+                    runnable.runPerSession(this.instance, this.menuProcessor, tick, menuSession);
                 }
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            this.instance.getJavaPlugin().getLogger().log(Level.SEVERE, "An error occurred while processing menu tasks.", exception);
         }
     }
 }

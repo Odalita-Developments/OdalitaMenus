@@ -10,7 +10,6 @@ import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import nl.odalitadevelopments.menus.utils.collection.Table;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
     }
 
     @Override
-    public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull Player player, @NotNull MenuSession session) {
+    public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull MenuSession session) {
         if (!session.isHasUpdatableItems()) return;
 
         int updatableItems = 0;
@@ -45,7 +44,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
                     ItemStack item = menuItem.getItemStack(instance);
                     int slot = SlotPos.of(row, column).getSlot();
 
-                    InventoryUtils.updateItem(player, slot, item, session.getInventory());
+                    InventoryUtils.updateItem(session, slot, item, session.getInventory());
                 }
             }
         }

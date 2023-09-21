@@ -20,15 +20,15 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
 public final class MenuSession {
 
     private final OdalitaMenus instance;
-    private final Player player;
+    private final UUID uniqueId;
+    private final Set<Player> viewers;
 
     private String id;
     private SupportedMenuType menuType;
@@ -50,9 +50,11 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, Player viewer, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
-        this.player = player;
+        this.uniqueId = UUID.randomUUID();
+        this.viewers = new HashSet<>();
+        this.viewers.add(viewer);
 
         this.id = id;
         this.menuType = menuType;
@@ -81,6 +83,10 @@ public final class MenuSession {
         this.openActions.clear();
     }
 
+    public Player getViewer() {
+        return this.viewers.iterator().next();
+    }
+
     public void setId(@NotNull String id) {
         if (this.id.equals(id)) return;
 
@@ -92,7 +98,7 @@ public final class MenuSession {
 
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        InventoryUtils.changeTitle(this.inventory, title);
+        InventoryUtils.changeTitle(this, this.inventory, title);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -115,7 +121,7 @@ public final class MenuSession {
             throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
         }
 
-        InventoryUtils.setProperty(this.inventory, property, value);
+        InventoryUtils.setProperty(this, property, value);
     }
 
     public synchronized void setGlobalCacheKey(@NotNull String globalCacheKey) {

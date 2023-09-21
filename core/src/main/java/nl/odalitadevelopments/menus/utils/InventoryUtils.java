@@ -3,10 +3,10 @@ package nl.odalitadevelopments.menus.utils;
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
 import nl.odalitadevelopments.menus.contents.action.MenuProperty;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import static nl.odalitadevelopments.menus.utils.ReflectionUtils.*;
 
@@ -25,13 +26,8 @@ public final class InventoryUtils {
     private InventoryUtils() {
     }
 
-    public static synchronized void updateItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
+    public static synchronized void updateItem(MenuSession session, int slot, ItemStack itemStack, Inventory inventory) {
         try {
-            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
-            Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
-            int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
-            if (windowId <= 0) return;
-
             Object nmsItemStack = GET_NMS_ITEM_STACK.invoke(null, itemStack);
 
             Object craftInventory = CRAFT_INVENTORY.cast(inventory);
@@ -39,16 +35,23 @@ public final class InventoryUtils {
             Object contents = GET_NMS_INVENTORY_CONTENTS.invoke(nmsInventory);
             SET_LIST.invoke(contents, slot, nmsItemStack);
 
-            Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
-            sendPacket(player, packetPlayOutSetSlot);
+            for (Player viewer : session.getViewers()) {
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(viewer);
+                Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
+                int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
+                if (windowId <= 0) return;
+
+                Object packetPlayOutSetSlot = createPacketPlayOutSetSlotPacket(windowId, slot, nmsItemStack, activeContainer);
+                sendPacket(viewer, packetPlayOutSetSlot);
+            }
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            session.getInstance().getJavaPlugin().getLogger().log(Level.SEVERE, "Failed to update item in inventory", throwable);
         }
     }
 
-    public static synchronized void changeTitle(Inventory inventory, String newTitle) {
+    public static synchronized void changeTitle(MenuSession session, Inventory inventory, String newTitle) {
         try {
-            if (inventory.getViewers().isEmpty()) {
+            if (session.getViewers().isEmpty()) {
                 Object craftInventory = CRAFT_INVENTORY.cast(inventory);
                 Object nmsInventory = GET_NMS_INVENTORY.invoke(craftInventory);
                 Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
@@ -67,10 +70,8 @@ public final class InventoryUtils {
 
             Object titleComponent = createChatBaseComponent(newTitle);
 
-            for (HumanEntity viewer : inventory.getViewers()) {
-                if (!(viewer instanceof Player player)) continue;
-
-                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            for (Player viewer : session.getViewers()) {
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(viewer);
                 Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
                 if (windowId <= 0) continue;
@@ -78,7 +79,7 @@ public final class InventoryUtils {
                 Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(activeContainer);
                 Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, titleComponent);
 
-                sendPacket(player, packetPlayOutOpenWindow);
+                sendPacket(viewer, packetPlayOutOpenWindow);
 
                 TITLE_FIELD.setAccessible(true);
                 TITLE_FIELD.set(activeContainer, titleComponent);
@@ -87,25 +88,23 @@ public final class InventoryUtils {
                 refreshInventory(entityPlayer, activeContainer);
             }
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            session.getInstance().getJavaPlugin().getLogger().log(Level.SEVERE, "Failed to change title in inventory", throwable);
         }
     }
 
-    public static synchronized void setProperty(Inventory inventory, MenuProperty property, int value) {
+    public static synchronized void setProperty(MenuSession session, MenuProperty property, int value) {
         try {
-            for (HumanEntity viewer : inventory.getViewers()) {
-                if (!(viewer instanceof Player player)) continue;
-
-                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            for (Player viewer : session.getViewers()) {
+                Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(viewer);
                 Object activeContainer = ACTIVE_CONTAINER_FIELD.get(entityPlayer);
                 int windowId = WINDOW_ID_FIELD.getInt(activeContainer);
                 if (windowId <= 0) continue;
 
                 Object packetPlayOutWindowData = PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR.newInstance(windowId, property.getIndex(), value);
-                sendPacket(player, packetPlayOutWindowData);
+                sendPacket(viewer, packetPlayOutWindowData);
             }
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            session.getInstance().getJavaPlugin().getLogger().log(Level.SEVERE, "Failed to set property in inventory", throwable);
         }
     }
 

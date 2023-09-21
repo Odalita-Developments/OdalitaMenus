@@ -643,7 +643,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         Cooldown cooldown = this.menuSession.getInstance().getProvidersContainer().getCooldownProvider().frameLoadCooldown();
-        if (cooldown != null && this.menuSession.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getPlayer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
+        if (cooldown != null && this.menuSession.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getViewer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
             return false;
         }
 
@@ -673,7 +673,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
         MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler);
-        loader.load(frame, this.menuSession.getPlayer(), frameContents);
+        loader.load(frame, this.menuSession.getViewer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);
         return true;
@@ -700,7 +700,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 this.cache.getRefreshableItems().remove(slot);
                 this.cache.getPageSwitchUpdateItems().remove(slot);
 
-                InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
+                InventoryUtils.updateItem(this.menuSession, slot, null, this.menuSession.getInventory());
             }
         }
 
@@ -800,7 +800,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            InventoryUtils.updateItem(this.menuSession, slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
         }
     }
 
