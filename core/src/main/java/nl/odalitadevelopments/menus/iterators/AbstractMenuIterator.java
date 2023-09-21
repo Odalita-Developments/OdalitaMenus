@@ -1,6 +1,7 @@
 package nl.odalitadevelopments.menus.iterators;
 
 import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -13,6 +14,7 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
 
     private final T instance;
     protected final MenuContents contents;
+    protected final MenuFrameData frameData;
 
     protected final MenuIteratorType type;
     protected final int startRow;
@@ -24,10 +26,11 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
     protected int index = 0;
     protected boolean override = false;
 
-    protected AbstractMenuIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn) {
+    protected AbstractMenuIterator(MenuContents contents, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn) {
         this.instance = this.self();
 
         this.contents = contents;
+        this.frameData = frameData;
         this.type = type;
         this.startRow = startRow;
         this.startColumn = startColumn;
@@ -107,7 +110,7 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
         return this.getSlotPos(slot).convertFromFrame(
                 this.contents.menuSession().getRows(),
                 this.contents.menuSession().getColumns(),
-                this.contents.menuFrameData()
+                this.frameData
         );
     }
 

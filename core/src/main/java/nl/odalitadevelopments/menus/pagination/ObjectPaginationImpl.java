@@ -94,8 +94,7 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
     @ApiStatus.Internal
     @Override
     public @NotNull List<Supplier<MenuItem>> getItemsOnPage() {
-        if (this.initialized || this.contents.menuFrameData() != null) return List.of();
-
+        if (this.initialized) return List.of();
         return this.getItemsOnPage(this.currentPage);
     }
 

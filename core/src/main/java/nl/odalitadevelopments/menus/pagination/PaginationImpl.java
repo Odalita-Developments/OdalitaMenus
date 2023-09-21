@@ -39,7 +39,7 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
         int pageIndex = Math.max(this.items.size() - 1, 0);
         int index = this.items.getOrDefault(pageIndex, new ArrayList<>()).size();
 
-        if ((this.initialized || this.contents.menuFrameData() != null) && index < this.itemsPerPage && pageIndex == this.currentPage) {
+        if (this.initialized && index < this.itemsPerPage && pageIndex == this.currentPage) {
             this.iterator.setNext(itemSupplier.get());
         }
 
@@ -62,8 +62,7 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
     @ApiStatus.Internal
     @Override
     public @NotNull List<Supplier<MenuItem>> getItemsOnPage() {
-        if (this.initialized || this.contents.menuFrameData() != null) return List.of();
-
+        if (this.initialized) return List.of();
         return this.getItemsOnPage(this.currentPage);
     }
 

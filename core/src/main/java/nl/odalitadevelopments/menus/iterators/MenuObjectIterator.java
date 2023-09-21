@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.iterators;
 
 import com.google.common.collect.Lists;
 import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.MenuFrameData;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.pagination.ObjectPagination;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
@@ -29,8 +30,8 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
 
     private volatile boolean isApplying = false;
 
-    public MenuObjectIterator(MenuContents contents, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
-        super(contents, type, startRow, startColumn);
+    public MenuObjectIterator(MenuContents contents, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
+        super(contents, frameData, type, startRow, startColumn);
 
         this.allObjects = Lists.newCopyOnWriteArrayList();
         this.menuItemCreatorFunction = menuItemCreatorFunction;

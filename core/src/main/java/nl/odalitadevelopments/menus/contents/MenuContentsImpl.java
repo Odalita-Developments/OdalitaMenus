@@ -43,7 +43,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession = menuSession;
         this.cache = menuSession.getCache();
         this.scheduler = new MenuContentsSchedulerImpl(this);
-        actions = new MenuContentsActionsImpl(this);
+        this.actions = new MenuContentsActionsImpl(this);
         this.events = new MenuContentsEventsImpl(this);
     }
 
@@ -73,11 +73,6 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public @NotNull MenuContentsEvents events() {
         return this.events;
-    }
-
-    @Override
-    public @Nullable MenuFrameData menuFrameData() {
-        return null;
     }
 
     @Override
@@ -432,7 +427,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
-        MenuIterator menuIterator = new MenuIterator(this, menuIteratorType, startRow, startColumn);
+        MenuIterator menuIterator = new MenuIterator(this, null, menuIteratorType, startRow, startColumn);
         this.cache.getIterators().put(iterator, menuIterator);
         return menuIterator;
     }
@@ -440,7 +435,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn, @NotNull List<@NotNull MenuItem> menuItems,
                                      int... blacklisted) {
-        MenuIterator menuIterator = new MenuIterator(this, menuIteratorType, startRow, startColumn);
+        MenuIterator menuIterator = new MenuIterator(this, null, menuIteratorType, startRow, startColumn);
         menuIterator.blacklist(blacklisted);
 
         for (MenuItem menuItem : menuItems) {
@@ -452,12 +447,12 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     public @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
                                                                    @NotNull Class<T> clazz,
                                                                    @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction) {
-        return new MenuObjectIterator<>(this, menuIteratorType, startRow, startColumn, menuItemCreatorFunction);
+        return new MenuObjectIterator<>(this, null, menuIteratorType, startRow, startColumn, menuItemCreatorFunction);
     }
 
     @Override
     public <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems) {
-        MenuIterator value = new MenuIterator(this, MenuIteratorType.PATTERN, 0, 0);
+        MenuIterator value = new MenuIterator(this, null, MenuIteratorType.PATTERN, 0, 0);
         iteratorPattern.handle(value);
 
         for (MenuItem menuItem : menuItems) {
@@ -673,7 +668,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession.getInstance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
-        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler, this.actions, this.events);
+        MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession, new MenuSessionCache(this.menuSession), frameData, this.scheduler);
         loader.load(frame, this.menuSession.getPlayer(), frameContents);
 
         this.menuSession.getCache().setLoadedFrameId(id);

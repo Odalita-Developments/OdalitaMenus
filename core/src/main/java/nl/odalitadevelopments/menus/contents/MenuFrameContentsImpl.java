@@ -1,29 +1,31 @@
 package nl.odalitadevelopments.menus.contents;
 
-import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.iterators.MenuIterator;
+import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
+import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
-import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
-import org.bukkit.inventory.ItemStack;
+import nl.odalitadevelopments.menus.patterns.MenuPattern;
+import nl.odalitadevelopments.menus.patterns.PatternCache;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
+import java.util.function.Function;
 
-final class MenuFrameContentsImpl extends MenuContentsImpl {
+final class MenuFrameContentsImpl extends MenuContentsImpl implements MenuFrameContents {
 
     private final MenuFrameData frameData;
 
-    MenuFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, MenuContentsScheduler scheduler, MenuContentsActions actions, MenuContentsEvents events) {
-        super(menuSession, cache, scheduler, actions, events);
+    MenuFrameContentsImpl(MenuSession menuSession, MenuSessionCache cache, MenuFrameData frameData, MenuContentsScheduler scheduler) {
+        super(menuSession, cache, scheduler, null, null);
 
         this.frameData = frameData;
     }
 
     @Override
-    public @Nullable MenuFrameData menuFrameData() {
+    public @NotNull MenuFrameData menuFrameData() {
         return this.frameData;
     }
 
@@ -54,78 +56,38 @@ final class MenuFrameContentsImpl extends MenuContentsImpl {
     }
 
     @Override
-    public void registerPlaceableItemSlots(int... slots) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
+    public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
+        MenuIterator menuIterator = new MenuIterator(this, this.frameData, menuIteratorType, startRow, startColumn);
+        this.cache.getIterators().put(iterator, menuIterator);
+        return menuIterator;
     }
 
     @Override
-    public void setForcedPlaceableItem(@NotNull SlotPos slotPos, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
+    public void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn, @NotNull List<@NotNull MenuItem> menuItems,
+                                     int... blacklisted) {
+        MenuIterator menuIterator = new MenuIterator(this, this.frameData, menuIteratorType, startRow, startColumn);
+        menuIterator.blacklist(blacklisted);
+
+        for (MenuItem menuItem : menuItems) {
+            menuIterator.setNext(menuItem);
+        }
     }
 
     @Override
-    public void setForcedPlaceableItem(int row, int column, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
+    public @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                                   @NotNull Class<T> clazz,
+                                                                   @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction) {
+        return new MenuObjectIterator<>(this, this.frameData, menuIteratorType, startRow, startColumn, menuItemCreatorFunction);
     }
 
     @Override
-    public void setForcedPlaceableItem(int slot, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
-    }
+    public <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems) {
+        MenuIterator value = new MenuIterator(this, this.frameData, MenuIteratorType.PATTERN, 0, 0);
+        iteratorPattern.handle(value);
 
-    @Override
-    public void placeableItemsCloseAction(@NotNull PlaceableItemsCloseAction action) {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
-    }
-
-    @Override
-    public @NotNull Optional<@NotNull SlotPos> firstEmptyPlaceableItemSlot() {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
-    }
-
-    @Override
-    public @NotNull Map<Integer, ItemStack> getPlaceableItems() {
-        throw new UnsupportedOperationException("Placeable items are not supported in frames.");
-    }
-
-    @Override
-    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int slot, @NotNull Class<F> frameClass) {
-        throw new UnsupportedOperationException("Cannot register a frame inside a frame");
-    }
-
-    @Override
-    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, @NotNull SlotPos slotPos, @NotNull Class<F> frameClass) {
-        throw new UnsupportedOperationException("Cannot register a frame inside a frame");
-    }
-
-    @Override
-    public <F extends MenuFrameProvider> void registerFrame(@NotNull String id, int row, int column, @NotNull Class<F> frameClass) {
-        throw new UnsupportedOperationException("Cannot register a frame inside a frame");
-    }
-
-    @Override
-    public boolean loadFrame(@NotNull String id, Object @NotNull ... arguments) {
-        throw new UnsupportedOperationException("Cannot load a frame inside a frame");
-    }
-
-    @Override
-    public void unloadFrame(@NotNull String id) {
-        throw new UnsupportedOperationException("Cannot unload a frame inside a frame");
-    }
-
-    @Override
-    public void registerFrameOverlaySlots(SlotPos @NotNull ... slots) {
-        throw new UnsupportedOperationException("Cannot register frame overlay slots inside a frame");
-    }
-
-    @Override
-    public void registerFrameOverlaySlots(int... slots) {
-        throw new UnsupportedOperationException("Cannot register frame overlay slots inside a frame");
-    }
-
-    @Override
-    public @Nullable String loadedFrameId() {
-        throw new UnsupportedOperationException("Cannot get loaded frame id inside a frame");
+        for (MenuItem menuItem : menuItems) {
+            value.setNext(menuItem);
+        }
     }
 
     @Override

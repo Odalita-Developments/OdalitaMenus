@@ -1,9 +1,9 @@
 package nl.odalitadevelopments.menus.menu.providers.frame;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.MenuFrameContents;
 import org.jetbrains.annotations.NotNull;
 
 public interface GlobalMenuFrameProvider extends MenuFrameProvider {
 
-    void onLoad(@NotNull MenuContents menuContents);
+    void onLoad(@NotNull MenuFrameContents menuContents);
 }
