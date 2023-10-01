@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_20_2(764),
     MINECRAFT_1_20_1(763),
     MINECRAFT_1_20(763),
     MINECRAFT_1_19_4(762),
@@ -84,7 +85,7 @@ public enum ProtocolVersion {
         return NOT_SUPPORTED;
     }
 
-    public static @NotNull ProtocolVersion LATEST() {
+    public static @NotNull ProtocolVersion latest() {
         return ProtocolVersion.values()[0];
     }
 }
