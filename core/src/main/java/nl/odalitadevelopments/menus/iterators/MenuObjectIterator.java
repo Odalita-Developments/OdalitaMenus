@@ -89,7 +89,7 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     }
 
     public boolean apply() {
-        if (this.isApplying || (this.pagination != null && !this.contents.menuSession().isInitialized())) return false;
+        if (this.isApplying) return false;
 
         super.reset();
 
