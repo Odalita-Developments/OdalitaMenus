@@ -10,8 +10,6 @@ public interface MenuFrameProviderLoader<P extends MenuFrameProvider> {
         return (provider, player, contents) -> {
             if (provider instanceof PlayerMenuFrameProvider playerMenuFrameProvider) {
                 playerMenuFrameProvider.onLoad(player, contents);
-            } else if (provider instanceof GlobalMenuFrameProvider globalMenuFrameProvider) {
-                globalMenuFrameProvider.onLoad(contents);
             } else {
                 throw new IllegalStateException("Unknown provider type: " + provider.getClass().getName());
             }
