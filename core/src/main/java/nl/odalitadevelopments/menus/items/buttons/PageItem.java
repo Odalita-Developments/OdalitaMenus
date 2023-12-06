@@ -2,8 +2,8 @@ package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
-import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
@@ -87,8 +87,11 @@ public final class PageItem extends PageUpdatableItem {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
+            MenuSession menuSession = instance.getOpenMenuSession(player);
+            if (menuSession == null) return;
+
             Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().pageCooldown();
-            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_PAGE_COOLDOWN", cooldown)) {
+            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(menuSession, "INTERNAL_PAGE_COOLDOWN", cooldown)) {
                 return;
             }
 

@@ -643,7 +643,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         }
 
         Cooldown cooldown = this.menuSession.getInstance().getProvidersContainer().getCooldownProvider().frameLoadCooldown();
-        if (cooldown != null && this.menuSession.getInstance().getCooldownContainer().checkAndCreate(this.menuSession.getViewer().getUniqueId(), "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
+        if (cooldown != null && this.menuSession.getInstance().getCooldownContainer().checkAndCreate(this.menuSession, "INTERNAL_FRAME_LOAD_COOLDOWN", cooldown)) {
             return false;
         }
 

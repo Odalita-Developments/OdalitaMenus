@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
@@ -120,8 +121,11 @@ public final class ScrollItem extends PageUpdatableItem {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 
+            MenuSession menuSession = instance.getOpenMenuSession(player);
+            if (menuSession == null) return;
+
             Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().scrollCooldown();
-            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(player.getUniqueId(), "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
+            if (cooldown != null && instance.getCooldownContainer().checkAndCreate(menuSession, "INTERNAL_SCROLL_COOLDOWN", cooldown)) {
                 return;
             }
 

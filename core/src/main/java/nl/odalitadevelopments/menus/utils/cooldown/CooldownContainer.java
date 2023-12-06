@@ -1,63 +1,66 @@
 package nl.odalitadevelopments.menus.utils.cooldown;
 
 import com.google.common.base.Preconditions;
+import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.utils.collection.Table;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public final class CooldownContainer implements Listener {
 
-    private final Table<UUID, String, Cooldown> playerCooldowns = new Table<>();
+    private final Table<UUID, String, Cooldown> sessionCooldowns = new Table<>();
 
-    public void addCooldown(UUID uuid, String name, Cooldown cooldown) {
+    private final OdalitaMenus instance;
+
+    public CooldownContainer(OdalitaMenus instance) {
+        this.instance = instance;
+    }
+
+    public void addCooldown(MenuSession menuSession, String name, Cooldown cooldown) {
         Preconditions.checkArgument(cooldown.value() > 0, "value must be greater than 0");
 
-        this.playerCooldowns.computeIfAbsent(uuid, name, (u, s) -> cooldown);
+        this.sessionCooldowns.computeIfAbsent(menuSession.getUniqueId(), name, (u, s) -> cooldown);
     }
 
-    public void addCooldown(UUID uuid, String name, int value, TimeUnit timeUnit) {
-        this.addCooldown(uuid, name, new Cooldown(value, timeUnit));
-    }
-
-    public boolean hasCooldown(UUID uuid, String name) {
-        Cooldown cooldown = this.playerCooldowns.get(uuid, name);
+    public boolean hasCooldown(MenuSession menuSession, String name) {
+        Cooldown cooldown = this.sessionCooldowns.get(menuSession.getUniqueId(), name);
         if (cooldown == null) return false;
 
         if (cooldown.isExpired()) {
-            this.playerCooldowns.remove(uuid, name);
+            this.sessionCooldowns.remove(menuSession.getUniqueId(), name);
             return false;
         }
 
         return true;
     }
 
-    public void removeCooldown(UUID uuid, String name) {
-        this.playerCooldowns.remove(uuid, name);
-    }
+    public boolean checkAndCreate(MenuSession menuSession, String name, Cooldown cooldown) {
+        if (this.hasCooldown(menuSession, name)) return true;
 
-    public boolean checkAndCreate(UUID uuid, String name, Cooldown cooldown) {
-        if (this.hasCooldown(uuid, name)) return true;
-
-        this.addCooldown(uuid, name, cooldown);
+        this.addCooldown(menuSession, name, cooldown);
         return false;
-    }
-
-    public boolean checkAndCreate(UUID uuid, String name, int value, TimeUnit timeUnit) {
-        return this.checkAndCreate(uuid, name, Cooldown.of(value, timeUnit));
     }
 
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent event) {
-        this.playerCooldowns.getRowMap().remove(event.getPlayer().getUniqueId());
+        this.cleanup(event.getPlayer());
     }
 
     @EventHandler
     private void onPlayerKick(PlayerKickEvent event) {
-        this.playerCooldowns.getRowMap().remove(event.getPlayer().getUniqueId());
+        this.cleanup(event.getPlayer());
+    }
+
+    private void cleanup(Player player) {
+        MenuSession menuSession = this.instance.getOpenMenuSession(player);
+        if (menuSession == null || !menuSession.getViewers().isEmpty()) return;
+
+        this.sessionCooldowns.getRowMap().remove(menuSession.getUniqueId());
     }
 }

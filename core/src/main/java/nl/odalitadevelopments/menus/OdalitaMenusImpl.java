@@ -102,7 +102,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.patternContainer = new PatternContainer();
 
         this.providersContainer = new ProvidersContainer(this);
-        this.cooldownContainer = new CooldownContainer();
+        this.cooldownContainer = new CooldownContainer(this);
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
         new InventoryPacketListener(this, this.menuProcessor);
