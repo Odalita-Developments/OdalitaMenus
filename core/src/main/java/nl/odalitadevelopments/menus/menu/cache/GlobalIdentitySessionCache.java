@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -35,10 +37,24 @@ public final class GlobalIdentitySessionCache implements Listener {
         return cache;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     private void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player player)) return;
+        if (event.getPlayer() instanceof Player player) {
+            this.cleanPlayerCache(player);
+        }
+    }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        this.cleanPlayerCache(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    private void onPlayerKick(PlayerKickEvent event) {
+        this.cleanPlayerCache(event.getPlayer());
+    }
+
+    private void cleanPlayerCache(Player player) {
         MenuSession menuSession = this.instance.getOpenMenuSession(player);
         if (menuSession == null || !menuSession.getViewers().isEmpty()) return;
 

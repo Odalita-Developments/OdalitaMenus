@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.items;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 public final class ItemProcessor {
 
     @ApiStatus.Internal
-    public void initializeItems(MenuSession menuSession, MenuContents menuContents) {
+    public void initializeItems(MenuSession menuSession, IMenuContents menuContents) {
         SupportedMenuType menuType = menuSession.getMenuType();
         Inventory inventory = menuSession.getInventory();
 

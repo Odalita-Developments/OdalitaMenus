@@ -2,7 +2,6 @@ package nl.odalitadevelopments.menus.contents;
 
 import nl.odalitadevelopments.menus.contents.action.MenuContentsActions;
 import nl.odalitadevelopments.menus.contents.event.MenuContentsEvents;
-import nl.odalitadevelopments.menus.contents.interfaces.IDefaultContents;
 import nl.odalitadevelopments.menus.contents.interfaces.IFrameContents;
 import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.interfaces.IPaginationScrollableContents;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public sealed interface MenuIdentityContents
-        extends IMenuContents, IDefaultContents, IPaginationScrollableContents, IFrameContents
+        extends IMenuContents, IPaginationScrollableContents, IFrameContents
         permits MenuIdentityContentsImpl {
 
     @Contract("_ -> new")

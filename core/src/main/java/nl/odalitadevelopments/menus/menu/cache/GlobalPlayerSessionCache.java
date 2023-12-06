@@ -30,12 +30,12 @@ public final class GlobalPlayerSessionCache implements Listener {
         return cache;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerQuit(PlayerQuitEvent event) {
         this.cleanPlayerCache(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     private void onPlayerKick(PlayerKickEvent event) {
         this.cleanPlayerCache(event.getPlayer().getUniqueId());
     }
