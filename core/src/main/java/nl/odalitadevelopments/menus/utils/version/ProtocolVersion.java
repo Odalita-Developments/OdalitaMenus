@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_20_4(765),
+    MINECRAFT_1_20_3(765),
     MINECRAFT_1_20_2(764),
     MINECRAFT_1_20_1(763),
     MINECRAFT_1_20(763),
@@ -38,28 +40,28 @@ public enum ProtocolVersion {
         return this.format;
     }
 
-    public int getNumber() {
+    public int number() {
         return this.number;
     }
 
     public boolean isLowerOrEqual(@NotNull ProtocolVersion version) {
-        return this.number <= version.getNumber();
+        return this.number <= version.number();
     }
 
     public boolean isLower(@NotNull ProtocolVersion version) {
-        return this.number < version.getNumber();
+        return this.number < version.number();
     }
 
     public boolean isHigherOrEqual(@NotNull ProtocolVersion version) {
-        return this.number >= version.getNumber();
+        return this.number >= version.number();
     }
 
     public boolean isHigher(@NotNull ProtocolVersion version) {
-        return this.number > version.getNumber();
+        return this.number > version.number();
     }
 
     public boolean isEqual(@NotNull ProtocolVersion version) {
-        return this.number == version.getNumber();
+        return this.number == version.number();
     }
 
     private static final ProtocolVersion SERVER_VERSION;

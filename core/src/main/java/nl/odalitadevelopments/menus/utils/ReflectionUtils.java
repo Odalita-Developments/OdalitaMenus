@@ -38,6 +38,7 @@ final class ReflectionUtils {
     static Class<?> ENTITY_PLAYER;
     static Class<?> ENTITY_HUMAN;
     static Class<?> PLAYER_CONNECTION;
+    static Class<?> SERVER_COMMON_PACKET_LISTENER_v1202;
     static Class<?> NETWORK_MANAGER;
     static Class<?> CONTAINER;
     static Class<?> CONTAINERS;
@@ -90,6 +91,11 @@ final class ReflectionUtils {
             ENTITY_PLAYER = nmsClass("server.level", "EntityPlayer");
             ENTITY_HUMAN = nmsClass("world.entity.player", "EntityHuman");
             PLAYER_CONNECTION = nmsClass("server.network", "PlayerConnection");
+
+            if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_2)) {
+                SERVER_COMMON_PACKET_LISTENER_v1202 = nmsClass("server.network", "ServerCommonPacketListenerImpl");
+            }
+
             NETWORK_MANAGER = nmsClass("network", "NetworkManager");
             CONTAINER = nmsClass("world.inventory", "Container");
             CONTAINERS = nmsClass("world.inventory", "Containers");
@@ -168,11 +174,20 @@ final class ReflectionUtils {
                     .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
 
-            Field networkManagerField = Arrays.stream((version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_3)) ? PLAYER_CONNECTION.getDeclaredFields() : ENTITY_PLAYER.getDeclaredFields())
+            Field[] possibleNetworkManagerFields;
+            if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_2)) {
+                possibleNetworkManagerFields = SERVER_COMMON_PACKET_LISTENER_v1202.getFields();
+            } else if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_3)) {
+                possibleNetworkManagerFields = PLAYER_CONNECTION.getFields();
+            } else {
+                possibleNetworkManagerFields = ENTITY_PLAYER.getFields();
+            }
+
+            Field networkManagerField = Arrays.stream(possibleNetworkManagerFields)
                     .filter(field -> NETWORK_MANAGER.isAssignableFrom(field.getType()))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
 
-            Method sendPacketMethod = Arrays.stream(PLAYER_CONNECTION.getMethods())
+            Method sendPacketMethod = Arrays.stream(NETWORK_MANAGER.getMethods())
                     .filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0] == PACKET)
                     .findFirst().orElseThrow(NoSuchMethodException::new);
 
@@ -188,9 +203,8 @@ final class ReflectionUtils {
 
     static synchronized void sendPacket(Player player, Object packet) {
         try {
-            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
-            Object playerConnection = GET_PLAYER_CONNECTION_METHOD.invoke(entityPlayer);
-            SEND_PACKET_METHOD.invoke(playerConnection, packet);
+            Object networkManager = getNetworkManager(player);
+            SEND_PACKET_METHOD.invoke(networkManager, packet);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

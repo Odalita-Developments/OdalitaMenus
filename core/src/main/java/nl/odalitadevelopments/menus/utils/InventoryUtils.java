@@ -118,6 +118,8 @@ public final class InventoryUtils {
                 channel = NETWORK_MANAGER.getField("channel").get(networkManager);
             } else if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_18_1)) {
                 channel = NETWORK_MANAGER.getField("k").get(networkManager);
+            } else if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_2)) {
+                channel = NETWORK_MANAGER.getField("n").get(networkManager);
             } else {
                 channel = NETWORK_MANAGER.getField("m").get(networkManager);
             }
