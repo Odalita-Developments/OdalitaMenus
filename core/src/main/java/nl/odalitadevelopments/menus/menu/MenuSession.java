@@ -82,7 +82,7 @@ public final class MenuSession {
     }
 
     public void setId(@NotNull String id) {
-        if (this.id.equals(id)) return;
+        if (this.id != null && this.id.equals(id)) return;
 
         this.id = id;
     }

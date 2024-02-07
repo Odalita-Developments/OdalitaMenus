@@ -17,7 +17,7 @@ final class ScrollableDirectionPatternCache {
     private final Map<ScrollableDirection, NavigableMap<Integer, Integer>> directionIndex;
     private final Map<ScrollableDirection, Integer> directionWidth;
 
-    public @NotNull Cache initialize(ScrollableDirection direction) {
+    @NotNull Cache initialize(ScrollableDirection direction) {
         if (direction != ScrollableDirection.HORIZONTALLY && direction != ScrollableDirection.VERTICALLY) {
             throw new IllegalArgumentException("Direction is not supported '" + direction + "'");
         }
