@@ -8,13 +8,12 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.IPagination;
-import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
+import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 final class MenuInitializer<P extends MenuProvider> {
@@ -35,10 +34,11 @@ final class MenuInitializer<P extends MenuProvider> {
             String inventoryTitle = colorProvider.handle(annotation.title());
 
             SupportedMenuType menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type());
-            Inventory inventory = menuType.createInventory(inventoryTitle);
+            Object nmsInventory = InventoryUtils.openAnvilInventory(player);
+            Inventory inventory = InventoryUtils.getInventoryFromNMSMenu(nmsInventory); /*menuType.createInventory(inventoryTitle);*/
 
             String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuId, menuType, inventory, annotation.title(), annotation.globalCacheKey());
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuId, menuType, inventory, inventoryTitle, annotation.globalCacheKey());
 
             MenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
@@ -60,7 +60,7 @@ final class MenuInitializer<P extends MenuProvider> {
 
             this.itemProcessor.initializeItems(menuSession, contents);
 
-            this.openInventory(player, menuSession);
+            this.openInventory(player, nmsInventory, menuSession);
 
             Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
         } catch (Exception exception) {
@@ -68,8 +68,8 @@ final class MenuInitializer<P extends MenuProvider> {
         }
     }
 
-    private void openInventory(@NotNull Player player, @NotNull MenuSession menuSession) {
+    private void openInventory(Player player, Object nmsInventory, MenuSession menuSession) {
         this.menuProcessor.getOpenMenus().put(player, menuSession);
-        player.openInventory(menuSession.getInventory());
+        InventoryUtils.openInventory(player, nmsInventory, menuSession.getTitle());
     }
 }

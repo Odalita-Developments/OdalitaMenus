@@ -204,6 +204,10 @@ public final class InventoryListener implements Listener {
 
         Inventory inventory = event.getInventory();
         if (menuSession.getInventory().equals(inventory)) {
+            for (OdalitaEventListener eventListener : menuSession.getCache().getEventListeners()) {
+                eventListener.unregister();
+            }
+
             Runnable closeActionBefore = menuSession.getCache().getCloseActionBefore();
             if (closeActionBefore != null) {
                 closeActionBefore.run();

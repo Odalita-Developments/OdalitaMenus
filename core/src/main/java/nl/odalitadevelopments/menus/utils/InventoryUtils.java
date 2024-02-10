@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.ApiStatus;
@@ -106,6 +107,52 @@ public final class InventoryUtils {
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+        }
+    }
+
+    public static void openInventory(Player player, Object inventory, String title) {
+        // TODO check if custom inventory than use openInventory(null, inventory, title)
+
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+
+            ACTIVE_CONTAINER_FIELD.set(entityPlayer, inventory);
+            int windowId = WINDOW_ID_FIELD.getInt(inventory);
+
+            Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(inventory);
+            Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, createChatBaseComponent(title));
+            sendPacket(player, packetPlayOutOpenWindow);
+
+            ENTITY_PLAYER.getMethod("a", CONTAINER).invoke(entityPlayer, inventory);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    public static Object openAnvilInventory(Player player) {
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            INVENTORY_FIELD.setAccessible(true);
+            Object inventory = INVENTORY_FIELD.get(entityPlayer);
+
+            int windowId = (int) entityPlayer.getClass().getMethod("nextContainerCounter").invoke(entityPlayer);
+            Object anvilMenu = ANVIL_CONTAINER_CONSTRUCTOR.newInstance(windowId, inventory);
+            CHECK_REACHABLE.set(anvilMenu, false);
+
+            return anvilMenu;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Inventory getInventoryFromNMSMenu(Object inventory) {
+        try {
+            Object getBukkitView = inventory.getClass().getMethod("getBukkitView").invoke(inventory);
+            return ((InventoryView) getBukkitView).getTopInventory();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
         }
     }
 

@@ -115,7 +115,11 @@ public final class MenuSession {
             throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
         }
 
-        InventoryUtils.setProperty(this.inventory, property, value);
+        if (!this.opened) {
+            this.openActions.add(() -> InventoryUtils.setProperty(this.inventory, property, value));
+        } else {
+            InventoryUtils.setProperty(this.inventory, property, value);
+        }
     }
 
     public synchronized void setGlobalCacheKey(@NotNull String globalCacheKey) {

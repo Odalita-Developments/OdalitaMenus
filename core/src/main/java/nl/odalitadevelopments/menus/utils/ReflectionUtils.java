@@ -43,11 +43,15 @@ final class ReflectionUtils {
     static Class<?> CONTAINER;
     static Class<?> CONTAINERS;
     static Class<?> IINVENTORY;
+    static Class<?> PLAYER_INVENTORY;
     static Class<?> NON_NULL_LIST;
     static Class<?> CHAT_BASE_COMPONENT;
 
+    static Class<?> ANVIL_CONTAINER_CLASS;
+
     static Class<?> CRAFT_PLAYER;
     static Class<?> CRAFT_INVENTORY;
+    static Class<?> CRAFT_CONTAINER;
     static Class<?> MINECRAFT_INVENTORY;
     static Class<?> ITEM_STACK;
     static Class<?> CRAFT_ITEM_STACK;
@@ -67,11 +71,15 @@ final class ReflectionUtils {
 
     static Field GET_NMS_CONTAINER_ITEMS_1165;
 
+    static Field INVENTORY_FIELD;
     static Field ACTIVE_CONTAINER_FIELD;
     static Field WINDOW_ID_FIELD;
+    static Field CHECK_REACHABLE;
     static Field TITLE_FIELD;
     static Field MINECRAFT_INVENTORY_TITLE_FIELD;
     static Field PAPER_MINECRAFT_INVENTORY_TITLE_FIELD;
+
+    static Constructor<?> ANVIL_CONTAINER_CONSTRUCTOR;
 
     static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
     static Constructor<?> PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR;
@@ -100,11 +108,15 @@ final class ReflectionUtils {
             CONTAINER = nmsClass("world.inventory", "Container");
             CONTAINERS = nmsClass("world.inventory", "Containers");
             IINVENTORY = nmsClass("world", "IInventory");
+            PLAYER_INVENTORY = nmsClass("world.entity.player", "PlayerInventory");
             NON_NULL_LIST = nmsClass("core", "NonNullList");
             CHAT_BASE_COMPONENT = nmsClass("network.chat", "IChatBaseComponent");
 
+            ANVIL_CONTAINER_CLASS = nmsClass("world.inventory", "ContainerAnvil");
+
             CRAFT_PLAYER = obcClass("entity.CraftPlayer");
             CRAFT_INVENTORY = obcClass("inventory.CraftInventory");
+            CRAFT_CONTAINER = obcClass("inventory.CraftContainer");
             MINECRAFT_INVENTORY = obcClass("inventory.CraftInventoryCustom$MinecraftInventory");
             ITEM_STACK = nmsClass("world.item", "ItemStack");
             CRAFT_ITEM_STACK = obcClass("inventory.CraftItemStack");
@@ -121,6 +133,8 @@ final class ReflectionUtils {
             TITLE_FIELD = CONTAINER.getDeclaredField("title");
             MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
 
+            CHECK_REACHABLE = CONTAINER.getField("checkReachable");
+
             if (IS_PAPER) {
                 PAPER_MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
             }
@@ -128,6 +142,10 @@ final class ReflectionUtils {
             ACTIVE_CONTAINER_FIELD = Arrays.stream(ENTITY_HUMAN.getFields())
                     .filter(field -> field.getType().isAssignableFrom(CONTAINER))
                     .findFirst().orElseThrow(NoSuchFieldException::new);
+
+            INVENTORY_FIELD = ENTITY_HUMAN.getDeclaredField("cm");
+
+            ANVIL_CONTAINER_CONSTRUCTOR = ANVIL_CONTAINER_CLASS.getConstructor(int.class, PLAYER_INVENTORY);
 
             if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
                 GET_NMS_INVENTORY_TYPE = CONTAINER.getMethod("a");

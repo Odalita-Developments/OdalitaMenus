@@ -15,6 +15,7 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAc
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
+import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -22,6 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -51,6 +53,7 @@ public final class MenuSessionCache {
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
     private Runnable closeActionBefore = null;
     private Runnable closeActionAfter = null;
+    private Collection<OdalitaEventListener> eventListeners = new HashSet<>();
 
     private PlayerInventoryItemMetaChanger itemMetaChanger = null;
 
