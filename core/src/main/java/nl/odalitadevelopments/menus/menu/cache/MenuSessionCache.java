@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.contents.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.MenuTask;
+import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
@@ -49,8 +50,8 @@ public final class MenuSessionCache {
     private PlaceableItemDragAction placeableItemDragAction = null;
 
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
-    private Runnable closeActionBefore = null;
-    private Runnable closeActionAfter = null;
+    private Supplier<MenuCloseResult> closeActionBefore = null;
+    private Supplier<MenuCloseResult> closeActionAfter = null;
 
     private PlayerInventoryItemMetaChanger itemMetaChanger = null;
 
