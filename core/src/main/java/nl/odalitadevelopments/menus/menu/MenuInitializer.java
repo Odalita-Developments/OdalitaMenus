@@ -38,7 +38,7 @@ final class MenuInitializer<P extends MenuProvider> {
             Inventory inventory = menuType.createInventory(inventoryTitle);
 
             String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), player, menuId, menuType, inventory, annotation.title(), annotation.globalCacheKey());
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), this.builder, player, menuId, menuType, inventory, annotation.title(), annotation.globalCacheKey());
 
             MenuContents contents = menuSession.getMenuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);

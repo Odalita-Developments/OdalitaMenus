@@ -1,6 +1,7 @@
 package nl.odalitadevelopments.menus.contents;
 
 import lombok.AllArgsConstructor;
+import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
@@ -8,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 final class MenuContentsEventsImpl implements MenuContentsEvents {
@@ -51,16 +53,29 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
     }
 
     @Override
-    public void onClose(boolean beforePlaceableItemRemoveAction, @NotNull Runnable action) {
+    public void onClose(boolean beforeUnregisteringMenu, @NotNull Supplier<@NotNull MenuCloseResult> action) {
         if (this.menuContents.menuFrameData() != null) {
             throw new UnsupportedOperationException("Close event is not supported in frames.");
         }
 
-        if (beforePlaceableItemRemoveAction) {
+        if (beforeUnregisteringMenu) {
             this.menuContents.cache.setCloseActionBefore(action);
         } else {
             this.menuContents.cache.setCloseActionAfter(action);
         }
+    }
+
+    @Override
+    public void onClose(@NotNull Supplier<@NotNull MenuCloseResult> action) {
+        this.onClose(true, action);
+    }
+
+    @Override
+    public void onClose(boolean beforeUnregisteringMenu, @NotNull Runnable action) {
+        this.onClose(beforeUnregisteringMenu, () -> {
+            action.run();
+            return MenuCloseResult.CLOSE;
+        });
     }
 
     @Override
