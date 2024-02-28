@@ -494,6 +494,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void registerPlaceableItemSlots(int... slots) {
         for (int slot : slots) {
+            if (!this.menuSession.fits(slot)) continue;
+
             this.cache.getPlaceableItems().add(slot);
         }
     }

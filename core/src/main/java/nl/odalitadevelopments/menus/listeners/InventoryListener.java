@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.listeners;
 
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
@@ -12,6 +13,7 @@ import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 public final class InventoryListener implements Listener {
@@ -204,13 +207,17 @@ public final class InventoryListener implements Listener {
 
         Inventory inventory = event.getInventory();
         if (menuSession.getInventory().equals(inventory)) {
-            for (OdalitaEventListener eventListener : menuSession.getCache().getEventListeners()) {
-                eventListener.unregister();
+            Supplier<MenuCloseResult> closeActionBefore = menuSession.getCache().getCloseActionBefore();
+            if (closeActionBefore != null) {
+                // If the close action is to keep the menu open, open the inventory again
+                if (closeActionBefore.get() == MenuCloseResult.KEEP_OPEN) {
+                    Bukkit.getScheduler().runTask(this.instance.getJavaPlugin(), () -> player.openInventory(inventory));
+                    return;
+                }
             }
 
-            Runnable closeActionBefore = menuSession.getCache().getCloseActionBefore();
-            if (closeActionBefore != null) {
-                closeActionBefore.run();
+            for (OdalitaEventListener eventListener : menuSession.getCache().getEventListeners()) {
+                eventListener.unregister();
             }
 
             PlaceableItemsCloseAction action = menuSession.getCache().getPlaceableItemsCloseAction();
@@ -227,9 +234,13 @@ public final class InventoryListener implements Listener {
                 }
             }
 
-            Runnable closeActionAfter = menuSession.getCache().getCloseActionAfter();
+            Supplier<MenuCloseResult> closeActionAfter = menuSession.getCache().getCloseActionAfter();
             if (closeActionAfter != null) {
-                closeActionAfter.run();
+                // If the close action is to keep the menu open, reopen the menu
+                if (closeActionAfter.get() == MenuCloseResult.KEEP_OPEN) {
+                    Bukkit.getScheduler().runTask(this.instance.getJavaPlugin(), menuSession::reopen);
+                    // Don't return here, because we still want to close the previous menu session
+                }
             }
 
             menuSession.setClosed(true);

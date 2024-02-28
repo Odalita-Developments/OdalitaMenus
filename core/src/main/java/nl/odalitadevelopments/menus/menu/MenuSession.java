@@ -28,6 +28,8 @@ import java.util.Map;
 public final class MenuSession {
 
     private final OdalitaMenus instance;
+    @Getter(AccessLevel.NONE)
+    private final MenuOpenerBuilderImpl<?> builder;
     private final Player player;
 
     private String id;
@@ -50,8 +52,9 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
         this.instance = instance;
+        this.builder = builder;
         this.player = player;
 
         this.id = id;
@@ -150,6 +153,11 @@ public final class MenuSession {
     @ApiStatus.Internal
     public void setClosed(boolean closed) {
         this.closed = closed;
+    }
+
+    @ApiStatus.Internal
+    public void reopen() {
+        this.builder.open();
     }
 
     public int getRows() {
