@@ -8,7 +8,6 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.pagination.IPagination;
-import nl.odalitadevelopments.menus.pagination.Pagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
@@ -69,7 +68,12 @@ final class MenuInitializer<P extends MenuProvider> {
     }
 
     private void openInventory(@NotNull Player player, @NotNull MenuSession menuSession) {
-        this.menuProcessor.getOpenMenus().put(player, menuSession);
+        MenuSession oldSession = this.menuProcessor.getOpenMenus().put(player, menuSession);
+        if (oldSession != null) {
+            // Mark old session as closed, if present to prevent items being set in the wrong inventory
+            oldSession.setClosed(true);
+        }
+
         player.openInventory(menuSession.getInventory());
     }
 }
