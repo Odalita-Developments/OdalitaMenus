@@ -109,6 +109,12 @@ public final class MenuSession {
             throw new IllegalStateException("Cannot change menu type while menu is opened!");
         } else {
             this.menuType = this.instance.getSupportedMenuTypes().getSupportedMenuType(menuType);
+
+            // Make sure the contents array is the correct size
+            MenuItem[][] newContents = new MenuItem[this.getRows()][this.getColumns()];
+            System.arraycopy(this.contents, 0, newContents, 0, this.contents.length);
+            this.contents = newContents;
+
             this.inventory = this.menuType.createInventory(this.title);
         }
     }
