@@ -191,7 +191,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         PlayerInventory playerInventory = serverPlayer.inventory;
 
-        ContainerWorkbench craftingMenu = new ContainerWorkbench(-1, playerInventory, ContainerAccess.at().create(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
+        ContainerWorkbench craftingMenu = new ContainerWorkbench(-1, playerInventory, ContainerAccess.at(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
         craftingMenu.checkReachable = false;
 
         return craftingMenu;
@@ -202,7 +202,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         PlayerInventory playerInventory = serverPlayer.inventory;
 
-        ContainerEnchantTable enchantmentMenu = new ContainerEnchantTable(-1, playerInventory, ContainerAccess.at().create(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
+        ContainerEnchantTable enchantmentMenu = new ContainerEnchantTable(-1, playerInventory, ContainerAccess.at(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
         enchantmentMenu.checkReachable = false;
 
         return enchantmentMenu;
