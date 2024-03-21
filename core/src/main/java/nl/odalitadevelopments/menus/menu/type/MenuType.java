@@ -1,13 +1,17 @@
 package nl.odalitadevelopments.menus.menu.type;
 
+import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiFunction;
+
 public enum MenuType {
 
-    ANVIL(InventoryType.ANVIL),
+    ANVIL(InventoryType.ANVIL, (player, title) -> InventoryUtils.createAnvilInventory(player)),
     BEACON(InventoryType.BEACON),
     BLAST_FURNACE(InventoryType.BLAST_FURNACE),
     BREWING(InventoryType.BREWING),
@@ -32,22 +36,40 @@ public enum MenuType {
 
     private final int size;
     private final InventoryType inventoryType;
+    private final BiFunction<Player, String, Object> nmsInventoryCreation;
 
     MenuType(int size) {
         this.size = size;
         this.inventoryType = null;
+        this.nmsInventoryCreation = null;
     }
 
     MenuType(@NotNull InventoryType inventoryType) {
         this.size = 0;
         this.inventoryType = inventoryType;
+        this.nmsInventoryCreation = null;
     }
 
-    @NotNull Inventory createInventory(String title) {
-        if (this.inventoryType == null) {
-            return Bukkit.getServer().createInventory(null, this.size, title);
-        } else {
-            return Bukkit.getServer().createInventory(null, this.inventoryType, title);
+    MenuType(@NotNull InventoryType inventoryType, @NotNull BiFunction<Player, String, Object> nmsInventoryCreation) {
+        this.size = 0;
+        this.inventoryType = inventoryType;
+        this.nmsInventoryCreation = nmsInventoryCreation;
+    }
+
+    @NotNull InventoryCreation createInventory(Player player, String title) {
+        if (this.nmsInventoryCreation != null) {
+            Object nmsInventory = this.nmsInventoryCreation.apply(player, title);
+            Inventory bukkitInventory = InventoryUtils.getInventoryFromNMSMenu(nmsInventory);
+            return new InventoryCreation(nmsInventory, bukkitInventory);
         }
+
+        Inventory bukkitInventory;
+        if (this.inventoryType == null) {
+            bukkitInventory = Bukkit.getServer().createInventory(null, this.size, title);
+        } else {
+            bukkitInventory = Bukkit.getServer().createInventory(null, this.inventoryType, title);
+        }
+
+        return new InventoryCreation(null, bukkitInventory);
     }
 }

@@ -111,7 +111,10 @@ public final class InventoryUtils {
     }
 
     public static void openInventory(Player player, Object inventory, String title) {
-        // TODO check if custom inventory than use openInventory(null, inventory, title)
+        if (inventory instanceof Inventory bukkitInventory) {
+            player.openInventory(bukkitInventory);
+            return;
+        }
 
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
@@ -129,7 +132,7 @@ public final class InventoryUtils {
         }
     }
 
-    public static Object openAnvilInventory(Player player) {
+    public static Object createAnvilInventory(Player player) {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
             INVENTORY_FIELD.setAccessible(true);

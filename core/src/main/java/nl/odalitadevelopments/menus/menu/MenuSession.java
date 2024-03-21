@@ -10,6 +10,7 @@ import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.InventoryUtils;
@@ -34,8 +35,9 @@ public final class MenuSession {
 
     private String id;
     private SupportedMenuType menuType;
+    @Getter(AccessLevel.PACKAGE)
     @Setter(AccessLevel.NONE)
-    private Inventory inventory;
+    private InventoryCreation inventoryData;
     private String title;
     private final MenuContents menuContents;
 
@@ -52,7 +54,7 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, Player player, String id, SupportedMenuType menuType, InventoryCreation inventoryData, String title, String globalCacheKey) {
         this.instance = instance;
         this.builder = builder;
         this.player = player;
@@ -60,7 +62,7 @@ public final class MenuSession {
         this.id = id;
         this.menuType = menuType;
 
-        this.inventory = inventory;
+        this.inventoryData = inventoryData;
         this.contents = new MenuItem[this.getRows()][this.getColumns()];
         this.title = title;
 
@@ -90,12 +92,16 @@ public final class MenuSession {
         this.id = id;
     }
 
+    public @NotNull Inventory getInventory() {
+        return this.inventoryData.bukkitInventory();
+    }
+
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        InventoryUtils.changeTitle(this.inventory, title);
+        InventoryUtils.changeTitle(this.getInventory(), title);
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -115,7 +121,7 @@ public final class MenuSession {
             System.arraycopy(this.contents, 0, newContents, 0, this.contents.length);
             this.contents = newContents;
 
-            this.inventory = this.menuType.createInventory(this.title);
+            this.inventoryData = this.menuType.createInventory(this.player, this.title);
         }
     }
 
@@ -125,9 +131,9 @@ public final class MenuSession {
         }
 
         if (!this.opened) {
-            this.openActions.add(() -> InventoryUtils.setProperty(this.inventory, property, value));
+            this.openActions.add(() -> InventoryUtils.setProperty(this.getInventory(), property, value));
         } else {
-            InventoryUtils.setProperty(this.inventory, property, value);
+            InventoryUtils.setProperty(this.getInventory(), property, value);
         }
     }
 
