@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.nms.v1_20_R3;
+package nl.odalitadevelopments.menus.nms.v1_20_R1;
 
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
@@ -9,16 +9,15 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -27,7 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class OdalitaMenusNMS_v1_20_R3 implements OdalitaMenusNMS {
+public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
 
     private static Class<?> MINECRAFT_INVENTORY;
 
@@ -48,8 +47,8 @@ public final class OdalitaMenusNMS_v1_20_R3 implements OdalitaMenusNMS {
             }
 
             TITLE_FIELD = AbstractContainerMenu.class.getDeclaredField("title");
-            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_20_R3.WINDOW_ID);
-            NETWORK_MANAGER_FIELD = ServerCommonPacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_20_R3.NETWORK_MANAGER);
+            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_20_R1.WINDOW_ID);
+            NETWORK_MANAGER_FIELD = ServerGamePacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_20_R1.NETWORK_MANAGER);
         } catch (Exception exception) {
             exception.printStackTrace();
         }

@@ -68,7 +68,9 @@ public final class OdalitaMenusNMS_v1_19_R3 implements OdalitaMenusNMS {
     public Channel getPacketChannel(Player player) throws Exception {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         ServerGamePacketListenerImpl serverGamePacketListener = serverPlayer.connection;
+        NETWORK_MANAGER_FIELD.setAccessible(true);
         Connection connection = (Connection) NETWORK_MANAGER_FIELD.get(serverGamePacketListener);
+        NETWORK_MANAGER_FIELD.setAccessible(false);
         return connection.channel;
     }
 
