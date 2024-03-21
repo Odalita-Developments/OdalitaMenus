@@ -31,7 +31,7 @@ public final class InventoryListener implements Listener {
     private final OdalitaMenus instance;
     private final MenuProcessor menuProcessor;
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -161,7 +161,7 @@ public final class InventoryListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -199,7 +199,7 @@ public final class InventoryListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);

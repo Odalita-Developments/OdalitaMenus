@@ -93,11 +93,36 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
     }
 
     @Override
-    public <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled) {
-        if (!InventoryEvent.class.isAssignableFrom(eventClass) && !PlayerEvent.class.isAssignableFrom(eventClass)) {
-            throw new UnsupportedOperationException("Event class must be assignable from InventoryEvent or PlayerEvent.");
-        }
+    public @NotNull <T extends InventoryEvent> OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled) {
+        return this.onEvent(eventClass, eventConsumer, priority, ignoreCancelled);
+    }
 
+    @Override
+    public @NotNull <T extends InventoryEvent> OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority) {
+        return this.onInventoryEvent(eventClass, eventConsumer, priority, false);
+    }
+
+    @Override
+    public @NotNull <T extends InventoryEvent> OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer) {
+        return this.onInventoryEvent(eventClass, eventConsumer, EventPriority.NORMAL);
+    }
+
+    @Override
+    public @NotNull <T extends PlayerEvent> OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled) {
+        return this.onEvent(eventClass, eventConsumer, priority, ignoreCancelled);
+    }
+
+    @Override
+    public @NotNull <T extends PlayerEvent> OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority) {
+        return this.onPlayerEvent(eventClass, eventConsumer, priority, false);
+    }
+
+    @Override
+    public @NotNull <T extends PlayerEvent> OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer) {
+        return this.onPlayerEvent(eventClass, eventConsumer, EventPriority.NORMAL);
+    }
+
+    private <T extends Event> OdalitaEventListener onEvent(Class<? extends T> eventClass, Consumer<T> eventConsumer, EventPriority priority, boolean ignoreCancelled) {
         if (eventClass == InventoryCloseEvent.class) {
             throw new UnsupportedOperationException("Use onClose method to listen for close events.");
         }
@@ -128,15 +153,5 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
 
         this.menuContents.cache.getEventListeners().add(eventListener);
         return eventListener;
-    }
-
-    @Override
-    public <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority) {
-        return this.onEvent(eventClass, eventConsumer, priority, false);
-    }
-
-    @Override
-    public <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer) {
-        return this.onEvent(eventClass, eventConsumer, EventPriority.NORMAL);
     }
 }

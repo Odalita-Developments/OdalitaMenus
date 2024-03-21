@@ -48,6 +48,8 @@ final class ReflectionUtils {
     static Class<?> CHAT_BASE_COMPONENT;
 
     static Class<?> ANVIL_CONTAINER_CLASS;
+    static Class<?> CRAFTING_CONTAINER_CLASS;
+    static Class<?> ENCHANTING_CONTAINER_CLASS;
 
     static Class<?> CRAFT_PLAYER;
     static Class<?> CRAFT_INVENTORY;
@@ -80,6 +82,8 @@ final class ReflectionUtils {
     static Field PAPER_MINECRAFT_INVENTORY_TITLE_FIELD;
 
     static Constructor<?> ANVIL_CONTAINER_CONSTRUCTOR;
+    static Constructor<?> CRAFTING_CONTAINER_CONSTRUCTOR;
+    static Constructor<?> ENCHANTING_CONTAINER_CONSTRUCTOR;
 
     static Constructor<?> PACKET_PLAY_OUT_SET_SLOT_CONSTRUCTOR;
     static Constructor<?> PACKET_PLAY_OUT_WINDOW_DATA_CONSTRUCTOR;
@@ -113,6 +117,8 @@ final class ReflectionUtils {
             CHAT_BASE_COMPONENT = nmsClass("network.chat", "IChatBaseComponent");
 
             ANVIL_CONTAINER_CLASS = nmsClass("world.inventory", "ContainerAnvil");
+            CRAFTING_CONTAINER_CLASS = nmsClass("world.inventory", "ContainerWorkbench");
+            ENCHANTING_CONTAINER_CLASS = nmsClass("world.inventory", "ContainerEnchantTable");
 
             CRAFT_PLAYER = obcClass("entity.CraftPlayer");
             CRAFT_INVENTORY = obcClass("inventory.CraftInventory");
@@ -146,6 +152,8 @@ final class ReflectionUtils {
             INVENTORY_FIELD = ENTITY_HUMAN.getDeclaredField("cm");
 
             ANVIL_CONTAINER_CONSTRUCTOR = ANVIL_CONTAINER_CLASS.getConstructor(int.class, PLAYER_INVENTORY);
+            CRAFTING_CONTAINER_CONSTRUCTOR = CRAFTING_CONTAINER_CLASS.getConstructor(int.class, PLAYER_INVENTORY);
+            ENCHANTING_CONTAINER_CONSTRUCTOR = ENCHANTING_CONTAINER_CLASS.getConstructor(int.class, PLAYER_INVENTORY);
 
             if (version.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
                 GET_NMS_INVENTORY_TYPE = CONTAINER.getMethod("a");

@@ -119,8 +119,12 @@ public final class InventoryUtils {
         try {
             Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
 
+            int windowId = (int) entityPlayer.getClass().getMethod("nextContainerCounter").invoke(entityPlayer);
+            WINDOW_ID_FIELD.setAccessible(true);
+            WINDOW_ID_FIELD.set(inventory, windowId);
+            WINDOW_ID_FIELD.setAccessible(false);
+
             ACTIVE_CONTAINER_FIELD.set(entityPlayer, inventory);
-            int windowId = WINDOW_ID_FIELD.getInt(inventory);
 
             Object nmsInventoryType = GET_NMS_INVENTORY_TYPE.invoke(inventory);
             Object packetPlayOutOpenWindow = PACKET_PLAY_OUT_OPEN_WINDOW_CONSTRUCTOR.newInstance(windowId, nmsInventoryType, createChatBaseComponent(title));
@@ -138,11 +142,42 @@ public final class InventoryUtils {
             INVENTORY_FIELD.setAccessible(true);
             Object inventory = INVENTORY_FIELD.get(entityPlayer);
 
-            int windowId = (int) entityPlayer.getClass().getMethod("nextContainerCounter").invoke(entityPlayer);
-            Object anvilMenu = ANVIL_CONTAINER_CONSTRUCTOR.newInstance(windowId, inventory);
+            Object anvilMenu = ANVIL_CONTAINER_CONSTRUCTOR.newInstance(-1, inventory);
             CHECK_REACHABLE.set(anvilMenu, false);
 
             return anvilMenu;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Object createCraftingInventory(Player player) {
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            INVENTORY_FIELD.setAccessible(true);
+            Object inventory = INVENTORY_FIELD.get(entityPlayer);
+
+            Object craftingMenu = CRAFTING_CONTAINER_CONSTRUCTOR.newInstance(-1, inventory);
+            CHECK_REACHABLE.set(craftingMenu, false);
+
+            return craftingMenu;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Object createEnchantingInventory(Player player) {
+        try {
+            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            INVENTORY_FIELD.setAccessible(true);
+            Object inventory = INVENTORY_FIELD.get(entityPlayer);
+
+            Object enchantingMenu = ENCHANTING_CONTAINER_CONSTRUCTOR.newInstance(-1, inventory);
+            CHECK_REACHABLE.set(enchantingMenu, false);
+
+            return enchantingMenu;
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return null;

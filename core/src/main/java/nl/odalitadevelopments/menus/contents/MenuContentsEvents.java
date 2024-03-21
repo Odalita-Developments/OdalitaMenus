@@ -8,6 +8,8 @@ import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -31,9 +33,15 @@ public sealed interface MenuContentsEvents permits MenuContentsEventsImpl {
 
     void onClose(@NotNull Runnable action);
 
-    <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled);
+    <T extends InventoryEvent> @NotNull OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled);
 
-    <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority);
+    <T extends InventoryEvent> @NotNull OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority);
 
-    <T extends Event> @NotNull OdalitaEventListener onEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer);
+    <T extends InventoryEvent> @NotNull OdalitaEventListener onInventoryEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer);
+
+    <T extends PlayerEvent> @NotNull OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority, boolean ignoreCancelled);
+
+    <T extends PlayerEvent> @NotNull OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer, @NotNull EventPriority priority);
+
+    <T extends PlayerEvent> @NotNull OdalitaEventListener onPlayerEvent(@NotNull Class<? extends T> eventClass, @NotNull Consumer<@NotNull T> eventConsumer);
 }

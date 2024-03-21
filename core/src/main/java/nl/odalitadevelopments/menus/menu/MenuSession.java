@@ -118,7 +118,12 @@ public final class MenuSession {
 
             // Make sure the contents array is the correct size
             MenuItem[][] newContents = new MenuItem[this.getRows()][this.getColumns()];
-            System.arraycopy(this.contents, 0, newContents, 0, this.contents.length);
+            for (int i = 0; i < this.contents.length; i++) {
+                if (i >= newContents.length) break;
+
+                System.arraycopy(this.contents[i], 0, newContents[i], 0, Math.min(this.contents[i].length, newContents[i].length));
+            }
+
             this.contents = newContents;
 
             this.inventoryData = this.menuType.createInventory(this.player, this.title);
