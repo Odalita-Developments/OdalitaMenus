@@ -783,6 +783,9 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     protected final void set0(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, boolean calculated) {
+        // Don't set items after the menu is closed
+        if (this.menuSession.isClosed()) return;
+
         if (!calculated) slotPos = this.calculateSlotPos(slotPos);
         int slot = slotPos.getSlot();
 
