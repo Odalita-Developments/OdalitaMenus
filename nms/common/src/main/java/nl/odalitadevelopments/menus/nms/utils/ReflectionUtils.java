@@ -18,7 +18,7 @@ public final class ReflectionUtils {
     }
 
     public static String nmsClassName(String post1_17package, String className) {
-        String classPackage = (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17))
+        String classPackage = (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1))
                 ? post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package
                 : NM_PACKAGE + ".server." + getServerProtocolVersion();
 
