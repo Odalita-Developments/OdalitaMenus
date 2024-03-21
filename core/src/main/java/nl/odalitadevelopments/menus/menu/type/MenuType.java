@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.menu.type;
 
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 
 public enum MenuType {
 
-    ANVIL(InventoryType.ANVIL, (player, title) -> InventoryUtils.createAnvilInventory(player)),
+    ANVIL(InventoryType.ANVIL, (player, title) -> OdalitaMenusNMS.getInstance().createAnvilInventory(player)),
     BEACON(InventoryType.BEACON),
     BLAST_FURNACE(InventoryType.BLAST_FURNACE),
     BREWING(InventoryType.BREWING),
@@ -22,8 +22,8 @@ public enum MenuType {
     CHEST_4_ROW(36),
     CHEST_5_ROW(45),
     CHEST_6_ROW(54),
-    CRAFTING(InventoryType.WORKBENCH, (player, title) -> InventoryUtils.createCraftingInventory(player)),
-    ENCHANTING(InventoryType.ENCHANTING, (player, title) -> InventoryUtils.createEnchantingInventory(player)),
+    CRAFTING(InventoryType.WORKBENCH, (player, title) -> OdalitaMenusNMS.getInstance().createCraftingInventory(player)),
+    ENCHANTING(InventoryType.ENCHANTING, (player, title) -> OdalitaMenusNMS.getInstance().createEnchantingInventory(player)),
     FURNACE(InventoryType.FURNACE),
     GRINDSTONE(InventoryType.GRINDSTONE),
     HOPPER(InventoryType.HOPPER),
@@ -59,7 +59,7 @@ public enum MenuType {
     @NotNull InventoryCreation createInventory(Player player, String title) {
         if (this.nmsInventoryCreation != null) {
             Object nmsInventory = this.nmsInventoryCreation.apply(player, title);
-            Inventory bukkitInventory = InventoryUtils.getInventoryFromNMSMenu(nmsInventory);
+            Inventory bukkitInventory = OdalitaMenusNMS.getInstance().getInventoryFromNMS(nmsInventory);
             return new InventoryCreation(nmsInventory, bukkitInventory);
         }
 

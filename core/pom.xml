@@ -12,4 +12,37 @@
     <groupId>nl.odalitadevelopments.odalitamenus</groupId>
     <artifactId>core</artifactId>
     <name>Core</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>common</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_16_R3</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_17_R1</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_18_R2</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_19_R3</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R3</artifactId>
+            <version>0.4.6</version>
+        </dependency>
+    </dependencies>
 </project>

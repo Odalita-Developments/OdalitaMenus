@@ -8,10 +8,10 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -78,6 +78,11 @@ final class MenuInitializer<P extends MenuProvider> {
         Object nmsInventory = inventoryData.nmsInventory();
         Object inventoryToOpen = nmsInventory == null ? inventoryData.bukkitInventory() : nmsInventory;
 
-        InventoryUtils.openInventory(player, inventoryToOpen, menuSession.getTitle());
+        try {
+            OdalitaMenusNMS.getInstance().openInventory(player, inventoryToOpen, menuSession.getTitle());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            this.menuProcessor.getOpenMenus().remove(player);
+        }
     }
 }

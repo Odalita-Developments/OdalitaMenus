@@ -13,7 +13,7 @@ import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -99,9 +99,15 @@ public final class MenuSession {
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
+        String oldTitle = this.title;
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        InventoryUtils.changeTitle(this.getInventory(), title);
+        try {
+            OdalitaMenusNMS.getInstance().changeInventoryTitle(this.getInventory(), this.title);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            this.title = oldTitle;
+        }
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -136,9 +142,9 @@ public final class MenuSession {
         }
 
         if (!this.opened) {
-            this.openActions.add(() -> InventoryUtils.setProperty(this.getInventory(), property, value));
+            this.openActions.add(() -> OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value));
         } else {
-            InventoryUtils.setProperty(this.getInventory(), property, value);
+            OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value);
         }
     }
 

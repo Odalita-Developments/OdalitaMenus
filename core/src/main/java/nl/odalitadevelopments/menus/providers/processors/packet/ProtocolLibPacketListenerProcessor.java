@@ -9,7 +9,7 @@ import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaWindowItemsPacket;
-import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
+import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

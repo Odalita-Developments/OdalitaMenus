@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.utils.version;
+package nl.odalitadevelopments.menus.nms.utils.version;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;

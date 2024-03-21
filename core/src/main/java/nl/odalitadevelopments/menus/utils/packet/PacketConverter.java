@@ -1,8 +1,8 @@
 package nl.odalitadevelopments.menus.utils.packet;
 
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
-import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +47,7 @@ public final class PacketConverter {
             int windowId = getField(packetClass, (is1171) ? "c" : "a").getInt(packetObject);
             int slot = getField(packetClass, (is1171) ? "e" : "b").getInt(packetObject);
             Object nmsItem = getField(packetClass, (is1171) ? "f" : "c").get(packetObject);
-            ItemStack item = InventoryUtils.fromNMS(nmsItem);
+            ItemStack item = OdalitaMenusNMS.getInstance().itemStackFromNMS(nmsItem);
 
             if (is1171) {
                 int stateId = getField(packetClass, "d").getInt(packetObject);
@@ -72,13 +72,13 @@ public final class PacketConverter {
 
             List<ItemStack> items = new ArrayList<>(nmsItems.size());
             for (Object nmsItem : nmsItems) {
-                items.add(InventoryUtils.fromNMS(nmsItem));
+                items.add(OdalitaMenusNMS.getInstance().itemStackFromNMS(nmsItem));
             }
 
             if (is1171) {
                 int stateId = getField(packetClass, "b").getInt(packetObject);
                 Object nmsCarriedItem = getField(packetClass, "d").get(packetObject);
-                ItemStack carriedItem = InventoryUtils.fromNMS(nmsCarriedItem);
+                ItemStack carriedItem = OdalitaMenusNMS.getInstance().itemStackFromNMS(nmsCarriedItem);
 
                 return new OdalitaWindowItemsPacket(windowId, stateId, items, carriedItem);
             }
@@ -97,7 +97,7 @@ public final class PacketConverter {
             boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
 
             Class<?> packetClass = packetObject.getClass();
-            Object nmsItem = InventoryUtils.toNMS(packet.item());
+            Object nmsItem = OdalitaMenusNMS.getInstance().itemStackToNMS(packet.item());
 
             getField(packetClass, (is1171) ? "f" : "c").set(packetObject, nmsItem);
         } catch (Exception exception) {
@@ -114,7 +114,7 @@ public final class PacketConverter {
             Class<?> packetClass = packetObject.getClass();
             List<Object> nmsItems = new ArrayList<>();
             for (ItemStack item : packet.items()) {
-                nmsItems.add(InventoryUtils.toNMS(item));
+                nmsItems.add(OdalitaMenusNMS.getInstance().itemStackToNMS(item));
             }
 
             getField(packetClass, (is1171) ? "c" : "b").set(packetObject, nmsItems);

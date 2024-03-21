@@ -13,10 +13,11 @@ import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.*;
 import nl.odalitadevelopments.menus.scrollable.ScrollableBuilder;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.utils.ItemUtils;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -342,7 +343,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void setDisplay(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName) {
-        this.setDisplay(slotPos, InventoryUtils.createItemStack(material, displayName));
+        this.setDisplay(slotPos, ItemUtils.createItemStack(material, displayName));
     }
 
     @Override
@@ -387,7 +388,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void setClickable(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName, @NotNull Consumer<@NotNull InventoryClickEvent> event) {
-        this.setClickable(slotPos, InventoryUtils.createItemStack(material, displayName), event);
+        this.setClickable(slotPos, ItemUtils.createItemStack(material, displayName), event);
     }
 
     @Override
@@ -703,7 +704,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 this.cache.getRefreshableItems().remove(slot);
                 this.cache.getPageSwitchUpdateItems().remove(slot);
 
-                InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
+                OdalitaMenusNMS.getInstance().setInventoryItem(this.menuSession.getPlayer(), slot, null, this.menuSession.getInventory());
             }
         }
 
@@ -806,7 +807,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            InventoryUtils.updateItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            OdalitaMenusNMS.getInstance().setInventoryItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
         }
     }
 
