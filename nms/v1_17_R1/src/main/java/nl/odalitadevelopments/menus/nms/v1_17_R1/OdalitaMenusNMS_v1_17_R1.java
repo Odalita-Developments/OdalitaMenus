@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -148,11 +147,8 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
 
             ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
             AbstractContainerMenu activeContainer = serverPlayer.containerMenu;
-            int windowId = activeContainer.containerId;
-            if (windowId <= 0) continue;
 
-            ClientboundContainerSetDataPacket packet = new ClientboundContainerSetDataPacket(windowId, propertyIndex, value);
-            this.sendPacket(player, packet);
+            activeContainer.setData(propertyIndex, value);
         }
     }
 
@@ -214,6 +210,17 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
         enchantmentMenu.checkReachable = false;
 
         return enchantmentMenu;
+    }
+
+    @Override
+    public Object createStonecutterInventory(Player player) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
+
+        StonecutterMenu stonecutterMenu = new StonecutterMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.getLevel(), serverPlayer.blockPosition()));
+        stonecutterMenu.checkReachable = false;
+
+        return stonecutterMenu;
     }
 
     @Override

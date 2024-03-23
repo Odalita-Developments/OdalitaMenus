@@ -36,5 +36,7 @@ public interface OdalitaMenusNMS {
 
     Object createEnchantingInventory(Player player);
 
+    Object createStonecutterInventory(Player player);
+
     Inventory getInventoryFromNMS(Object nmsInventory);
 }

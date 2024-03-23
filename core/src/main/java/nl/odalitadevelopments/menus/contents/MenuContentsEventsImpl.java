@@ -128,6 +128,8 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
         }
 
         OdalitaEventListener eventListener = ($, event) -> {
+            if (!eventClass.isInstance(event)) return;
+
             T typedEvent = eventClass.cast(event);
             Inventory sessionInventory = this.menuContents.menuSession.getInventory();
 

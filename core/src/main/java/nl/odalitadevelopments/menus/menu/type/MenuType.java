@@ -31,7 +31,7 @@ public enum MenuType {
     LOOM(InventoryType.LOOM),
     SMITHING(InventoryType.SMITHING),
     SMOKER(InventoryType.SMOKER),
-    STONE_CUTTER(InventoryType.STONECUTTER),
+    STONECUTTER(InventoryType.STONECUTTER, (player, title) -> OdalitaMenusNMS.getInstance().createStonecutterInventory(player)),
     WINDOW_3X3(InventoryType.DROPPER);
 
     private final int size;

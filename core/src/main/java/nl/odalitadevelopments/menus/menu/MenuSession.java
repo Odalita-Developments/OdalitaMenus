@@ -136,7 +136,7 @@ public final class MenuSession {
         }
     }
 
-    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+    public void setMenuProperty(@NotNull MenuProperty property, int value) {
         if (this.menuType.type() != property.getMenuType()) {
             throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
         }

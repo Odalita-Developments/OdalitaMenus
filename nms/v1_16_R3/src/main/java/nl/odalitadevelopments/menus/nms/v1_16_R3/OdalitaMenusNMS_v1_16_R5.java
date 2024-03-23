@@ -140,11 +140,8 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
 
             EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
             Container activeContainer = serverPlayer.activeContainer;
-            int windowId = activeContainer.windowId;
-            if (windowId <= 0) continue;
 
-            PacketPlayOutWindowData packet = new PacketPlayOutWindowData(windowId, propertyIndex, value);
-            this.sendPacket(player, packet);
+            activeContainer.a(propertyIndex, value);
         }
     }
 
@@ -206,6 +203,17 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         enchantmentMenu.checkReachable = false;
 
         return enchantmentMenu;
+    }
+
+    @Override
+    public Object createStonecutterInventory(Player player) {
+        EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        PlayerInventory playerInventory = serverPlayer.inventory;
+
+        ContainerStonecutter stonecutterMenu = new ContainerStonecutter(-1, playerInventory, ContainerAccess.at(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
+        stonecutterMenu.checkReachable = false;
+
+        return stonecutterMenu;
     }
 
     @Override

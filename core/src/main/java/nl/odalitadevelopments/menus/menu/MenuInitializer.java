@@ -13,7 +13,10 @@ import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @AllArgsConstructor
 final class MenuInitializer<P extends MenuProvider> {
@@ -80,6 +83,12 @@ final class MenuInitializer<P extends MenuProvider> {
 
         try {
             OdalitaMenusNMS.getInstance().openInventory(player, inventoryToOpen, menuSession.getTitle());
+
+            // Make sure the player is added to the viewers list
+            List<HumanEntity> viewers = menuSession.getInventory().getViewers();
+            if (!viewers.contains(player)) {
+                viewers.add(player);
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
             this.menuProcessor.getOpenMenus().remove(player);
