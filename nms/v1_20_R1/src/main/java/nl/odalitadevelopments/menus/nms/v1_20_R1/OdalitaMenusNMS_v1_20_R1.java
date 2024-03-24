@@ -199,6 +199,17 @@ public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
     }
 
     @Override
+    public Object createCartographyInventory(Player player) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
+
+        CartographyTableMenu cartographyTableMenu = new CartographyTableMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.level(), serverPlayer.blockPosition()));
+        cartographyTableMenu.checkReachable = false;
+
+        return cartographyTableMenu;
+    }
+
+    @Override
     public Object createCraftingInventory(Player player) {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
@@ -221,11 +232,33 @@ public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
     }
 
     @Override
+    public Object createLoomInventory(Player player) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
+
+        LoomMenu loomMenu = new LoomMenu(-1, playerInventory);
+        loomMenu.checkReachable = false;
+
+        return loomMenu;
+    }
+
+    @Override
+    public Object createSmithingInventory(Player player) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
+
+        SmithingMenu smithingMenu = new SmithingMenu(-1, playerInventory);
+        smithingMenu.checkReachable = false;
+
+        return smithingMenu;
+    }
+
+    @Override
     public Object createStonecutterInventory(Player player) {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
 
-        StonecutterMenu stonecutterMenu = new StonecutterMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.level(), serverPlayer.blockPosition()));
+        StonecutterMenu stonecutterMenu = new StonecutterMenu(-1, playerInventory);
         stonecutterMenu.checkReachable = false;
 
         return stonecutterMenu;

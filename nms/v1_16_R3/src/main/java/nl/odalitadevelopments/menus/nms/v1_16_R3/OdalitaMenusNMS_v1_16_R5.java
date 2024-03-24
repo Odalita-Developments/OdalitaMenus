@@ -184,6 +184,17 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
+    public Object createCartographyInventory(Player player) {
+        EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        PlayerInventory playerInventory = serverPlayer.inventory;
+
+        ContainerCartography cartographyTableMenu = new ContainerCartography(-1, playerInventory, ContainerAccess.at(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
+        cartographyTableMenu.checkReachable = false;
+
+        return cartographyTableMenu;
+    }
+
+    @Override
     public Object createCraftingInventory(Player player) {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         PlayerInventory playerInventory = serverPlayer.inventory;
@@ -206,11 +217,33 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
+    public Object createLoomInventory(Player player) {
+        EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        PlayerInventory playerInventory = serverPlayer.inventory;
+
+        ContainerLoom loomMenu = new ContainerLoom(-1, playerInventory);
+        loomMenu.checkReachable = false;
+
+        return loomMenu;
+    }
+
+    @Override
+    public Object createSmithingInventory(Player player) {
+        EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        PlayerInventory playerInventory = serverPlayer.inventory;
+
+        ContainerSmithing smithingMenu = new ContainerSmithing(-1, playerInventory);
+        smithingMenu.checkReachable = false;
+
+        return smithingMenu;
+    }
+
+    @Override
     public Object createStonecutterInventory(Player player) {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         PlayerInventory playerInventory = serverPlayer.inventory;
 
-        ContainerStonecutter stonecutterMenu = new ContainerStonecutter(-1, playerInventory, ContainerAccess.at(serverPlayer.getWorldServer(), serverPlayer.getChunkCoordinates()));
+        ContainerStonecutter stonecutterMenu = new ContainerStonecutter(-1, playerInventory);
         stonecutterMenu.checkReachable = false;
 
         return stonecutterMenu;

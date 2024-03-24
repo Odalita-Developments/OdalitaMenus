@@ -32,9 +32,15 @@ public interface OdalitaMenusNMS {
 
     Object createAnvilInventory(Player player);
 
+    Object createCartographyInventory(Player player);
+
     Object createCraftingInventory(Player player);
 
     Object createEnchantingInventory(Player player);
+
+    Object createLoomInventory(Player player);
+
+    Object createSmithingInventory(Player player);
 
     Object createStonecutterInventory(Player player);
 
