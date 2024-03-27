@@ -3,8 +3,6 @@ package nl.odalitadevelopments.menus.contents;
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
-import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor

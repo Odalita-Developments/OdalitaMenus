@@ -8,7 +8,7 @@ import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.utils.collection.Table;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +45,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
                     ItemStack item = menuItem.getItemStack(instance);
                     int slot = SlotPos.of(row, column).getSlot();
 
-                    InventoryUtils.updateItem(player, slot, item, session.getInventory());
+                    OdalitaMenusNMS.getInstance().setInventoryItem(player, slot, item, session.getInventory());
                 }
             }
         }

@@ -1,6 +1,7 @@
 package nl.odalitadevelopments.menus.menu.type;
 
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public interface SupportedMenuType {
     }
 
     @ApiStatus.Internal
-    default @NotNull Inventory createInventory(@NotNull String title) {
-        return this.type().createInventory(title);
+    default @NotNull InventoryCreation createInventory(@NotNull Player player, @NotNull String title) {
+        return this.type().createInventory(player, title);
     }
 }

@@ -10,9 +10,10 @@ import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -34,8 +35,9 @@ public final class MenuSession {
 
     private String id;
     private SupportedMenuType menuType;
+    @Getter(AccessLevel.PACKAGE)
     @Setter(AccessLevel.NONE)
-    private Inventory inventory;
+    private InventoryCreation inventoryData;
     private String title;
     private final MenuContents menuContents;
 
@@ -52,7 +54,7 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, Player player, String id, SupportedMenuType menuType, Inventory inventory, String title, String globalCacheKey) {
+    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, Player player, String id, SupportedMenuType menuType, InventoryCreation inventoryData, String title, String globalCacheKey) {
         this.instance = instance;
         this.builder = builder;
         this.player = player;
@@ -60,7 +62,7 @@ public final class MenuSession {
         this.id = id;
         this.menuType = menuType;
 
-        this.inventory = inventory;
+        this.inventoryData = inventoryData;
         this.contents = new MenuItem[this.getRows()][this.getColumns()];
         this.title = title;
 
@@ -90,12 +92,22 @@ public final class MenuSession {
         this.id = id;
     }
 
+    public @NotNull Inventory getInventory() {
+        return this.inventoryData.bukkitInventory();
+    }
+
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
+        String oldTitle = this.title;
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        InventoryUtils.changeTitle(this.inventory, title);
+        try {
+            OdalitaMenusNMS.getInstance().changeInventoryTitle(this.getInventory(), this.title);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            this.title = oldTitle;
+        }
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -112,19 +124,28 @@ public final class MenuSession {
 
             // Make sure the contents array is the correct size
             MenuItem[][] newContents = new MenuItem[this.getRows()][this.getColumns()];
-            System.arraycopy(this.contents, 0, newContents, 0, this.contents.length);
+            for (int i = 0; i < this.contents.length; i++) {
+                if (i >= newContents.length) break;
+
+                System.arraycopy(this.contents[i], 0, newContents[i], 0, Math.min(this.contents[i].length, newContents[i].length));
+            }
+
             this.contents = newContents;
 
-            this.inventory = this.menuType.createInventory(this.title);
+            this.inventoryData = this.menuType.createInventory(this.player, this.title);
         }
     }
 
-    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+    public void setMenuProperty(@NotNull MenuProperty property, int value) {
         if (this.menuType.type() != property.getMenuType()) {
             throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
         }
 
-        InventoryUtils.setProperty(this.inventory, property, value);
+        if (!this.opened) {
+            this.openActions.add(() -> OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value));
+        } else {
+            OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value);
+        }
     }
 
     public synchronized void setGlobalCacheKey(@NotNull String globalCacheKey) {

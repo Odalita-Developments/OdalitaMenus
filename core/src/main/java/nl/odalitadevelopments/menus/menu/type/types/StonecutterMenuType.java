@@ -12,7 +12,7 @@ public final class StonecutterMenuType implements SupportedMenuType {
 
     @Override
     public @NotNull MenuType type() {
-        return MenuType.STONE_CUTTER;
+        return MenuType.STONECUTTER;
     }
 
     @Override
