@@ -6,7 +6,7 @@
     <parent>
         <groupId>nl.odalitadevelopments.odalitamenus</groupId>
         <artifactId>nms</artifactId>
-        <version>0.4.6</version>
+        <version>0.5.0</version>
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>common</artifactId>
-            <version>0.4.6</version>
+            <version>0.5.0</version>
             <scope>provided</scope>
         </dependency>
 
