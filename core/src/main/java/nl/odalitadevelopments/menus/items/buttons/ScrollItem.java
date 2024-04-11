@@ -1,6 +1,7 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -81,9 +82,8 @@ public final class ScrollItem extends PageUpdatableItem {
 
     private final Direction direction;
     private final Scrollable scrollable;
+    private final ItemStack itemStack;
     private final boolean showOnLastPage;
-
-    private ItemStack itemStack;
 
     private ScrollItem(Direction direction, Scrollable scrollable, ItemStack itemStack, boolean showOnLastPage) {
         this.direction = direction;
@@ -97,7 +97,7 @@ public final class ScrollItem extends PageUpdatableItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance) {
+    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         if (!this.showOnLastPage && this.isOnLastPageForDirection()) {
             return new ItemStack(Material.AIR);
         }
@@ -116,7 +116,7 @@ public final class ScrollItem extends PageUpdatableItem {
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance) {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 

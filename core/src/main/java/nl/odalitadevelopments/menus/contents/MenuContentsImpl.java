@@ -807,7 +807,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            OdalitaMenusNMS.getInstance().setInventoryItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            OdalitaMenusNMS.getInstance().setInventoryItem(this.menuSession.getPlayer(), slot, item == null ? null : item.getItemStack(this.menuSession.getInstance(), this), this.menuSession.getInventory());
         }
     }
 

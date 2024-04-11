@@ -42,7 +42,7 @@ final class MenuUpdateTask implements MenuTaskRunnable {
                 if (updatableItemData.getUpdatedAtTick() == -1 || tick - updatableItemData.getUpdatedAtTick() == menuItem.getUpdateTicks()) {
                     updatableItemData.setUpdatedAtTick(tick);
 
-                    ItemStack item = menuItem.getItemStack(instance);
+                    ItemStack item = menuItem.getItemStack(instance, session.getMenuContents());
                     int slot = SlotPos.of(row, column).getSlot();
 
                     OdalitaMenusNMS.getInstance().setInventoryItem(player, slot, item, session.getInventory());

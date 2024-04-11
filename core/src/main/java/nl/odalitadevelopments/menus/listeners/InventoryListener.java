@@ -156,7 +156,7 @@ public final class InventoryListener implements Listener {
 
             MenuItem menuItem = menuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
-                menuItem.onClick(this.instance).accept(event);
+                menuItem.onClick(this.instance, menuSession.getMenuContents()).accept(event);
             }
         }
     }
