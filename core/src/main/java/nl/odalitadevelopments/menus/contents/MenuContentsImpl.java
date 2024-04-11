@@ -432,6 +432,36 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     @Override
+    public void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.set(slotPos, UpdatableItem.of(itemStack, time));
+    }
+
+    @Override
+    public void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.setUpdatable(SlotPos.of(row, column), itemStack, time);
+    }
+
+    @Override
+    public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.setUpdatable(SlotPos.of(slot), itemStack, time);
+    }
+
+    @Override
+    public void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.set(slotPos, UpdatableItem.of(itemStack));
+    }
+
+    @Override
+    public void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.setUpdatable(SlotPos.of(row, column), itemStack);
+    }
+
+    @Override
+    public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.setUpdatable(SlotPos.of(slot), itemStack);
+    }
+
+    @Override
     public @NotNull MenuIterator createIterator(@NotNull String iterator, @NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn) {
         MenuIterator menuIterator = new MenuIterator(this, menuIteratorType, startRow, startColumn);
         this.cache.getIterators().put(iterator, menuIterator);
