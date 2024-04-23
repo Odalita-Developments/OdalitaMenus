@@ -13,6 +13,9 @@
     <artifactId>v1_20_R4</artifactId>
 
     <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
         <spigot-version>1.20.5-R0.1-SNAPSHOT</spigot-version>
     </properties>
 
@@ -38,7 +41,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.5</version>
+                <version>2.0.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
