@@ -1,10 +1,8 @@
 jdk:
-  - openjdk17
   - openjdk21
 before_install:
-  - sdk install java 17.0.9-oracle
   - sdk install java 21.0.2-oracle
-  - sdk use java 17.0.9-oracle
+  - sdk use java 21.0.2-oracle
   - sdk install maven
   - wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar --no-check-certificate
   - java -jar BuildTools.jar --rev 1.17.1 --remapped
@@ -12,7 +10,6 @@ before_install:
   - java -jar BuildTools.jar --rev 1.19.4 --remapped
   - java -jar BuildTools.jar --rev 1.20.1 --remapped
   - java -jar BuildTools.jar --rev 1.20.4 --remapped
-  - sdk use java 21.0.2-oracle
   - java -jar BuildTools.jar --rev 1.20.5 --remapped
 install:
   - mvn install -Dmaven.javadoc.skip=true -DskipTests
