@@ -17,6 +17,7 @@ import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -85,7 +86,7 @@ public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
 
     @Override
     public Component createChatBaseComponent(String string) {
-        return Component.Serializer.fromJson("{\"text\":\"" + string + "\"}");
+        return CraftChatMessage.fromJSONOrNull("{\"text\":\"" + string + "\"}");
     }
 
     @Override

@@ -49,5 +49,10 @@
             <artifactId>v1_20_R3</artifactId>
             <version>0.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R4</artifactId>
+            <version>0.5.1</version>
+        </dependency>
     </dependencies>
 </project>

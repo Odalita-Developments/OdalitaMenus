@@ -9,6 +9,7 @@ import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -70,8 +71,8 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
-    public IChatMutableComponent createChatBaseComponent(String string) {
-        return IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + string + "\"}");
+    public IChatBaseComponent createChatBaseComponent(String string) {
+        return CraftChatMessage.fromJSONOrNull("{\"text\":\"" + string + "\"}");
     }
 
     @Override
@@ -110,7 +111,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
             return;
         }
 
-        IChatMutableComponent titleComponent = this.createChatBaseComponent(title);
+        IChatBaseComponent titleComponent = this.createChatBaseComponent(title);
 
         for (HumanEntity viewer : inventory.getViewers()) {
             if (!(viewer instanceof Player player)) continue;
@@ -164,7 +165,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         serverPlayer.activeContainer = nmsInventory;
 
         Containers<?> type = nmsInventory.getType();
-        IChatMutableComponent titleComponent = this.createChatBaseComponent(title);
+        IChatBaseComponent titleComponent = this.createChatBaseComponent(title);
 
         PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(windowId, type, titleComponent);
         this.sendPacket(player, packet);
