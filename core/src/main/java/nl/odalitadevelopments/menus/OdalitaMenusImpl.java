@@ -15,6 +15,7 @@ import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import nl.odalitadevelopments.menus.nms.v1_16_R3.OdalitaMenusNMS_v1_16_R5;
 import nl.odalitadevelopments.menus.nms.v1_17_R1.OdalitaMenusNMS_v1_17_R1;
@@ -142,7 +143,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             method.invoke(null, nms);
             method.setAccessible(false);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
             Bukkit.getServer().shutdown();
         }
     }

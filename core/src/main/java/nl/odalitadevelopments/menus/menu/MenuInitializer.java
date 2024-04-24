@@ -9,6 +9,7 @@ import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -66,7 +67,7 @@ final class MenuInitializer<P extends MenuProvider> {
 
             Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 
@@ -90,7 +91,7 @@ final class MenuInitializer<P extends MenuProvider> {
                 viewers.add(player);
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
             this.menuProcessor.getOpenMenus().remove(player);
         }
     }

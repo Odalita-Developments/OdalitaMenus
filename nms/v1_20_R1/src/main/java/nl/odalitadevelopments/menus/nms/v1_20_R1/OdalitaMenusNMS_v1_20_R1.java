@@ -12,6 +12,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
@@ -50,7 +51,7 @@ public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
             WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_20_R1.WINDOW_ID);
             NETWORK_MANAGER_FIELD = ServerGamePacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_20_R1.NETWORK_MANAGER);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 

@@ -3,6 +3,7 @@ package nl.odalitadevelopments.menus.tasks;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -50,7 +51,7 @@ public final class MenuTasksProcessor implements Runnable {
                 }
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 }

@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
 import net.minecraft.server.v1_16_R3.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
@@ -40,7 +41,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
             TITLE_FIELD = Container.class.getDeclaredField("title");
             WINDOW_ID_FIELD = Container.class.getDeclaredField(ObfuscatedNames_v1_16_R5.WINDOW_ID);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 

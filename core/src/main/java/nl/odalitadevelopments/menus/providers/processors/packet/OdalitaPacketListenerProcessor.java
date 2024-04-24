@@ -3,6 +3,7 @@ package nl.odalitadevelopments.menus.providers.processors.packet;
 import io.netty.channel.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.PacketConverter;
@@ -56,7 +57,7 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
 
                     pipeline.remove(ODALITA_PACKET_HANDLER);
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    OdalitaLogger.error(exception);
                 }
             }
         }
@@ -83,7 +84,7 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
             if (pipeline.get(ODALITA_PACKET_HANDLER) != null) return;
             pipeline.addBefore(PACKET_HANDLER, ODALITA_PACKET_HANDLER, this.createChannelDuplexHandler(player));
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 

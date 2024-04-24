@@ -1,6 +1,7 @@
 package nl.odalitadevelopments.menus.utils.packet;
 
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +57,7 @@ public final class PacketConverter {
 
             return new OdalitaSetSlotPacket(windowId, slot, item);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
             return null;
         }
     }
@@ -85,7 +86,7 @@ public final class PacketConverter {
 
             return new OdalitaWindowItemsPacket(windowId, items);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
             return null;
         }
     }
@@ -101,7 +102,7 @@ public final class PacketConverter {
 
             getField(packetClass, (is1171) ? "f" : "c").set(packetObject, nmsItem);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 
@@ -119,7 +120,7 @@ public final class PacketConverter {
 
             getField(packetClass, (is1171) ? "c" : "b").set(packetObject, nmsItems);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
     }
 
