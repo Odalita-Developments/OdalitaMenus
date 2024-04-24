@@ -1,21 +1,24 @@
-package nl.odalitadevelopments.menus.nms.v1_17_R1;
+package nl.odalitadevelopments.menus.nms.v1_20_R4;
 
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerCommonPacketListenerImpl;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -24,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
+public final class OdalitaMenusNMS_v1_20_R4 implements OdalitaMenusNMS {
 
     private static Class<?> MINECRAFT_INVENTORY;
 
@@ -32,6 +35,7 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
     private static Field PAPER_MINECRAFT_INVENTORY_TITLE_FIELD;
     private static Field TITLE_FIELD;
     private static Field WINDOW_ID_FIELD;
+    private static Field NETWORK_MANAGER_FIELD;
 
     static {
         try {
@@ -44,7 +48,8 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
             }
 
             TITLE_FIELD = AbstractContainerMenu.class.getDeclaredField("title");
-            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_17_R1.WINDOW_ID);
+            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_20_R4.WINDOW_ID);
+            NETWORK_MANAGER_FIELD = ServerCommonPacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_20_R4.NETWORK_MANAGER);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -61,9 +66,13 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
     }
 
     @Override
-    public Channel getPacketChannel(Player player) {
+    public Channel getPacketChannel(Player player) throws Exception {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        return serverPlayer.connection.connection.channel;
+        ServerGamePacketListenerImpl serverGamePacketListener = serverPlayer.connection;
+        NETWORK_MANAGER_FIELD.setAccessible(true);
+        Connection connection = (Connection) NETWORK_MANAGER_FIELD.get(serverGamePacketListener);
+        NETWORK_MANAGER_FIELD.setAccessible(false);
+        return connection.channel;
     }
 
     @Override
@@ -196,7 +205,7 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
 
-        CartographyTableMenu cartographyTableMenu = new CartographyTableMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.getLevel(), serverPlayer.blockPosition()));
+        CartographyTableMenu cartographyTableMenu = new CartographyTableMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.level(), serverPlayer.blockPosition()));
         cartographyTableMenu.checkReachable = false;
 
         return cartographyTableMenu;
@@ -207,7 +216,7 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
 
-        CraftingMenu craftingMenu = new CraftingMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.getLevel(), serverPlayer.blockPosition()));
+        CraftingMenu craftingMenu = new CraftingMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.level(), serverPlayer.blockPosition()));
         craftingMenu.checkReachable = false;
 
         return craftingMenu;
@@ -218,7 +227,7 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         net.minecraft.world.entity.player.Inventory playerInventory = serverPlayer.getInventory();
 
-        EnchantmentMenu enchantmentMenu = new EnchantmentMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.getLevel(), serverPlayer.blockPosition()));
+        EnchantmentMenu enchantmentMenu = new EnchantmentMenu(-1, playerInventory, ContainerLevelAccess.create(serverPlayer.level(), serverPlayer.blockPosition()));
         enchantmentMenu.checkReachable = false;
 
         return enchantmentMenu;

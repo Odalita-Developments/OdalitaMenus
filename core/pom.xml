@@ -13,7 +13,15 @@
     <artifactId>core</artifactId>
     <name>Core</name>
 
+    <repositories>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- OdalitaMenus NMS -->
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>common</artifactId>
@@ -48,6 +56,19 @@
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_20_R3</artifactId>
             <version>0.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R4</artifactId>
+            <version>0.5.1</version>
+        </dependency>
+
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

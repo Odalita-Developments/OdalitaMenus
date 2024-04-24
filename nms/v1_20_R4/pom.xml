@@ -10,10 +10,13 @@
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
-    <artifactId>v1_20_R3</artifactId>
+    <artifactId>v1_20_R4</artifactId>
 
     <properties>
-        <spigot-version>1.20.4-R0.1-SNAPSHOT</spigot-version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <spigot-version>1.20.5-R0.1-SNAPSHOT</spigot-version>
     </properties>
 
     <dependencies>
