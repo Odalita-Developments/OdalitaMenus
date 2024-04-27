@@ -95,7 +95,7 @@ public final class OdalitaMenusNMS_v1_20_R1 implements OdalitaMenusNMS {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         AbstractContainerMenu activeContainer = serverPlayer.containerMenu;
         int windowId = activeContainer.containerId;
-        int stateId = activeContainer.getStateId();
+        int stateId = activeContainer.incrementStateId();
         if (windowId <= 0) return;
 
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
