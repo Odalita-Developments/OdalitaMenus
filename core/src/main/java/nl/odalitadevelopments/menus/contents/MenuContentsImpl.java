@@ -671,6 +671,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public boolean loadFrame(@NotNull String id, Object @NotNull ... arguments) {
+        if (this.menuSession.isClosed()) return false;
+
         MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
         if (frameData == null) {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
@@ -715,6 +717,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void unloadFrame(@NotNull String id) {
+        if (this.menuSession.isClosed()) return;
+
         MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
         if (frameData == null) {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
