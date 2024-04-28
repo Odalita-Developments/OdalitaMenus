@@ -6,7 +6,7 @@
     <parent>
         <groupId>nl.odalitadevelopments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.5.2</version>
+        <version>0.5.3</version>
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus</groupId>
@@ -25,42 +25,42 @@
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>common</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_16_R3</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_17_R1</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_18_R2</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_19_R3</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_20_R1</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_20_R3</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>v1_20_R4</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
 
         <!-- ProtocolLib -->
