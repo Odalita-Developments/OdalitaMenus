@@ -77,7 +77,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
-    public void setInventoryItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
+    public synchronized void setInventoryItem(Player player, int slot, ItemStack itemStack, Inventory inventory) {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         Container activeContainer = serverPlayer.activeContainer;
         int windowId = activeContainer.windowId;
@@ -94,7 +94,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
-    public void changeInventoryTitle(Inventory inventory, String title) throws Exception {
+    public synchronized void changeInventoryTitle(Inventory inventory, String title) throws Exception {
         if (inventory.getViewers().isEmpty()) {
             IInventory nmsInventory = ((CraftInventory) inventory).getInventory();
             Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
@@ -136,7 +136,7 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     }
 
     @Override
-    public void setInventoryProperty(Inventory inventory, int propertyIndex, int value) {
+    public synchronized void setInventoryProperty(Inventory inventory, int propertyIndex, int value) {
         for (HumanEntity viewer : inventory.getViewers()) {
             if (!(viewer instanceof Player player)) continue;
 
