@@ -177,6 +177,9 @@ public final class MenuSession {
     @ApiStatus.Internal
     public void setClosed(boolean closed) {
         this.closed = closed;
+        if (closed) {
+            this.opened = false;
+        }
     }
 
     @ApiStatus.Internal
