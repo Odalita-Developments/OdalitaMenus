@@ -88,12 +88,16 @@ public final class OdalitaMenusNMS_v1_17_R1 implements OdalitaMenusNMS {
         AbstractContainerMenu activeContainer = serverPlayer.containerMenu;
         int windowId = activeContainer.containerId;
         int stateId = activeContainer.incrementStateId();
-        if (windowId <= 0) return;
+        if (activeContainer instanceof InventoryMenu || windowId <= 0) return;
 
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
 
         Container nmsInventory = ((CraftInventory) inventory).getInventory();
         List<net.minecraft.world.item.ItemStack> contents = nmsInventory.getContents();
+        if (contents.size() <= slot) {
+            return;
+        }
+
         contents.set(slot, nmsItemStack);
 
         ClientboundContainerSetSlotPacket packet = new ClientboundContainerSetSlotPacket(windowId, stateId, slot, nmsItemStack);

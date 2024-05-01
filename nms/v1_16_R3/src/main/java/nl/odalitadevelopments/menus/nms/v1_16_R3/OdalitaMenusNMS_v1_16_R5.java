@@ -81,12 +81,16 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         EntityPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         Container activeContainer = serverPlayer.activeContainer;
         int windowId = activeContainer.windowId;
-        if (windowId <= 0) return;
+        if (activeContainer instanceof ContainerPlayer || windowId <= 0) return;
 
         net.minecraft.server.v1_16_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
 
         IInventory nmsInventory = ((CraftInventory) inventory).getInventory();
         List<net.minecraft.server.v1_16_R3.ItemStack> contents = nmsInventory.getContents();
+        if (contents.size() <= slot) {
+            return;
+        }
+
         contents.set(slot, nmsItemStack);
 
         PacketPlayOutSetSlot packet = new PacketPlayOutSetSlot(windowId, slot, nmsItemStack);
