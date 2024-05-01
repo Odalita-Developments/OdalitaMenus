@@ -1,10 +1,12 @@
-[![](https://jitpack.io/v/Odalita-Developments/OdalitaMenus.svg)](https://jitpack.io/#Odalita-Developments/OdalitaMenus)
+[![JitPack](https://jitpack.io/v/Odalita-Developments/OdalitaMenus.svg)](https://jitpack.io/#Odalita-Developments/OdalitaMenus)
 
 # OdalitaMenus
+
 Advanced yet simple to use inventory api for Spigot plugins
 ___
 
 # Getting started ([Wiki](https://github.com/Odalita-Developments/OdalitaMenus/wiki/Getting-started))
+
 In order to get started you would need to add the libary to your project using **maven** or **gradle**
 
 Maven dependency:
@@ -20,7 +22,6 @@ Maven dependency:
     <version>v0.5.4</version>
 </dependency>
 ```
-
 
 Gradle dependency:
 ```gradle
