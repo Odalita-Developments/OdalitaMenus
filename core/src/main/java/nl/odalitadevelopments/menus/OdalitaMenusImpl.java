@@ -39,6 +39,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +47,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 final class OdalitaMenusImpl implements OdalitaMenus, Listener {
@@ -88,7 +86,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     @Getter(AccessLevel.NONE)
     private final InventoryListener inventoryListener;
     @Getter(AccessLevel.NONE)
-    private final ScheduledFuture<?> menuTask;
+    private final BukkitTask menuTask;
 
     private OdalitaMenusImpl(JavaPlugin javaPlugin) {
         if (INSTANCES.containsKey(javaPlugin)) {
@@ -118,7 +116,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
-        this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
+        this.menuTask = Bukkit.getScheduler().runTaskTimerAsynchronously(javaPlugin, new MenuTasksProcessor(this), 0, 1);
 
         INSTANCES.put(javaPlugin, this);
     }
@@ -211,7 +209,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onPluginDisable(PluginDisableEvent event) {
         if (this.javaPlugin.equals(event.getPlugin())) {
-            this.menuTask.cancel(true);
+            this.menuTask.cancel();
 
             for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
