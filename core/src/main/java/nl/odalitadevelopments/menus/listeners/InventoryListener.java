@@ -31,7 +31,7 @@ public final class InventoryListener implements Listener {
     private final OdalitaMenus instance;
     private final MenuProcessor menuProcessor;
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -52,7 +52,11 @@ public final class InventoryListener implements Listener {
             if (!clickedTopInventory && currentItem != null && menuSession.getCache().getPlayerInventoryClickAction() != null) {
                 event.setCancelled(true); // Cancel event by default
                 menuSession.getCache().getPlayerInventoryClickAction().accept(event);
-                return;
+
+                // If the event is cancelled, return
+                if (event.isCancelled()) {
+                    return;
+                }
             }
 
             // Cancel if the player uses shift click from top inventory when shift click is not allowed
