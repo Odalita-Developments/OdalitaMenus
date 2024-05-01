@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MenuTasksProcessor implements Runnable {
 
-    private final AtomicInteger tickCounter = new AtomicInteger(0);
+    private static final AtomicInteger TICK_COUNTER = new AtomicInteger(0);
 
     private final Collection<MenuTaskRunnable> tasks = new HashSet<>();
 
@@ -31,7 +31,7 @@ public final class MenuTasksProcessor implements Runnable {
     @Override
     public void run() {
         try {
-            int tick = this.tickCounter.getAndIncrement();
+            int tick = TICK_COUNTER.getAndIncrement();
 
             for (MenuTaskRunnable runnable : this.tasks) {
                 runnable.runGlobally(this.instance, this.menuProcessor, tick);

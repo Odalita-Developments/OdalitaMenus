@@ -14,9 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 final class MenuUpdateTask implements MenuTaskRunnable {
 
-    private final Table<MenuSession, Integer, UpdatableItemData> updatableItems = new Table<>();
+    private final Table<MenuSession, Integer, UpdatableItemData> updatableItems = new Table<>(new ConcurrentHashMap<>(), (k) -> new ConcurrentHashMap<>());
 
     @Override
     public void runGlobally(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick) {

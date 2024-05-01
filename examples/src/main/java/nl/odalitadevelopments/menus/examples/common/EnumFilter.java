@@ -29,7 +29,7 @@ public interface EnumFilter<T extends Enum<T> & EnumFilter<T>> {
 
             int index = (next) ? 0 : enumConstants.length - 1;
             return (T) enumConstants[index];
-        } catch (Throwable throwable) {
+        } catch (Exception exception) {
             return currentEnumConstant();
         }
     }
