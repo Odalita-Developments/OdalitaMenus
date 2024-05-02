@@ -125,7 +125,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         try {
             Class<?> harmNMSInstance = Class.forName("nl.odalitadevelopments.menus.nms.OdalitaMenusNMSInstance");
             OdalitaMenusNMS nms = switch (ProtocolVersion.getServerVersion()) {
-                case MINECRAFT_1_20_5 -> new OdalitaMenusNMS_v1_20_R4();
+                case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
                 case MINECRAFT_1_20_4 -> new OdalitaMenusNMS_v1_20_R3();
                 case MINECRAFT_1_20_1 -> new OdalitaMenusNMS_v1_20_R1();
                 case MINECRAFT_1_19_4 -> new OdalitaMenusNMS_v1_19_R3();
