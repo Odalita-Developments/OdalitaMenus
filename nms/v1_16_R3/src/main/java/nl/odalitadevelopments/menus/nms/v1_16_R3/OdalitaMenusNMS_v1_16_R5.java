@@ -101,16 +101,20 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
     public synchronized void changeInventoryTitle(Inventory inventory, String title) throws Exception {
         if (inventory.getViewers().isEmpty()) {
             IInventory nmsInventory = ((CraftInventory) inventory).getInventory();
-            Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
 
-            MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
-            MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
-            MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+            // If it's a custom inventory change the title, if not, do nothing cause the updated title will be sent when the inventory is opened
+            if (MINECRAFT_INVENTORY.isInstance(nmsInventory)) {
+                Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
 
-            if (PaperHelper.IS_PAPER) {
-                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
-                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
-                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+
+                if (PaperHelper.IS_PAPER) {
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
+                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+                }
             }
 
             return;
@@ -167,10 +171,15 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         WINDOW_ID_FIELD.set(nmsInventory, windowId);
         WINDOW_ID_FIELD.setAccessible(false);
 
+        IChatBaseComponent titleComponent = this.createChatBaseComponent(title);
+
+        TITLE_FIELD.setAccessible(true);
+        TITLE_FIELD.set(nmsInventory, titleComponent);
+        TITLE_FIELD.setAccessible(false);
+
         serverPlayer.activeContainer = nmsInventory;
 
         Containers<?> type = nmsInventory.getType();
-        IChatBaseComponent titleComponent = this.createChatBaseComponent(title);
 
         PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(windowId, type, titleComponent);
         this.sendPacket(player, packet);
