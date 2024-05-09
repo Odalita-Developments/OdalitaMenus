@@ -19,7 +19,7 @@ Maven dependency:
 <dependency>
     <groupId>com.github.odalita-developments.odalitamenus</groupId>
     <artifactId>core</artifactId>
-    <version>v0.5.5</version>
+    <version>v0.5.6</version>
 </dependency>
 ```
 
@@ -33,6 +33,6 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.odalita-developments.odalitamenus:core:v0.5.5'
+    implementation 'com.github.odalita-developments.odalitamenus:core:v0.5.6'
 }
 ```
