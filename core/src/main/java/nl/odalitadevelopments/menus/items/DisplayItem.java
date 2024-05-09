@@ -20,7 +20,7 @@ public final class DisplayItem extends MenuItem {
     private final ItemStack itemStack;
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         return this.itemStack;
     }
 

@@ -66,7 +66,7 @@ public final class PageItem extends PageUpdatableItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         if (!this.showOnFirstOrLastPage && !this.canBeUsed()) {
             return new ItemStack(Material.AIR);
         }

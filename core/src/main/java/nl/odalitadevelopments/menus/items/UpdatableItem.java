@@ -49,7 +49,7 @@ public final class UpdatableItem extends MenuItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         return this.itemStackSupplier.get();
     }
 

@@ -21,7 +21,7 @@ public final class ClickableItem extends MenuItem {
     private final Consumer<InventoryClickEvent> clickHandler;
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         return this.itemStack;
     }
 

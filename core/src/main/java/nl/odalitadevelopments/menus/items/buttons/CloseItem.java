@@ -30,7 +30,7 @@ public final class CloseItem extends MenuItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         if (this.itemStack == null) {
             this.itemStack = instance.getProvidersContainer().getDefaultItemProvider().closeItem();
         }

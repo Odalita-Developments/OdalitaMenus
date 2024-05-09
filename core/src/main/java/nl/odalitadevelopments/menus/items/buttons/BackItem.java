@@ -38,7 +38,7 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         if (super.itemStack == null) {
             super.itemStack = instance.getProvidersContainer().getDefaultItemProvider().backItem(super.menuProvider);
         }

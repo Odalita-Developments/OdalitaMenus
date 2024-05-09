@@ -116,13 +116,13 @@ public final class ConfirmMenu implements PlayerMenuProvider {
         public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
             if (this.menuItem.isUpdatable()) {
                 if (this.confirm) {
-                    return this.builder.getConfirmItem().apply(this.contents).getItemStack(instance, contents);
+                    return this.builder.getConfirmItem().apply(this.contents).provideItem(instance, contents);
                 } else {
-                    return this.builder.getCancelItem().apply(this.contents).getItemStack(instance, contents);
+                    return this.builder.getCancelItem().apply(this.contents).provideItem(instance, contents);
                 }
             }
 
-            return this.menuItem.getItemStack(instance, contents);
+            return this.menuItem.provideItem(instance, contents);
         }
 
         @Override

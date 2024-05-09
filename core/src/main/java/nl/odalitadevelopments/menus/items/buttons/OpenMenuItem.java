@@ -42,7 +42,7 @@ public class OpenMenuItem<P extends MenuProvider> extends MenuItem {
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
         if (this.itemStack == null) {
             this.itemStack = new ItemStack(Material.AIR);
         }

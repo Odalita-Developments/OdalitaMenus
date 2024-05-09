@@ -6,13 +6,11 @@ import nl.odalitadevelopments.menus.providers.processors.CooldownProcessor;
 import nl.odalitadevelopments.menus.providers.processors.DefaultItemProcessor;
 import nl.odalitadevelopments.menus.providers.processors.packet.OdalitaPacketListenerProcessor;
 import nl.odalitadevelopments.menus.providers.processors.packet.ProtocolLibPacketListenerProcessor;
-import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
-import nl.odalitadevelopments.menus.providers.providers.CooldownProvider;
-import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
+import nl.odalitadevelopments.menus.providers.providers.*;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ProvidersContainer {
 
@@ -21,6 +19,7 @@ public final class ProvidersContainer {
     private ColorProvider colorProvider;
     private CooldownProvider cooldownProvider;
     private DefaultItemProvider defaultItemProvider;
+    private MenuItemDataProvider menuItemDataProvider;
     private PacketListenerProvider packetListenerProvider;
 
     public ProvidersContainer(@NotNull OdalitaMenus instance) {
@@ -53,6 +52,10 @@ public final class ProvidersContainer {
         this.defaultItemProvider = defaultItemProvider;
     }
 
+    public void setMenuItemDataProvider(@NotNull MenuItemDataProvider menuItemDataProvider) {
+        this.menuItemDataProvider = menuItemDataProvider;
+    }
+
     public void setPacketListenerProvider(@NotNull PacketListenerProvider packetListenerProvider) {
         this.packetListenerProvider.close(this.instance);
         this.packetListenerProvider = packetListenerProvider;
@@ -60,17 +63,22 @@ public final class ProvidersContainer {
 
     @ApiStatus.Internal
     public @NotNull ColorProvider getColorProvider() {
-        return colorProvider;
+        return this.colorProvider;
     }
 
     @ApiStatus.Internal
     public @NotNull CooldownProvider getCooldownProvider() {
-        return cooldownProvider;
+        return this.cooldownProvider;
     }
 
     @ApiStatus.Internal
     public @NotNull DefaultItemProvider getDefaultItemProvider() {
-        return defaultItemProvider;
+        return this.defaultItemProvider;
+    }
+
+    @ApiStatus.Internal
+    public @Nullable MenuItemDataProvider getMenuItemDataProvider() {
+        return this.menuItemDataProvider;
     }
 
     @ApiStatus.Internal
