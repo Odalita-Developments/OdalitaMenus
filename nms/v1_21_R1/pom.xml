@@ -6,7 +6,7 @@
     <parent>
         <groupId>nl.odalitadevelopments.odalitamenus</groupId>
         <artifactId>nms</artifactId>
-        <version>0.5.6</version>
+        <version>0.5.7</version>
     </parent>
 
     <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
@@ -20,18 +20,25 @@
         <dependency>
             <groupId>nl.odalitadevelopments.odalitamenus.nms</groupId>
             <artifactId>common</artifactId>
-            <version>0.5.6</version>
+            <version>0.5.7</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${spigot-version}</version>
-            <classifier>remapped-mojang</classifier>
+            <groupId>ca.bkaw</groupId>
+            <artifactId>paper-nms</artifactId>
+            <version>1.21-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bytecode.space</id>
+            <url>https://repo.bytecode.space/repository/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <defaultGoal>clean package install</defaultGoal>
@@ -47,35 +54,15 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>specialsource-maven-plugin</artifactId>
-                <version>2.0.2</version>
+                <groupId>ca.bkaw</groupId>
+                <artifactId>paper-nms-maven-plugin</artifactId>
+                <version>1.4.4</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>remap</goal>
                         </goals>
-                        <id>remap-obf</id>
-                        <configuration>
-                            <srgIn>org.spigotmc:minecraft-server:${spigot-version}:txt:maps-mojang</srgIn>
-                            <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:${spigot-version}:jar:remapped-mojang</remappedDependencies>
-                            <remappedArtifactAttached>true</remappedArtifactAttached>
-                            <remappedClassifierName>remapped-obf</remappedClassifierName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <id>remap-spigot</id>
-                        <configuration>
-                            <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
-                            <srgIn>org.spigotmc:minecraft-server:${spigot-version}:csrg:maps-spigot</srgIn>
-                            <remappedDependencies>org.spigotmc:spigot:${spigot-version}:jar:remapped-obf</remappedDependencies>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
