@@ -16,10 +16,10 @@ import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_21_R1.util.CraftChatMessage;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -40,12 +40,12 @@ public final class OdalitaMenusNMS_v1_21_R1 implements OdalitaMenusNMS {
 
     static {
         try {
-            MINECRAFT_INVENTORY = ReflectionUtils.obcClass("inventory.CraftInventoryCustom$MinecraftInventory");
-
-            MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
-
             if (PaperHelper.IS_PAPER) {
+                MINECRAFT_INVENTORY = ReflectionUtils.paperClass("inventory.PaperInventoryCustomHolderContainer");
                 PAPER_MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
+            } else {
+                MINECRAFT_INVENTORY = ReflectionUtils.cbClass("inventory.CraftInventoryCustom$MinecraftInventory");
+                MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
             }
 
             TITLE_FIELD = AbstractContainerMenu.class.getDeclaredField("title");
@@ -122,14 +122,14 @@ public final class OdalitaMenusNMS_v1_21_R1 implements OdalitaMenusNMS {
             if (MINECRAFT_INVENTORY.isInstance(nmsInventory)) {
                 Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
 
-                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
-                MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
-                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
-
                 if (PaperHelper.IS_PAPER) {
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+                } else {
+                    MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                    MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
+                    MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
                 }
             }
 
