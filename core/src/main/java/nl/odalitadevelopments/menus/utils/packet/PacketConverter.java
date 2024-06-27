@@ -43,15 +43,16 @@ public final class PacketConverter {
     private static OdalitaSetSlotPacket convertSetSlotPacket(@NotNull Object packetObject) {
         try {
             boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
+            boolean is1206 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6);
 
             Class<?> packetClass = packetObject.getClass();
-            int windowId = getField(packetClass, (is1171) ? "c" : "a").getInt(packetObject);
-            int slot = getField(packetClass, (is1171) ? "e" : "b").getInt(packetObject);
-            Object nmsItem = getField(packetClass, (is1171) ? "f" : "c").get(packetObject);
+            int windowId = getField(packetClass, (is1171) ? (is1206) ? "d" : "c" : "a").getInt(packetObject);
+            int slot = getField(packetClass, (is1171) ? (is1206) ? "f" : "e" : "b").getInt(packetObject);
+            Object nmsItem = getField(packetClass, (is1171) ? (is1206) ? "g" : "f" : "c").get(packetObject);
             ItemStack item = OdalitaMenusNMS.getInstance().itemStackFromNMS(nmsItem);
 
             if (is1171) {
-                int stateId = getField(packetClass, "d").getInt(packetObject);
+                int stateId = getField(packetClass, (is1206) ? "e" : "d").getInt(packetObject);
                 return new OdalitaSetSlotPacket(windowId, stateId, slot, item);
             }
 
@@ -66,10 +67,12 @@ public final class PacketConverter {
     private static OdalitaWindowItemsPacket convertWindowItemsPacket(@NotNull Object packetObject) {
         try {
             boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
+            boolean is1206 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6);
 
             Class<?> packetClass = packetObject.getClass();
-            int windowId = getField(packetClass, "a").getInt(packetObject);
-            List<Object> nmsItems = (List<Object>) getField(packetClass, (is1171) ? "c" : "b").get(packetObject);
+            int windowId = getField(packetClass, (is1206) ? "b" : "a").getInt(packetObject);
+
+            List<Object> nmsItems = (List<Object>) getField(packetClass, (is1171) ? (is1206) ? "d" : "c" : "b").get(packetObject);
 
             List<ItemStack> items = new ArrayList<>(nmsItems.size());
             for (Object nmsItem : nmsItems) {
@@ -77,8 +80,8 @@ public final class PacketConverter {
             }
 
             if (is1171) {
-                int stateId = getField(packetClass, "b").getInt(packetObject);
-                Object nmsCarriedItem = getField(packetClass, "d").get(packetObject);
+                int stateId = getField(packetClass, (is1206) ? "c" : "b").getInt(packetObject);
+                Object nmsCarriedItem = getField(packetClass, (is1206) ? "e" : "d").get(packetObject);
                 ItemStack carriedItem = OdalitaMenusNMS.getInstance().itemStackFromNMS(nmsCarriedItem);
 
                 return new OdalitaWindowItemsPacket(windowId, stateId, items, carriedItem);
@@ -96,11 +99,12 @@ public final class PacketConverter {
 
         try {
             boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
+            boolean is1206 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6);
 
             Class<?> packetClass = packetObject.getClass();
             Object nmsItem = OdalitaMenusNMS.getInstance().itemStackToNMS(packet.item());
 
-            getField(packetClass, (is1171) ? "f" : "c").set(packetObject, nmsItem);
+            getField(packetClass, (is1171) ? (is1206) ? "g" : "f" : "c").set(packetObject, nmsItem);
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
@@ -111,6 +115,7 @@ public final class PacketConverter {
 
         try {
             boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
+            boolean is1206 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6);
 
             Class<?> packetClass = packetObject.getClass();
             List<Object> nmsItems = new ArrayList<>();
@@ -118,7 +123,7 @@ public final class PacketConverter {
                 nmsItems.add(OdalitaMenusNMS.getInstance().itemStackToNMS(item));
             }
 
-            getField(packetClass, (is1171) ? "c" : "b").set(packetObject, nmsItems);
+            getField(packetClass, (is1171) ? (is1206) ? "d" : "c" : "b").set(packetObject, nmsItems);
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
