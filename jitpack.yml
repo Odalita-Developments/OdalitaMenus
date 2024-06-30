@@ -20,9 +20,9 @@ before_install:
   - java -jar BuildTools.jar --rev 1.19.4 --remapped
   - java -jar BuildTools.jar --rev 1.20.1 --remapped
   - java -jar BuildTools.jar --rev 1.20.4 --remapped
-  - java -jar BuildTools.jar --rev 1.21 --remapped
 
   - sdk use java 21.0.3-oracle
   - java -jar BuildTools.jar --rev 1.20.6 --remapped
+  - java -jar BuildTools.jar --rev 1.21 --remapped
 install:
   - mvn install -Dmaven.javadoc.skip=true -DskipTests
