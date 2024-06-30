@@ -25,20 +25,13 @@
         </dependency>
 
         <dependency>
-            <groupId>ca.bkaw</groupId>
-            <artifactId>paper-nms</artifactId>
-            <version>1.21-SNAPSHOT</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>${spigot-version}</version>
+            <classifier>remapped-mojang</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>bytecode.space</id>
-            <url>https://repo.bytecode.space/repository/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <defaultGoal>clean package install</defaultGoal>
@@ -52,19 +45,6 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>ca.bkaw</groupId>
-                <artifactId>paper-nms-maven-plugin</artifactId>
-                <version>1.4.4</version>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
