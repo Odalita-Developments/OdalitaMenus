@@ -33,6 +33,6 @@ allprojects {
 }
 
 dependencies {
-   implementation 'com.github.Odalita-Developments.OdalitaMenus:common:v0.5.7'
+   implementation 'com.github.Odalita-Developments.OdalitaMenus:core:v0.5.7'
 }
 ```
