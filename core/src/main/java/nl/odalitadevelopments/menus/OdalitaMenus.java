@@ -27,14 +27,6 @@ public sealed interface OdalitaMenus permits OdalitaMenusImpl {
         return OdalitaMenusImpl.createInstance(javaPlugin);
     }
 
-    static @NotNull OdalitaMenus getInstance(@NotNull JavaPlugin javaPlugin) {
-        return OdalitaMenusImpl.getInstance(javaPlugin);
-    }
-
-    static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
-        return OdalitaMenusImpl.hasInstance(javaPlugin);
-    }
-
     @NotNull JavaPlugin getJavaPlugin();
 
     @NotNull SupportedMenuTypes getSupportedMenuTypes();

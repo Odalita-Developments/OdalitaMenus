@@ -30,6 +30,7 @@ import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
+import nl.odalitadevelopments.menus.utils.metrics.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -46,29 +46,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Getter
 final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
-    private static final Map<Plugin, OdalitaMenus> INSTANCES = new HashMap<>();
-
     static @NotNull OdalitaMenus createInstance(@NotNull JavaPlugin javaPlugin) {
         return new OdalitaMenusImpl(javaPlugin);
-    }
-
-    static @NotNull OdalitaMenus getInstance(@NotNull JavaPlugin javaPlugin) {
-        OdalitaMenus instance = INSTANCES.get(javaPlugin);
-        if (instance == null) {
-            throw new IllegalStateException("OdalitaMenus is not initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
-        }
-
-        return instance;
-    }
-
-    static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
-        return INSTANCES.containsKey(javaPlugin);
     }
 
     private final JavaPlugin javaPlugin;
@@ -90,10 +73,6 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private final BukkitTask menuTask;
 
     private OdalitaMenusImpl(JavaPlugin javaPlugin) {
-        if (INSTANCES.containsKey(javaPlugin)) {
-            throw new IllegalStateException("OdalitaMenus is already initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
-        }
-
         this.initNMS();
 
         this.javaPlugin = javaPlugin;
@@ -119,7 +98,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.menuTask = Bukkit.getScheduler().runTaskTimerAsynchronously(javaPlugin, new MenuTasksProcessor(this), 0, 1);
 
-        INSTANCES.put(javaPlugin, this);
+        new Metrics(javaPlugin, 22559);
     }
 
     private void initNMS() {
@@ -224,7 +203,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             HandlerList.unregisterAll(this.cooldownContainer);
             HandlerList.unregisterAll(this);
 
-            INSTANCES.remove(this.javaPlugin);
+            this.javaPlugin.getServer().getServicesManager().unregisterAll(this.javaPlugin);
         }
     }
 
