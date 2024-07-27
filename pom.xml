@@ -6,7 +6,7 @@
 
     <groupId>nl.odalitadevelopments</groupId>
     <artifactId>odalitamenus</artifactId>
-    <version>0.5.7</version>
+    <version>0.5.8</version>
     <packaging>pom</packaging>
     <name>OdalitaMenus</name>
     <modules>
