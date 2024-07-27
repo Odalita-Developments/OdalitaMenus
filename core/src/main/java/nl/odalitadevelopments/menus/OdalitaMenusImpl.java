@@ -25,6 +25,7 @@ import nl.odalitadevelopments.menus.nms.v1_20_R1.OdalitaMenusNMS_v1_20_R1;
 import nl.odalitadevelopments.menus.nms.v1_20_R3.OdalitaMenusNMS_v1_20_R3;
 import nl.odalitadevelopments.menus.nms.v1_20_R4.OdalitaMenusNMS_v1_20_R4;
 import nl.odalitadevelopments.menus.nms.v1_21_R1.OdalitaMenusNMS_v1_21_R1;
+import nl.odalitadevelopments.menus.nms.v1_21_R2.OdalitaMenusNMS_v1_20_R2;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
@@ -129,6 +130,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
                 case MINECRAFT_1_21 -> new OdalitaMenusNMS_v1_21_R1();
                 case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
                 case MINECRAFT_1_20_4 -> new OdalitaMenusNMS_v1_20_R3();
+                case MINECRAFT_1_20_2 -> new OdalitaMenusNMS_v1_20_R2();
                 case MINECRAFT_1_20_1 -> new OdalitaMenusNMS_v1_20_R1();
                 case MINECRAFT_1_19_4 -> new OdalitaMenusNMS_v1_19_R3();
                 case MINECRAFT_1_18_2 -> new OdalitaMenusNMS_v1_18_R2();
