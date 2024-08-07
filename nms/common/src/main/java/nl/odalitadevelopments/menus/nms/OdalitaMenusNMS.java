@@ -1,6 +1,8 @@
 package nl.odalitadevelopments.menus.nms;
 
 import io.netty.channel.Channel;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,10 +13,6 @@ public interface OdalitaMenusNMS {
     static @NotNull OdalitaMenusNMS getInstance() {
         return OdalitaMenusNMSInstance.getNms();
     }
-
-    Object itemStackToNMS(ItemStack itemStack);
-
-    ItemStack itemStackFromNMS(Object item);
 
     Channel getPacketChannel(Player player) throws Exception;
 
@@ -45,4 +43,12 @@ public interface OdalitaMenusNMS {
     Object createStonecutterInventory(Player player);
 
     Inventory getInventoryFromNMS(Object nmsInventory);
+
+    ClientboundSetSlotPacket readSetSlotPacket(Object packet);
+
+    ClientboundSetContentsPacket readSetContentsPacket(Object packet);
+
+    String setSlotPacketName();
+
+    String windowItemsPacketName();
 }

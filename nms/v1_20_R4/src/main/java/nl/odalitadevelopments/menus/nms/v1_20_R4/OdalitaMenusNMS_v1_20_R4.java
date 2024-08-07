@@ -5,6 +5,7 @@ import io.papermc.paper.text.PaperComponents;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,9 +14,13 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
+import nl.odalitadevelopments.menus.nms.v1_20_R4.packet.ClientboundSetContentsPacket_v1_20_R4;
+import nl.odalitadevelopments.menus.nms.v1_20_R4.packet.ClientboundSetSlotPacket_v1_20_R4;
 import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
@@ -54,16 +59,6 @@ public final class OdalitaMenusNMS_v1_20_R4 implements OdalitaMenusNMS {
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
-    }
-
-    @Override
-    public Object itemStackToNMS(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack);
-    }
-
-    @Override
-    public ItemStack itemStackFromNMS(Object item) {
-        return CraftItemStack.asBukkitCopy((net.minecraft.world.item.ItemStack) item);
     }
 
     @Override
@@ -126,7 +121,7 @@ public final class OdalitaMenusNMS_v1_20_R4 implements OdalitaMenusNMS {
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
                     PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
-                }else {
+                } else {
                     MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
                     MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
                     MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
@@ -287,5 +282,33 @@ public final class OdalitaMenusNMS_v1_20_R4 implements OdalitaMenusNMS {
         }
 
         return menu.getBukkitView().getTopInventory();
+    }
+
+    @Override
+    public ClientboundSetSlotPacket readSetSlotPacket(Object packet) {
+        if (!(packet instanceof ClientboundContainerSetSlotPacket clientboundContainerSetSlotPacket)) {
+            return null;
+        }
+
+        return new ClientboundSetSlotPacket_v1_20_R4(clientboundContainerSetSlotPacket);
+    }
+
+    @Override
+    public ClientboundSetContentsPacket readSetContentsPacket(Object packet) {
+        if (!(packet instanceof ClientboundContainerSetContentPacket clientboundContainerSetContentPacket)) {
+            return null;
+        }
+
+        return new ClientboundSetContentsPacket_v1_20_R4(clientboundContainerSetContentPacket);
+    }
+
+    @Override
+    public String setSlotPacketName() {
+        return ClientboundContainerSetSlotPacket.class.getSimpleName();
+    }
+
+    @Override
+    public String windowItemsPacketName() {
+        return ClientboundContainerSetContentPacket.class.getSimpleName();
     }
 }

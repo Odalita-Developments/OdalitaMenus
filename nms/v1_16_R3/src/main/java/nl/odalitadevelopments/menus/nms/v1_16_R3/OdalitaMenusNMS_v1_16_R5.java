@@ -4,9 +4,13 @@ import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
 import net.minecraft.server.v1_16_R3.*;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
+import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
+import nl.odalitadevelopments.menus.nms.v1_16_R3.packet.ClientboundSetContentsPacket_v1_16_R5;
+import nl.odalitadevelopments.menus.nms.v1_16_R3.packet.ClientboundSetSlotPacket_v1_16_R5;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -43,16 +47,6 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
-    }
-
-    @Override
-    public Object itemStackToNMS(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack);
-    }
-
-    @Override
-    public ItemStack itemStackFromNMS(Object item) {
-        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_16_R3.ItemStack) item);
     }
 
     @Override
@@ -271,5 +265,33 @@ public final class OdalitaMenusNMS_v1_16_R5 implements OdalitaMenusNMS {
         }
 
         return menu.getBukkitView().getTopInventory();
+    }
+
+    @Override
+    public ClientboundSetSlotPacket readSetSlotPacket(Object packet) {
+        if (!(packet instanceof PacketPlayOutSetSlot packetPlayOutSetSlot)) {
+            return null;
+        }
+
+        return new ClientboundSetSlotPacket_v1_16_R5(packetPlayOutSetSlot);
+    }
+
+    @Override
+    public ClientboundSetContentsPacket readSetContentsPacket(Object packet) {
+        if (!(packet instanceof PacketPlayOutWindowItems packetPlayOutWindowItems)) {
+            return null;
+        }
+
+        return new ClientboundSetContentsPacket_v1_16_R5(packetPlayOutWindowItems);
+    }
+
+    @Override
+    public String setSlotPacketName() {
+        return PacketPlayOutSetSlot.class.getSimpleName();
+    }
+
+    @Override
+    public String windowItemsPacketName() {
+        return PacketPlayOutWindowItems.class.getSimpleName();
     }
 }

@@ -111,7 +111,7 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
                         function.accept(player, packet);
                     }
 
-                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet, packetObject);
+                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet);
                 }
 
                 super.write(ctx, packetObject, promise);
@@ -120,12 +120,12 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     private ClientboundPacketType getClientboundPacketType(String packetClassName) {
-        if (packetClassName.equals("PacketPlayOutSetSlot")) {
+        if (packetClassName.equals(OdalitaMenusNMS.getInstance().setSlotPacketName())) {
             return ClientboundPacketType.SET_SLOT;
         }
 
-        if (packetClassName.equals("PacketPlayOutWindowItems")) {
-            return ClientboundPacketType.WINDOW_ITEMS;
+        if (packetClassName.equals(OdalitaMenusNMS.getInstance().windowItemsPacketName())) {
+            return ClientboundPacketType.SET_CONTENTS;
         }
 
         return null;
