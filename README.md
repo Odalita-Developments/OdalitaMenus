@@ -1,9 +1,10 @@
 # OdalitaMenus
 
-Advanced yet simple to use inventory api for Spigot plugins
+Advanced yet simple to use inventory api for Paper plugins
 ___
 
 # Getting started ([Wiki](https://github.com/Odalita-Developments/OdalitaMenus/wiki/Getting-started))
+**(NOTE)** If you're running on 1.20.6 or later, please make sure you use Paper as your server software. Spigot is no longer supported for newer versions.
 
 In order to get started you would need to add the libary to your project using **maven** or **gradle**
 
