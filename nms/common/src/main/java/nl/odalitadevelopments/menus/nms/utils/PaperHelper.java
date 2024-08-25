@@ -10,7 +10,7 @@ public final class PaperHelper {
     @SuppressWarnings("all")
     private static boolean checkIsPaper() {
         try {
-            return Class.forName("com.destroystokyo.paper.PaperConfig") != null;
+            return Class.forName("com.destroystokyo.paper.PaperConfig") != null || Class.forName("io.papermc.paper.configuration.PaperConfigurations") != null;
         } catch (ClassNotFoundException ex) {
             return false;
         }

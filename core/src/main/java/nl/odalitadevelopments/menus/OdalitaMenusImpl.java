@@ -16,6 +16,7 @@ import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
+import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import nl.odalitadevelopments.menus.nms.v1_16_R3.OdalitaMenusNMS_v1_16_R5;
 import nl.odalitadevelopments.menus.nms.v1_17_R1.OdalitaMenusNMS_v1_17_R1;
@@ -124,9 +125,15 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     }
 
     private void initNMS() {
+        ProtocolVersion serverVersion = ProtocolVersion.getServerVersion();
+        if (serverVersion.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6) && !PaperHelper.IS_PAPER) {
+            OdalitaLogger.error("OdalitaMenus requires Paper based server software to run on Minecraft 1.20.6 and higher!");
+            return;
+        }
+
         try {
             Class<?> harmNMSInstance = Class.forName("nl.odalitadevelopments.menus.nms.OdalitaMenusNMSInstance");
-            OdalitaMenusNMS nms = switch (ProtocolVersion.getServerVersion()) {
+            OdalitaMenusNMS nms = switch (serverVersion) {
                 case MINECRAFT_1_21_1 -> new OdalitaMenusNMS_v1_21_R1();
                 case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
                 case MINECRAFT_1_20_4 -> new OdalitaMenusNMS_v1_20_R3();
