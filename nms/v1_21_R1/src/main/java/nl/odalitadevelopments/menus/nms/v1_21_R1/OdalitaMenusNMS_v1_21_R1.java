@@ -17,7 +17,6 @@ import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
-import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
 import nl.odalitadevelopments.menus.nms.v1_21_R1.packet.ClientboundSetContentsPacket_v1_21_R1;
 import nl.odalitadevelopments.menus.nms.v1_21_R1.packet.ClientboundSetSlotPacket_v1_21_R1;
@@ -35,6 +34,7 @@ import java.util.List;
 
 public final class OdalitaMenusNMS_v1_21_R1 implements OdalitaMenusNMS {
 
+    private static Class<?> PAPER_CUSTOM_HOLDER_CONTAINER;
     private static Class<?> MINECRAFT_INVENTORY;
 
     private static Field MINECRAFT_INVENTORY_TITLE_FIELD;
@@ -45,13 +45,11 @@ public final class OdalitaMenusNMS_v1_21_R1 implements OdalitaMenusNMS {
 
     static {
         try {
-            if (PaperHelper.IS_PAPER) {
-                MINECRAFT_INVENTORY = ReflectionUtils.paperClass("inventory.PaperInventoryCustomHolderContainer");
-                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
-            } else {
-                MINECRAFT_INVENTORY = ReflectionUtils.cbClass("inventory.CraftInventoryCustom$MinecraftInventory");
-                MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("title");
-            }
+            PAPER_CUSTOM_HOLDER_CONTAINER = ReflectionUtils.paperClass("inventory.PaperInventoryCustomHolderContainer");
+            MINECRAFT_INVENTORY = ReflectionUtils.cbClass("inventory.CraftInventoryCustom$MinecraftInventory");
+
+            PAPER_MINECRAFT_INVENTORY_TITLE_FIELD = PAPER_CUSTOM_HOLDER_CONTAINER.getDeclaredField("adventure$title");
+            MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
 
             TITLE_FIELD = AbstractContainerMenu.class.getDeclaredField("title");
             WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_21_R1.WINDOW_ID);
@@ -114,18 +112,18 @@ public final class OdalitaMenusNMS_v1_21_R1 implements OdalitaMenusNMS {
             Container nmsInventory = ((CraftInventory) inventory).getInventory();
 
             // If it's a custom inventory change the title, if not, do nothing cause the updated title will be sent when the inventory is opened
-            if (MINECRAFT_INVENTORY.isInstance(nmsInventory)) {
+            if (PAPER_CUSTOM_HOLDER_CONTAINER.isInstance(nmsInventory)) {
+                Object minecraftInventory = PAPER_CUSTOM_HOLDER_CONTAINER.cast(nmsInventory);
+
+                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
+                PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
+            } else if (MINECRAFT_INVENTORY.isInstance(nmsInventory)) {
                 Object minecraftInventory = MINECRAFT_INVENTORY.cast(nmsInventory);
 
-                if (PaperHelper.IS_PAPER) {
-                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
-                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
-                    PAPER_MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
-                } else {
-                    MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
-                    MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, title);
-                    MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
-                }
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(true);
+                MINECRAFT_INVENTORY_TITLE_FIELD.set(minecraftInventory, PaperComponents.plainSerializer().deserialize(title));
+                MINECRAFT_INVENTORY_TITLE_FIELD.setAccessible(false);
             }
 
             return;
