@@ -10,29 +10,21 @@ In order to get started you would need to add the libary to your project using *
 
 Maven dependency:
 ```xml
-<repository>
-    <id>repsy</id>
-    <url>https://repo.repsy.io/mvn/kiwisap/odalitamenus</url>
-</repository>
-
 <dependency>
-    <groupId>nl.odalitadevelopments.odalitamenus</groupId>
+    <groupId>io.github.odalita-developments.odalitamenus</groupId>
     <artifactId>core</artifactId>
-    <version>0.5.10</version>
+    <version>0.5.11</version>
 </dependency>
 ```
 
 Gradle dependency:
 ```gradle
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://repo.repsy.io/mvn/kiwisap/odalitamenus' }
-    }
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    implementation 'nl.odalitadevelopments.odalitamenus:core:0.5.10'
+    implementation 'io.github.odalita-developments.odalitamenus:core:0.5.11'
 }
 ```
 
