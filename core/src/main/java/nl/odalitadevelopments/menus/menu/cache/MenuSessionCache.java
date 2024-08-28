@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
+import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
@@ -15,6 +16,7 @@ import nl.odalitadevelopments.menus.contents.scheduler.MenuTask;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
+import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -22,6 +24,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -49,8 +52,9 @@ public final class MenuSessionCache {
     private PlaceableItemDragAction placeableItemDragAction = null;
 
     private Consumer<InventoryClickEvent> playerInventoryClickAction = null;
-    private Runnable closeActionBefore = null;
-    private Runnable closeActionAfter = null;
+    private Supplier<MenuCloseResult> closeActionBefore = null;
+    private Supplier<MenuCloseResult> closeActionAfter = null;
+    private Collection<OdalitaEventListener> eventListeners = new HashSet<>();
 
     private PlayerInventoryItemMetaChanger itemMetaChanger = null;
 

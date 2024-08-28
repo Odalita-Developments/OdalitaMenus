@@ -8,8 +8,8 @@ import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaWindowItemsPacket;
-import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                             int slot = packet.getIntegers().read((is1171) ? 2 : 1);
                             ItemStack item = packet.getItemModifier().read(0);
 
-                            OdalitaSetSlotPacket odalitaSetSlotPacket = new OdalitaSetSlotPacket(windowId, stateId, slot, item);
+                            OdalitaSetSlotPacket odalitaSetSlotPacket = new OdalitaSetSlotPacket(null, windowId, stateId, slot, item);
                             entry.getValue().accept(player, odalitaSetSlotPacket);
 
                             packet.getItemModifier().write(0, odalitaSetSlotPacket.item());
@@ -100,16 +100,16 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
 
                 for (Map<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> map : packetListenersClientbound.values()) {
                     for (Map.Entry<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> entry : map.entrySet()) {
-                        if (entry.getKey() == ClientboundPacketType.WINDOW_ITEMS) {
+                        if (entry.getKey() == ClientboundPacketType.SET_CONTENTS) {
                             int windowId = packet.getIntegers().read(0);
                             int stateId = (is1171) ? packet.getIntegers().read(1) : -1;
                             List<ItemStack> items = packet.getItemListModifier().read(0);
                             ItemStack carriedItem = (is1171) ? packet.getItemModifier().read(0) : null;
 
-                            OdalitaWindowItemsPacket odalitaWindowItemsPacket = new OdalitaWindowItemsPacket(windowId, stateId, items, carriedItem);
-                            entry.getValue().accept(player, odalitaWindowItemsPacket);
+                            OdalitaSetContentsPacket odalitaSetContentsPacket = new OdalitaSetContentsPacket(null, windowId, stateId, items, carriedItem);
+                            entry.getValue().accept(player, odalitaSetContentsPacket);
 
-                            packet.getItemListModifier().write(0, odalitaWindowItemsPacket.items());
+                            packet.getItemListModifier().write(0, odalitaSetContentsPacket.items());
                         }
                     }
                 }

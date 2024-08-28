@@ -8,14 +8,16 @@ import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.utils.collection.Table;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 final class MenuUpdateTask implements MenuTaskRunnable {
 
-    private final Table<MenuSession, Integer, UpdatableItemData> updatableItems = new Table<>();
+    private final Table<MenuSession, Integer, UpdatableItemData> updatableItems = new Table<>(new ConcurrentHashMap<>(), (k) -> new ConcurrentHashMap<>());
 
     @Override
     public void runGlobally(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick) {
@@ -41,10 +43,10 @@ final class MenuUpdateTask implements MenuTaskRunnable {
                 if (updatableItemData.getUpdatedAtTick() == -1 || tick - updatableItemData.getUpdatedAtTick() == menuItem.getUpdateTicks()) {
                     updatableItemData.setUpdatedAtTick(tick);
 
-                    ItemStack item = menuItem.getItemStack(instance);
+                    ItemStack item = menuItem.provideItem(instance, session.getMenuContents());
                     int slot = SlotPos.of(row, column).getSlot();
 
-                    InventoryUtils.updateItem(session, slot, item, session.getInventory());
+                    OdalitaMenusNMS.getInstance().setInventoryItem(slot, item, session.getInventory());
                 }
             }
         }

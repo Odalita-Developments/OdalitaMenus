@@ -6,19 +6,19 @@ import java.util.Objects;
 
 public abstract class Identity<T> {
 
-    private final T ident;
+    private final T identity;
 
-    public Identity(@NotNull T ident) {
-        this.ident = ident;
+    public Identity(@NotNull T identity) {
+        this.identity = identity;
     }
 
-    public final @NotNull T ident() {
-        return this.ident;
+    public final @NotNull T identity() {
+        return this.identity;
     }
 
     @SuppressWarnings("unchecked")
     public final @NotNull Class<T> type() {
-        return (Class<T>) this.ident.getClass();
+        return (Class<T>) this.identity.getClass();
     }
 
     @Override
@@ -27,11 +27,11 @@ public abstract class Identity<T> {
         if (o == null || getClass() != o.getClass()) return false;
 
         Identity<?> identity = (Identity<?>) o;
-        return Objects.equals(this.ident, identity.ident);
+        return Objects.equals(this.identity, identity.identity);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(this.ident);
+        return Objects.hash(this.identity);
     }
 }

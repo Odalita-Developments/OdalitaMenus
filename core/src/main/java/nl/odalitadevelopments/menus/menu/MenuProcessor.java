@@ -7,6 +7,7 @@ import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,7 +130,7 @@ public final class MenuProcessor {
                 }
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            OdalitaLogger.error(exception);
         }
 
         return null;

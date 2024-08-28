@@ -2,8 +2,9 @@ package nl.odalitadevelopments.menus.providers.processors.packet;
 
 import io.netty.channel.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.PacketConverter;
 import org.bukkit.Bukkit;
@@ -47,13 +48,17 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
 
         if (packetListenersClientbound.isEmpty()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                Channel channel = InventoryUtils.getPacketChannel(player);
-                if (channel == null) continue;
+                try {
+                    Channel channel = OdalitaMenusNMS.getInstance().getPacketChannel(player);
+                    if (channel == null) continue;
 
-                ChannelPipeline pipeline = channel.pipeline();
-                if (pipeline == null) continue;
+                    ChannelPipeline pipeline = channel.pipeline();
+                    if (pipeline == null) continue;
 
-                pipeline.remove(ODALITA_PACKET_HANDLER);
+                    pipeline.remove(ODALITA_PACKET_HANDLER);
+                } catch (Exception exception) {
+                    OdalitaLogger.error(exception);
+                }
             }
         }
     }
@@ -69,14 +74,18 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     private void inject(Player player) {
-        Channel channel = InventoryUtils.getPacketChannel(player);
-        if (channel == null) return;
+        try {
+            Channel channel = OdalitaMenusNMS.getInstance().getPacketChannel(player);
+            if (channel == null) return;
 
-        ChannelPipeline pipeline = channel.pipeline();
-        if (pipeline == null) return;
+            ChannelPipeline pipeline = channel.pipeline();
+            if (pipeline == null) return;
 
-        if (pipeline.get(ODALITA_PACKET_HANDLER) != null) return;
-        pipeline.addBefore(PACKET_HANDLER, ODALITA_PACKET_HANDLER, this.createChannelDuplexHandler(player));
+            if (pipeline.get(ODALITA_PACKET_HANDLER) != null) return;
+            pipeline.addBefore(PACKET_HANDLER, ODALITA_PACKET_HANDLER, this.createChannelDuplexHandler(player));
+        } catch (Exception exception) {
+            OdalitaLogger.error(exception);
+        }
     }
 
     private ChannelDuplexHandler createChannelDuplexHandler(Player player) {
@@ -102,7 +111,7 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
                         function.accept(player, packet);
                     }
 
-                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet, packetObject);
+                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet);
                 }
 
                 super.write(ctx, packetObject, promise);
@@ -111,12 +120,12 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     private ClientboundPacketType getClientboundPacketType(String packetClassName) {
-        if (packetClassName.equals("PacketPlayOutSetSlot")) {
+        if (packetClassName.equals(OdalitaMenusNMS.getInstance().setSlotPacketName())) {
             return ClientboundPacketType.SET_SLOT;
         }
 
-        if (packetClassName.equals("PacketPlayOutWindowItems")) {
-            return ClientboundPacketType.WINDOW_ITEMS;
+        if (packetClassName.equals(OdalitaMenusNMS.getInstance().windowItemsPacketName())) {
+            return ClientboundPacketType.SET_CONTENTS;
         }
 
         return null;

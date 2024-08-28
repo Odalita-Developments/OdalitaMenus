@@ -1,23 +1,18 @@
-package nl.odalitadevelopments.menus.utils.version;
+package nl.odalitadevelopments.menus.nms.utils.version;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_21_1(767),
+    MINECRAFT_1_20_6(766),
+    MINECRAFT_1_20_4(765),
     MINECRAFT_1_20_2(764),
     MINECRAFT_1_20_1(763),
-    MINECRAFT_1_20(763),
     MINECRAFT_1_19_4(762),
-    MINECRAFT_1_19_3(761),
-    MINECRAFT_1_19_2(760),
-    MINECRAFT_1_19_1(760),
-    MINECRAFT_1_19(759),
     MINECRAFT_1_18_2(758),
-    MINECRAFT_1_18_1(757),
-    MINECRAFT_1_18(757),
     MINECRAFT_1_17_1(756),
-    MINECRAFT_1_17(755),
     MINECRAFT_1_16_5(754),
     NOT_SUPPORTED(0);
 
@@ -38,28 +33,28 @@ public enum ProtocolVersion {
         return this.format;
     }
 
-    public int getNumber() {
+    public int number() {
         return this.number;
     }
 
     public boolean isLowerOrEqual(@NotNull ProtocolVersion version) {
-        return this.number <= version.getNumber();
+        return this.number <= version.number();
     }
 
     public boolean isLower(@NotNull ProtocolVersion version) {
-        return this.number < version.getNumber();
+        return this.number < version.number();
     }
 
     public boolean isHigherOrEqual(@NotNull ProtocolVersion version) {
-        return this.number >= version.getNumber();
+        return this.number >= version.number();
     }
 
     public boolean isHigher(@NotNull ProtocolVersion version) {
-        return this.number > version.getNumber();
+        return this.number > version.number();
     }
 
     public boolean isEqual(@NotNull ProtocolVersion version) {
-        return this.number == version.getNumber();
+        return this.number == version.number();
     }
 
     private static final ProtocolVersion SERVER_VERSION;

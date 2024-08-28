@@ -44,6 +44,14 @@ public final class ItemBuilder {
         return this;
     }
 
+    public <T extends ItemMeta> ItemBuilder meta(@NotNull Class<T> metaClass, @NotNull Consumer<T> metaConsumer) {
+        if (metaClass.isInstance(this.meta)) {
+            metaConsumer.accept(metaClass.cast(this.meta));
+        }
+
+        return this;
+    }
+
     public ItemBuilder displayName(@NotNull String displayName) {
         return this.meta((meta) -> meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName)));
     }

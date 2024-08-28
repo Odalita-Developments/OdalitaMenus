@@ -17,10 +17,11 @@ import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedFeatures;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.pagination.PaginationBuilder;
 import nl.odalitadevelopments.menus.patterns.*;
 import nl.odalitadevelopments.menus.scrollable.ScrollableBuilder;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.utils.ItemUtils;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -341,7 +342,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void setDisplay(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName) {
-        this.setDisplay(slotPos, InventoryUtils.createItemStack(material, displayName));
+        this.setDisplay(slotPos, ItemUtils.createItemStack(material, displayName));
     }
 
     @Override
@@ -386,7 +387,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void setClickable(@NotNull SlotPos slotPos, @NotNull Material material, @NotNull String displayName, @NotNull Consumer<@NotNull InventoryClickEvent> event) {
-        this.setClickable(slotPos, InventoryUtils.createItemStack(material, displayName), event);
+        this.setClickable(slotPos, ItemUtils.createItemStack(material, displayName), event);
     }
 
     @Override
@@ -427,6 +428,36 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event, int time) {
         this.setUpdatable(SlotPos.of(slot), itemStack, event, time);
+    }
+
+    @Override
+    public void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.set(slotPos, UpdatableItem.of(itemStack, time));
+    }
+
+    @Override
+    public void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.setUpdatable(SlotPos.of(row, column), itemStack, time);
+    }
+
+    @Override
+    public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, int time) {
+        this.setUpdatable(SlotPos.of(slot), itemStack, time);
+    }
+
+    @Override
+    public void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.set(slotPos, UpdatableItem.of(itemStack));
+    }
+
+    @Override
+    public void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.setUpdatable(SlotPos.of(row, column), itemStack);
+    }
+
+    @Override
+    public void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack) {
+        this.setUpdatable(SlotPos.of(slot), itemStack);
     }
 
     @Override
@@ -493,6 +524,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     @Override
     public void registerPlaceableItemSlots(int... slots) {
         for (int slot : slots) {
+            if (!this.menuSession.fits(slot)) continue;
+
             this.cache.getPlaceableItems().add(slot);
         }
     }
@@ -637,6 +670,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public boolean loadFrame(@NotNull String id, Object @NotNull ... arguments) {
+        if (this.menuSession.isClosed()) return false;
+
         MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
         if (frameData == null) {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
@@ -681,6 +716,8 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
 
     @Override
     public void unloadFrame(@NotNull String id) {
+        if (this.menuSession.isClosed()) return;
+
         MenuFrameData frameData = this.menuSession.getCache().getFrames().get(id);
         if (frameData == null) {
             throw new IllegalArgumentException("The frame with the id '" + id + "' is not registered!");
@@ -700,7 +737,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
                 this.cache.getRefreshableItems().remove(slot);
                 this.cache.getPageSwitchUpdateItems().remove(slot);
 
-                InventoryUtils.updateItem(this.menuSession, slot, null, this.menuSession.getInventory());
+                OdalitaMenusNMS.getInstance().setInventoryItem(slot, null, this.menuSession.getInventory());
             }
         }
 
@@ -780,6 +817,9 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
     }
 
     protected final void set0(SlotPos slotPos, int originalSlot, MenuItem item, boolean override, boolean calculated) {
+        // Don't set items after the menu is closed
+        if (this.menuSession.isClosed()) return;
+
         if (!calculated) slotPos = this.calculateSlotPos(slotPos);
         int slot = slotPos.getSlot();
 
@@ -800,7 +840,7 @@ sealed class MenuContentsImpl implements MenuContents permits MenuFrameContentsI
         this.menuSession.contents[slotPos.getRow()][slotPos.getColumn()] = item;
 
         if (this.menuSession.isOpened()) {
-            InventoryUtils.updateItem(this.menuSession, slot, item == null ? null : item.getItemStack(this.menuSession.getInstance()), this.menuSession.getInventory());
+            OdalitaMenusNMS.getInstance().setInventoryItem(slot, item == null ? null : item.provideItem(this.menuSession.getInstance(), this), this.menuSession.getInventory());
         }
     }
 

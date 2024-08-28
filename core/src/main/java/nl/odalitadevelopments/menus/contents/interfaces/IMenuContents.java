@@ -151,6 +151,18 @@ public interface IMenuContents {
 
     void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, @NotNull Consumer<@NotNull InventoryClickEvent> event, int time);
 
+    void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack, int time);
+
+    void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack, int time);
+
+    void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack, int time);
+
+    void setUpdatable(@NotNull SlotPos slotPos, @NotNull Supplier<@NotNull ItemStack> itemStack);
+
+    void setUpdatable(int row, int column, @NotNull Supplier<@NotNull ItemStack> itemStack);
+
+    void setUpdatable(int slot, @NotNull Supplier<@NotNull ItemStack> itemStack);
+
 
     /* ITERATORS */
     @NotNull

@@ -4,26 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.odalitadevelopments</groupId>
+        <groupId>io.github.odalita-developments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.4.3</version>
+        <version>0.5.11</version>
     </parent>
 
-    <groupId>nl.odalitadevelopments.odalitamenus</groupId>
+    <groupId>io.github.odalita-developments.odalitamenus</groupId>
     <artifactId>plugin</artifactId>
     <name>Plugin</name>
 
     <dependencies>
         <dependency>
-            <groupId>nl.odalitadevelopments.odalitamenus</groupId>
+            <groupId>io.github.odalita-developments.odalitamenus</groupId>
             <artifactId>core</artifactId>
-            <version>0.4.3</version>
+            <version>0.5.11</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>OdalitaMenusPlugin-${project.version}</finalName>
-        <defaultGoal>clean install</defaultGoal>
+        <defaultGoal>clean package install</defaultGoal>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
         <resources>
             <resource>
@@ -36,19 +37,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.5.2</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <shadedArtifactAttached>false</shadedArtifactAttached>

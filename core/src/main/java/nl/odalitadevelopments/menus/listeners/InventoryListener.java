@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.listeners;
 
 import lombok.AllArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
@@ -12,6 +13,7 @@ import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 public final class InventoryListener implements Listener {
@@ -28,7 +31,7 @@ public final class InventoryListener implements Listener {
     private final OdalitaMenus instance;
     private final MenuProcessor menuProcessor;
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -49,7 +52,11 @@ public final class InventoryListener implements Listener {
             if (!clickedTopInventory && currentItem != null && menuSession.getCache().getPlayerInventoryClickAction() != null) {
                 event.setCancelled(true); // Cancel event by default
                 menuSession.getCache().getPlayerInventoryClickAction().accept(event);
-                return;
+
+                // If the event is cancelled, return
+                if (event.isCancelled()) {
+                    return;
+                }
             }
 
             // Cancel if the player uses shift click from top inventory when shift click is not allowed
@@ -153,12 +160,12 @@ public final class InventoryListener implements Listener {
 
             MenuItem menuItem = menuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
-                menuItem.onClick(this.instance).accept(event);
+                menuItem.onClick(this.instance, menuSession.getMenuContents()).accept(event);
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryDrag(InventoryDragEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -196,7 +203,7 @@ public final class InventoryListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -204,9 +211,17 @@ public final class InventoryListener implements Listener {
 
         Inventory inventory = event.getInventory();
         if (menuSession.getInventory().equals(inventory)) {
-            Runnable closeActionBefore = menuSession.getCache().getCloseActionBefore();
+            Supplier<MenuCloseResult> closeActionBefore = menuSession.getCache().getCloseActionBefore();
             if (closeActionBefore != null) {
-                closeActionBefore.run();
+                // If the close action is to keep the menu open, open the inventory again
+                if (closeActionBefore.get() == MenuCloseResult.KEEP_OPEN) {
+                    Bukkit.getScheduler().runTask(this.instance.getJavaPlugin(), () -> player.openInventory(inventory));
+                    return;
+                }
+            }
+
+            for (OdalitaEventListener eventListener : menuSession.getCache().getEventListeners()) {
+                eventListener.unregister();
             }
 
             PlaceableItemsCloseAction action = menuSession.getCache().getPlaceableItemsCloseAction();
@@ -223,9 +238,13 @@ public final class InventoryListener implements Listener {
                 }
             }
 
-            Runnable closeActionAfter = menuSession.getCache().getCloseActionAfter();
+            Supplier<MenuCloseResult> closeActionAfter = menuSession.getCache().getCloseActionAfter();
             if (closeActionAfter != null) {
-                closeActionAfter.run();
+                // If the close action is to keep the menu open, reopen the menu
+                if (closeActionAfter.get() == MenuCloseResult.KEEP_OPEN) {
+                    Bukkit.getScheduler().runTask(this.instance.getJavaPlugin(), menuSession::reopen);
+                    // Don't return here, because we still want to close the previous menu session
+                }
             }
 
             menuSession.setClosed(true);

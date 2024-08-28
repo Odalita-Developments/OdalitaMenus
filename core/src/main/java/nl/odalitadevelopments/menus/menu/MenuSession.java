@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.annotations.Menu;
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.MenuIdentityContents;
 import nl.odalitadevelopments.menus.contents.action.MenuProperty;
@@ -13,9 +12,11 @@ import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
-import nl.odalitadevelopments.menus.utils.InventoryUtils;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -32,11 +33,14 @@ public final class MenuSession {
     private final OdalitaMenus instance;
     private final UUID uniqueId;
     private final Set<Player> viewers;
+    @Getter(AccessLevel.NONE)
+    private final MenuOpenerBuilderImpl<?> builder;
 
     private String id;
     private SupportedMenuType menuType;
+    @Getter(AccessLevel.PACKAGE)
     @Setter(AccessLevel.NONE)
-    private Inventory inventory;
+    private InventoryCreation inventoryData;
     private String title;
     private final IMenuContents menuContents;
 
@@ -53,19 +57,20 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, String id, SupportedMenuType menuType, Inventory inventory, Menu annotation, boolean identity) {
+    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, String id, SupportedMenuType menuType, InventoryCreation inventoryData, String title, String globalCacheKey, boolean identity) {
         this.instance = instance;
+        this.builder = builder;
         this.uniqueId = UUID.randomUUID();
         this.viewers = new HashSet<>();
 
         this.id = id;
         this.menuType = menuType;
 
-        this.inventory = inventory;
+        this.inventoryData = inventoryData;
         this.contents = new MenuItem[this.getRows()][this.getColumns()];
-        this.title = annotation.title();
+        this.title = title;
 
-        this.globalCacheKey = annotation.globalCacheKey();
+        this.globalCacheKey = globalCacheKey;
         this.cache = new MenuSessionCache(this);
 
         if (identity) {
@@ -97,8 +102,12 @@ public final class MenuSession {
         return this.viewers.iterator().next();
     }
 
+    public @NotNull Inventory getInventory() {
+        return this.inventoryData.bukkitInventory();
+    }
+
     public void setId(@NotNull String id) {
-        if (this.id.equals(id)) return;
+        if (this.id != null && this.id.equals(id)) return;
 
         this.id = id;
     }
@@ -106,9 +115,15 @@ public final class MenuSession {
     public synchronized void setTitle(@NotNull String title) {
         if (this.title.equals(title)) return;
 
+        String oldTitle = this.title;
         this.title = this.instance.getProvidersContainer().getColorProvider().handle(title);
 
-        InventoryUtils.changeTitle(this, this.inventory, title);
+        try {
+            OdalitaMenusNMS.getInstance().changeInventoryTitle(this.getInventory(), this.title);
+        } catch (Exception exception) {
+            OdalitaLogger.error(exception);
+            this.title = oldTitle;
+        }
     }
 
     public void setMenuType(@NotNull MenuType menuType) {
@@ -118,20 +133,39 @@ public final class MenuSession {
 
         if (this.menuType.type().equals(menuType)) return;
 
+        if (this.isIdentity() && !menuType.supportsIdentity()) {
+            throw new UnsupportedOperationException("Cannot change identity menu to a non-identity menu type!");
+        }
+
         if (this.opened) {
             throw new IllegalStateException("Cannot change menu type while menu is opened!");
         } else {
             this.menuType = this.instance.getSupportedMenuTypes().getSupportedMenuType(menuType);
-            this.inventory = this.menuType.createInventory(this.title);
+
+            // Make sure the contents array is the correct size
+            MenuItem[][] newContents = new MenuItem[this.getRows()][this.getColumns()];
+            for (int i = 0; i < this.contents.length; i++) {
+                if (i >= newContents.length) break;
+
+                System.arraycopy(this.contents[i], 0, newContents[i], 0, Math.min(this.contents[i].length, newContents[i].length));
+            }
+
+            this.contents = newContents;
+
+            this.inventoryData = this.menuType.createInventory(this.getViewer(), this.title);
         }
     }
 
-    public synchronized void setMenuProperty(@NotNull MenuProperty property, int value) {
+    public void setMenuProperty(@NotNull MenuProperty property, int value) {
         if (this.menuType.type() != property.getMenuType()) {
             throw new UnsupportedOperationException("Can't set property for a '" + property.getMenuType() + "' inventory in a '" + this.menuType.type() + "' inventory.");
         }
 
-        InventoryUtils.setProperty(this, property, value);
+        if (!this.opened) {
+            this.openActions.add(() -> OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value));
+        } else {
+            OdalitaMenusNMS.getInstance().setInventoryProperty(this.getInventory(), property.getIndex(), value);
+        }
     }
 
     public synchronized void setGlobalCacheKey(@NotNull String globalCacheKey) {
@@ -162,6 +196,14 @@ public final class MenuSession {
     @ApiStatus.Internal
     public void setClosed(boolean closed) {
         this.closed = closed;
+        if (closed) {
+            this.opened = false;
+        }
+    }
+
+    @ApiStatus.Internal
+    public void reopen() {
+        this.builder.open();
     }
 
     public int getRows() {

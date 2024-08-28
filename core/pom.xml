@@ -4,12 +4,148 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.odalitadevelopments</groupId>
+        <groupId>io.github.odalita-developments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.4.3</version>
+        <version>0.5.11</version>
     </parent>
 
-    <groupId>nl.odalitadevelopments.odalitamenus</groupId>
+    <groupId>io.github.odalita-developments.odalitamenus</groupId>
     <artifactId>core</artifactId>
     <name>Core</name>
+
+    <repositories>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- OdalitaMenus NMS -->
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>common</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_16_R3</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_17_R1</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_18_R2</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_19_R3</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R1</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R2</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R3</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_20_R4</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R1</artifactId>
+            <version>0.5.11</version>
+        </dependency>
+
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>clean package install</defaultGoal>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <shadedArtifactAttached>false</shadedArtifactAttached>
+
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R1</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

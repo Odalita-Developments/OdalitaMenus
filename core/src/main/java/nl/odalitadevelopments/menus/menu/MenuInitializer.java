@@ -5,15 +5,19 @@ import nl.odalitadevelopments.menus.annotations.Menu;
 import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
+import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import java.util.logging.Level;
 
@@ -36,10 +40,11 @@ final class MenuInitializer<P extends MenuProvider> {
             String inventoryTitle = colorProvider.handle(annotation.title());
 
             SupportedMenuType menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type());
-            Inventory inventory = menuType.createInventory(inventoryTitle);
+            InventoryCreation inventoryCreation = menuType.createInventory(player, inventoryTitle);
 
             String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), menuId, menuType, inventory, annotation, false); // TODO
+
+            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), this.builder, menuId, menuType, inventoryCreation, annotation.title(), annotation.globalCacheKey(), false); // TODO
             menuSession.getViewers().add(player);
 
             IMenuContents contents = menuSession.getMenuContents();
@@ -66,12 +71,32 @@ final class MenuInitializer<P extends MenuProvider> {
 
             Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
         } catch (Exception exception) {
-            this.menuProcessor.getInstance().getJavaPlugin().getLogger().log(Level.SEVERE, "An error occurred while initializing a menu for " + player.getName() + "!", exception);
+            OdalitaLogger.error(exception);
         }
     }
 
-    private void openInventory(@NotNull Player player, @NotNull MenuSession menuSession) {
-        this.menuProcessor.getOpenMenus().put(player, menuSession);
-        player.openInventory(menuSession.getInventory());
+    private void openInventory(Player player, MenuSession menuSession) {
+        MenuSession oldSession = this.menuProcessor.getOpenMenus().put(player, menuSession);
+        if (oldSession != null && oldSession.getViewers().remove(player) && oldSession.getViewers().isEmpty()) { // Make sure old session is empty before marking as closed
+            // Mark old session as closed, if present to prevent items being set in the wrong inventory
+            oldSession.setClosed(true);
+        }
+
+        InventoryCreation inventoryData = menuSession.getInventoryData();
+        Object nmsInventory = inventoryData.nmsInventory();
+        Object inventoryToOpen = nmsInventory == null ? inventoryData.bukkitInventory() : nmsInventory;
+
+        try {
+            OdalitaMenusNMS.getInstance().openInventory(player, inventoryToOpen, menuSession.getTitle());
+
+            // Make sure the player is added to the viewers list
+            List<HumanEntity> viewers = menuSession.getInventory().getViewers();
+            if (!viewers.contains(player)) {
+                viewers.add(player);
+            }
+        } catch (Exception exception) {
+            OdalitaLogger.error(exception);
+            this.menuProcessor.getOpenMenus().remove(player);
+        }
     }
 }

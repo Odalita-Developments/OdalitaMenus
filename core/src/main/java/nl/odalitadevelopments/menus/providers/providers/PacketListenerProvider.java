@@ -17,6 +17,7 @@ public interface PacketListenerProvider {
     enum ClientboundPacketType {
 
         SET_SLOT,
-        WINDOW_ITEMS;
+        SET_CONTENTS,
+        ;
     }
 }

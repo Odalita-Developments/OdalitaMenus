@@ -36,17 +36,17 @@ public enum MenuProperty {
      */
     TICKS_FOR_CURRENT_SMELTING(3, MenuType.FURNACE),
     /**
-     * In an enchanting inventory, the top button's experience level
+     * In an enchanting inventory, the top button's experience level.
      * value.
      */
     ENCHANT_BUTTON1(0, MenuType.ENCHANTING),
     /**
-     * In an enchanting inventory, the middle button's experience level
+     * In an enchanting inventory, the middle button's experience level.
      * value.
      */
     ENCHANT_BUTTON2(1, MenuType.ENCHANTING),
     /**
-     * In an enchanting inventory, the bottom button's experience level
+     * In an enchanting inventory, the bottom button's experience level.
      * value.
      */
     ENCHANT_BUTTON3(2, MenuType.ENCHANTING),
@@ -55,15 +55,15 @@ public enum MenuProperty {
      */
     ENCHANT_XP_SEED(3, MenuType.ENCHANTING),
     /**
-     * In an enchanting inventory, the top button's enchantment's id
+     * In an enchanting inventory, the top button's enchantment's id.
      */
     ENCHANT_ID1(4, MenuType.ENCHANTING),
     /**
-     * In an enchanting inventory, the middle button's enchantment's id
+     * In an enchanting inventory, the middle button's enchantment's id.
      */
     ENCHANT_ID2(5, MenuType.ENCHANTING),
     /**
-     * In an enchanting inventory, the bottom button's enchantment's id
+     * In an enchanting inventory, the bottom button's enchantment's id.
      */
     ENCHANT_ID3(6, MenuType.ENCHANTING),
     /**
@@ -79,23 +79,23 @@ public enum MenuProperty {
      */
     ENCHANT_LEVEL3(9, MenuType.ENCHANTING),
     /**
-     * In an beacon inventory, the levels of the beacon
+     * In a beacon inventory, the levels of the beacon.
      */
     LEVELS(0, MenuType.BEACON),
     /**
-     * In an beacon inventory, the primary potion effect
+     * In a beacon inventory, the primary potion effect.
      */
     PRIMARY_EFFECT(1, MenuType.BEACON),
     /**
-     * In an beacon inventory, the secondary potion effect
+     * In a beacon inventory, the secondary potion effect.
      */
     SECONDARY_EFFECT(2, MenuType.BEACON),
     /**
-     * The repair's cost in xp levels
+     * The repair's cost in xp levels.
      */
     REPAIR_COST(0, MenuType.ANVIL),
     /**
-     * The lectern's current open book page
+     * The lectern's current open book page.
      */
     BOOK_PAGE(0, MenuType.LECTERN);
 

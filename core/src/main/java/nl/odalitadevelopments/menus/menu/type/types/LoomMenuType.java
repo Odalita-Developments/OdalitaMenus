@@ -12,7 +12,7 @@ public final class LoomMenuType implements SupportedMenuType {
 
     @Override
     public @NotNull MenuType type() {
-        return MenuType.SMOKER;
+        return MenuType.LOOM;
     }
 
     @Override

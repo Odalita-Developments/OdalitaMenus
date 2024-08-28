@@ -15,12 +15,25 @@ import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProvider;
 import nl.odalitadevelopments.menus.menu.providers.frame.MenuFrameProviderLoader;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuTypes;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
+import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
+import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
+import nl.odalitadevelopments.menus.nms.v1_16_R3.OdalitaMenusNMS_v1_16_R5;
+import nl.odalitadevelopments.menus.nms.v1_17_R1.OdalitaMenusNMS_v1_17_R1;
+import nl.odalitadevelopments.menus.nms.v1_18_R2.OdalitaMenusNMS_v1_18_R2;
+import nl.odalitadevelopments.menus.nms.v1_19_R3.OdalitaMenusNMS_v1_19_R3;
+import nl.odalitadevelopments.menus.nms.v1_20_R1.OdalitaMenusNMS_v1_20_R1;
+import nl.odalitadevelopments.menus.nms.v1_20_R3.OdalitaMenusNMS_v1_20_R3;
+import nl.odalitadevelopments.menus.nms.v1_20_R4.OdalitaMenusNMS_v1_20_R4;
+import nl.odalitadevelopments.menus.nms.v1_21_R1.OdalitaMenusNMS_v1_21_R1;
+import nl.odalitadevelopments.menus.nms.v1_20_R2.OdalitaMenusNMS_v1_20_R2;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
-import nl.odalitadevelopments.menus.utils.version.ProtocolVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,15 +43,14 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 final class OdalitaMenusImpl implements OdalitaMenus, Listener {
@@ -79,16 +91,14 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     @Getter(AccessLevel.NONE)
     private final InventoryListener inventoryListener;
     @Getter(AccessLevel.NONE)
-    private final ScheduledFuture<?> menuTask;
+    private final BukkitTask menuTask;
 
     private OdalitaMenusImpl(JavaPlugin javaPlugin) {
         if (INSTANCES.containsKey(javaPlugin)) {
             throw new IllegalStateException("OdalitaMenus is already initialized for this plugin! (JavaPlugin: " + javaPlugin.getName() + ")");
         }
 
-        if (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.NOT_SUPPORTED)) {
-            throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_16_5.format() + " - " + ProtocolVersion.latest().format() + ")");
-        }
+        this.initNMS();
 
         this.javaPlugin = javaPlugin;
 
@@ -113,9 +123,42 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         javaPlugin.getServer().getPluginManager().registerEvents(this.cooldownContainer, javaPlugin);
         javaPlugin.getServer().getPluginManager().registerEvents(this, javaPlugin);
 
-        this.menuTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new MenuTasksProcessor(this), 0, 50, TimeUnit.MILLISECONDS);
+        this.menuTask = Bukkit.getScheduler().runTaskTimerAsynchronously(javaPlugin, new MenuTasksProcessor(this), 0, 1);
 
         INSTANCES.put(javaPlugin, this);
+    }
+
+    private void initNMS() {
+        ProtocolVersion serverVersion = ProtocolVersion.getServerVersion();
+        if (serverVersion.isHigherOrEqual(ProtocolVersion.MINECRAFT_1_20_6) && !PaperHelper.IS_PAPER) {
+            OdalitaLogger.error("OdalitaMenus requires Paper based server software to run on Minecraft 1.20.6 and higher!");
+            return;
+        }
+
+        try {
+            Class<?> harmNMSInstance = Class.forName("nl.odalitadevelopments.menus.nms.OdalitaMenusNMSInstance");
+            OdalitaMenusNMS nms = switch (serverVersion) {
+                case MINECRAFT_1_21_1 -> new OdalitaMenusNMS_v1_21_R1();
+                case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
+                case MINECRAFT_1_20_4 -> new OdalitaMenusNMS_v1_20_R3();
+                case MINECRAFT_1_20_2 -> new OdalitaMenusNMS_v1_20_R2();
+                case MINECRAFT_1_20_1 -> new OdalitaMenusNMS_v1_20_R1();
+                case MINECRAFT_1_19_4 -> new OdalitaMenusNMS_v1_19_R3();
+                case MINECRAFT_1_18_2 -> new OdalitaMenusNMS_v1_18_R2();
+                case MINECRAFT_1_17_1 -> new OdalitaMenusNMS_v1_17_R1();
+                case MINECRAFT_1_16_5 -> new OdalitaMenusNMS_v1_16_R5();
+                default ->
+                        throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_16_5.format() + " - " + ProtocolVersion.latest().format() + ")");
+            };
+
+            Method method = harmNMSInstance.getDeclaredMethod("init", OdalitaMenusNMS.class);
+            method.setAccessible(true);
+            method.invoke(null, nms);
+            method.setAccessible(false);
+        } catch (Exception exception) {
+            OdalitaLogger.error(exception);
+            Bukkit.getServer().shutdown();
+        }
     }
 
     @Override
@@ -181,7 +224,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onPluginDisable(PluginDisableEvent event) {
         if (this.javaPlugin.equals(event.getPlugin())) {
-            this.menuTask.cancel(true);
+            this.menuTask.cancel();
 
             for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
