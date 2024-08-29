@@ -3,8 +3,14 @@
 Advanced yet simple to use inventory api for Paper plugins
 ___
 
+[![Maven Central Version](https://img.shields.io/maven-central/v/io.github.odalita-developments.odalitamenus/core?style=for-the-badge&color=0459c8)](https://central.sonatype.com/artifact/io.github.odalita-developments.odalitamenus/core)
+[![GitHub Release](https://img.shields.io/github/v/release/Odalita-Developments/OdalitaMenus?display_name=release&style=for-the-badge&label=latest%20release&color=4493f8)](https://github.com/Odalita-Developments/OdalitaMenus/releases/latest)
+[![License](https://img.shields.io/github/license/Odalita-Developments/OdalitaMenus?style=for-the-badge&color=b2204c)](../LICENSE)
+[![Spigot Downloads](https://img.shields.io/spiget/downloads/110376?label=spigot%20downloads&style=for-the-badge&color=ee8917)](https://www.spigotmc.org/resources/110376/)
+___
+
 # Getting started ([Wiki](https://github.com/Odalita-Developments/OdalitaMenus/wiki/Getting-started))
-**(NOTE)** If you're running on 1.20.6 or later, please make sure you use Paper as your server software. Spigot is no longer supported for newer versions.
+**(NOTE)** If you're running on 1.20.6 or later, please make sure you use a Paper based server software. We no longer support Spigot for newer versions.
 
 In order to get started you would need to add the libary to your project using **maven** or **gradle**
 
