@@ -34,4 +34,11 @@ public abstract class Identity<T> {
     public final int hashCode() {
         return Objects.hash(this.identity);
     }
+
+    @Override
+    public String toString() {
+        return "Identity{" +
+                "identity=" + this.identity +
+                '}';
+    }
 }
