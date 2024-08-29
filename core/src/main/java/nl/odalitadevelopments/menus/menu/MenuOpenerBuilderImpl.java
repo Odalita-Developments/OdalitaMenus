@@ -2,6 +2,8 @@ package nl.odalitadevelopments.menus.menu;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import nl.odalitadevelopments.menus.identity.Identity;
+import nl.odalitadevelopments.menus.identity.IdentityKey;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
@@ -31,6 +33,7 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
     private final Player player;
     private final MenuProviderLoader<P> providerLoader;
 
+    private Identity<?> identity;
     private final Map<String, Integer> paginationPages = new HashMap<>();
     private final Map<String, Pair<Integer, Integer>> scrollableAxes = new HashMap<>();
 
@@ -42,6 +45,12 @@ final class MenuOpenerBuilderImpl<P extends MenuProvider> implements MenuOpenerB
         this.provider = provider;
         this.player = player;
         this.providerLoader = providerLoader;
+    }
+
+    @Override
+    public @NotNull <T> MenuOpenerBuilder identity(@NotNull IdentityKey<T> key, @NotNull T identity) {
+        this.identity = new Identity<>(key, identity);
+        return this;
     }
 
     @Override

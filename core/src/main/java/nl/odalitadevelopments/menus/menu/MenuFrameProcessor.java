@@ -15,7 +15,6 @@ public final class MenuFrameProcessor {
 
     @Getter
     private final Map<Class<? extends MenuFrameProvider>, MenuFrameProviderLoader<?>> frameProviderLoaders = new ConcurrentHashMap<>();
-
     private final Map<Class<? extends MenuFrameProvider>, MenuFrameProviderLoader<?>> frameProviderLoaderCache = new HashMap<>();
 
     MenuFrameProcessor(MenuProcessor menuProcessor) {

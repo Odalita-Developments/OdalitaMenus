@@ -10,6 +10,7 @@ import nl.odalitadevelopments.menus.contents.MenuIdentityContents;
 import nl.odalitadevelopments.menus.contents.action.MenuProperty;
 import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import nl.odalitadevelopments.menus.identity.Identity;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.type.InventoryCreation;
@@ -57,7 +58,7 @@ public final class MenuSession {
 
     private final Collection<Runnable> openActions = Sets.newConcurrentHashSet();
 
-    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, String id, SupportedMenuType menuType, InventoryCreation inventoryData, String title, String globalCacheKey, boolean identity) {
+    MenuSession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, String id, SupportedMenuType menuType, InventoryCreation inventoryData, String title, String globalCacheKey, Identity<?> identity) {
         this.instance = instance;
         this.builder = builder;
         this.uniqueId = UUID.randomUUID();
@@ -73,8 +74,8 @@ public final class MenuSession {
         this.globalCacheKey = globalCacheKey;
         this.cache = new MenuSessionCache(this);
 
-        if (identity) {
-            this.menuContents = MenuIdentityContents.create(this);
+        if (identity != null) {
+            this.menuContents = MenuIdentityContents.create(this, identity);
         } else {
             this.menuContents = MenuContents.create(this);
         }

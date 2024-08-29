@@ -4,41 +4,51 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class Identity<T> {
+public final class Identity<T> {
 
+    private final IdentityKey<T> key;
     private final T identity;
 
-    public Identity(@NotNull T identity) {
+    public Identity(@NotNull IdentityKey<T> key, @NotNull T identity) {
+        this.key = key;
         this.identity = identity;
     }
 
-    public final @NotNull T identity() {
+    public @NotNull IdentityKey<T> identityKey() {
+        return this.key;
+    }
+
+    public @NotNull T identity() {
         return this.identity;
     }
 
-    @SuppressWarnings("unchecked")
-    public final @NotNull Class<T> type() {
-        return (Class<T>) this.identity.getClass();
+    public @NotNull String key() {
+        return this.key.key();
+    }
+
+    public @NotNull Class<? extends T> type() {
+        return this.key.type();
     }
 
     @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
 
-        Identity<?> identity = (Identity<?>) o;
-        return Objects.equals(this.identity, identity.identity);
+        Identity<?> identity1 = (Identity<?>) object;
+        return Objects.equals(key, identity1.key) && Objects.equals(identity, identity1.identity);
     }
 
     @Override
-    public final int hashCode() {
-        return Objects.hash(this.identity);
+    public int hashCode() {
+        return Objects.hash(key, identity);
     }
 
     @Override
     public String toString() {
         return "Identity{" +
-                "identity=" + this.identity +
+                "key=" + key +
+                ", identity=" + identity +
                 '}';
     }
 }

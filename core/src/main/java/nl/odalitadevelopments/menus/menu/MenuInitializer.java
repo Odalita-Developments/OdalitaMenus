@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import java.util.logging.Level;
-
 @AllArgsConstructor
 final class MenuInitializer<P extends MenuProvider> {
 
@@ -34,17 +32,7 @@ final class MenuInitializer<P extends MenuProvider> {
         Player player = this.builder.getPlayer();
 
         try {
-            Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
-
-            ColorProvider colorProvider = this.menuProcessor.getInstance().getProvidersContainer().getColorProvider();
-            String inventoryTitle = colorProvider.handle(annotation.title());
-
-            SupportedMenuType menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type());
-            InventoryCreation inventoryCreation = menuType.createInventory(player, inventoryTitle);
-
-            String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
-
-            MenuSession menuSession = new MenuSession(this.menuProcessor.getInstance(), this.builder, menuId, menuType, inventoryCreation, annotation.title(), annotation.globalCacheKey(), false); // TODO
+            MenuSession menuSession = this.createMenuSession(menuProvider, player);
             menuSession.getViewers().add(player);
 
             IMenuContents contents = menuSession.getMenuContents();
@@ -73,6 +61,41 @@ final class MenuInitializer<P extends MenuProvider> {
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
+    }
+
+    private MenuSession createMenuSession(P menuProvider, Player player) {
+        // If the menu should be opened by identity, check if the identity already has a session open
+        if (this.builder.getIdentity() != null) {
+            MenuSession openedSession = this.menuProcessor.getOpenMenusByIdentity().get(this.builder.getIdentity());
+            if (openedSession != null) {
+                openedSession.getViewers().add(player);
+                return openedSession;
+            }
+        }
+
+        Menu annotation = menuProvider.getClass().getAnnotation(Menu.class);
+
+        ColorProvider colorProvider = this.menuProcessor.getInstance().getProvidersContainer().getColorProvider();
+        String inventoryTitle = colorProvider.handle(annotation.title());
+
+        SupportedMenuType menuType = this.supportedMenuTypes.getSupportedMenuType(annotation.type());
+        if (this.builder.getIdentity() != null && !menuType.type().supportsIdentity()) {
+            throw new IllegalArgumentException("Menu type '" + menuType.type().name() + "' does not support identity based menus");
+        }
+
+        InventoryCreation inventoryCreation = menuType.createInventory(player, inventoryTitle);
+        String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
+
+        return new MenuSession(
+                this.menuProcessor.getInstance(),
+                this.builder,
+                menuId,
+                menuType,
+                inventoryCreation,
+                annotation.title(),
+                annotation.globalCacheKey(),
+                this.builder.getIdentity()
+        );
     }
 
     private void openInventory(Player player, MenuSession menuSession) {

@@ -3,6 +3,7 @@ package nl.odalitadevelopments.menus.menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.identity.Identity;
 import nl.odalitadevelopments.menus.items.ItemProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import nl.odalitadevelopments.menus.menu.providers.MenuProviderLoader;
@@ -30,11 +31,11 @@ public final class MenuProcessor {
 
     @Getter
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaders = new ConcurrentHashMap<>();
-
     private final Map<Class<? extends MenuProvider>, MenuProviderLoader<?>> providerLoaderCache = new HashMap<>();
 
     @Getter
     private final Map<Player, MenuSession> openMenus = new ConcurrentHashMap<>();
+    private final Map<Identity<?>, MenuSession> openMenusByIdentity = new ConcurrentHashMap<>();
 
     public MenuProcessor(OdalitaMenus instance, ItemProcessor itemProcessor, SupportedMenuTypes supportedMenuTypes) {
         this.instance = instance;
@@ -42,6 +43,10 @@ public final class MenuProcessor {
         this.supportedMenuTypes = supportedMenuTypes;
 
         this.menuFrameProcessor = new MenuFrameProcessor(this);
+    }
+
+    void open(Player player, MenuSession session) {
+
     }
 
     public <P extends MenuProvider> void registerProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuProviderLoader<P> loader) {
