@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.examples.confirm_menu.usage;
 
+import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.examples.common.ItemBuilder;
 import nl.odalitadevelopments.menus.examples.confirm_menu.ConfirmMenu;
 import nl.odalitadevelopments.menus.items.DisplayItem;
@@ -11,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 final class ConfirmMenuUsage {
 
     // Simple confirm menu
-    public void openSimple(JavaPlugin plugin, Player player) {
+    public void openSimple(OdalitaMenus instance, Player player) {
         ConfirmMenu.builder()
                 .title("Confirm")
                 .response((response) -> {
@@ -33,11 +34,11 @@ final class ConfirmMenuUsage {
                                 .build()
                         )
                 )
-                .open(plugin, player);
+                .open(instance, player);
     }
 
     // Advanced confirm menu with updatable title and confirm item
-    public void openAdvanced(JavaPlugin plugin, Player player) {
+    public void openAdvanced(OdalitaMenus instance, Player player) {
         ConfirmMenu.builder()
                 .title((contents) -> { // Updates the title every second
                     int delay = contents.cache(ConfirmMenu.DELAY_CACHE_ID, -1);
@@ -72,6 +73,6 @@ final class ConfirmMenuUsage {
                             })
                             .build());
                 })
-                .open(plugin, player);
+                .open(instance, player);
     }
 }

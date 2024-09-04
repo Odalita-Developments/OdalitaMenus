@@ -29,6 +29,7 @@ import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
+import nl.odalitadevelopments.menus.utils.OdalitaServicesHandler;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
 import nl.odalitadevelopments.menus.utils.metrics.Metrics;
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +56,10 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         return new OdalitaMenusImpl(javaPlugin);
     }
 
+    private static final String VERSION = "0.5.11";
+
     private final JavaPlugin javaPlugin;
+    private final int id;
 
     private final SupportedMenuTypes supportedMenuTypes;
 
@@ -73,6 +78,9 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private final BukkitTask menuTask;
 
     private OdalitaMenusImpl(JavaPlugin javaPlugin) {
+        OdalitaServicesHandler servicesHandler = new OdalitaServicesHandler(javaPlugin);
+        this.id = servicesHandler.generateId();
+
         this.initNMS();
 
         this.javaPlugin = javaPlugin;
@@ -98,7 +106,9 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
 
         this.menuTask = Bukkit.getScheduler().runTaskTimerAsynchronously(javaPlugin, new MenuTasksProcessor(this), 0, 1);
 
-        new Metrics(javaPlugin, 22559);
+        Bukkit.getServicesManager().register(int.class, 0, javaPlugin, ServicePriority.Normal);
+
+        new Metrics(javaPlugin, 22559, VERSION);
     }
 
     private void initNMS() {
@@ -195,8 +205,6 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
             for (Player player : this.menuProcessor.getPlayersWithOpenMenu()) {
                 player.closeInventory();
             }
-
-            this.providersContainer.close(this);
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalSessionCache);

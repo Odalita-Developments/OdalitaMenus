@@ -6,7 +6,6 @@ import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,7 +111,7 @@ final class ConfirmMenuBuilderImpl implements ConfirmMenuBuilder {
     }
 
     @Override
-    public void open(@NotNull JavaPlugin plugin, @NotNull Player player) {
-        OdalitaMenus.getInstance(plugin).getMenuProcessor().openMenu(new ConfirmMenu(this), player);
+    public void open(@NotNull OdalitaMenus instance, @NotNull Player player) {
+        instance.openMenu(new ConfirmMenu(this), player);
     }
 }

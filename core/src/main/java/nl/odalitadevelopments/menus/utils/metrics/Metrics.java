@@ -3,6 +3,7 @@ package nl.odalitadevelopments.menus.utils.metrics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -82,19 +83,23 @@ public final class Metrics {
     // The plugin id
     private final int pluginId;
 
+    // The plugin version
+    private final String version;
+
     /**
      * Class constructor.
      *
-     * @param parentPlugin   The plugin which stats should be submitted.
-     * @param pluginId The id of the plugin.
-     *                 It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     * @param parentPlugin The plugin which stats should be submitted.
+     * @param pluginId     The id of the plugin.
+     *                     It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
-    public Metrics(JavaPlugin parentPlugin, int pluginId) {
+    public Metrics(JavaPlugin parentPlugin, int pluginId, String version) {
         if (parentPlugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
         this.parentPlugin = parentPlugin;
         this.pluginId = pluginId;
+        this.version = version;
 
         // Get the config file
         File bStatsFolder = new File(parentPlugin.getDataFolder().getParentFile(), "bStats");
@@ -134,6 +139,7 @@ public final class Metrics {
         logSentData = config.getBoolean("logSentData", false);
         logResponseStatusText = config.getBoolean("logResponseStatusText", false);
 
+        OdalitaLogger.info("bStats Metrics started! " +);
         if (enabled) {
             boolean found = false;
             // Search for all other bStats Metrics classes to see if we are the first one
@@ -147,6 +153,7 @@ public final class Metrics {
             // Register our service
             Bukkit.getServicesManager().register(Metrics.class, this, parentPlugin, ServicePriority.Normal);
             if (!found) {
+                OdalitaLogger.info("bStats Metrics started submitting!");
                 // We are the first!
                 startSubmitting();
             }
@@ -195,12 +202,9 @@ public final class Metrics {
     public JsonObject getPluginData() {
         JsonObject data = new JsonObject();
 
-        String pluginName = parentPlugin.getDescription().getName();
-        String pluginVersion = parentPlugin.getDescription().getVersion();
-
-        data.addProperty("pluginName", pluginName); // Append the name of the plugin
+        data.addProperty("pluginName", "OdalitaMenus"); // Append the name of the plugin
         data.addProperty("id", pluginId); // Append the id of the plugin
-        data.addProperty("pluginVersion", pluginVersion); // Append the version of the plugin
+        data.addProperty("pluginVersion", this.version); // Append the version of the plugin
         data.add("customCharts", new JsonArray());
 
         return data;
