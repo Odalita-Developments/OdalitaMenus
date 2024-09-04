@@ -28,4 +28,13 @@ public final class MenuIdentitySession extends AbstractMenuSession<MenuIdentityS
     protected @NotNull InventoryCreation createInventoryData(@NotNull MenuType menuType, @NotNull String title) {
         return null;
     }
+
+    @Override
+    public void menuType(@NotNull MenuType menuType) {
+        if (!menuType.supportsIdentity()) {
+            throw new UnsupportedOperationException("Cannot change identity menu to a non-identity menu type!");
+        }
+
+        super.menuType(menuType);
+    }
 }
