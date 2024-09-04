@@ -197,7 +197,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     }
 
     @Override
-    public <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P> loader) {
+    public <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P, ?> loader) {
         this.menuProcessor.getMenuFrameProcessor().registerFrameProviderLoader(providerClass, loader);
     }
 

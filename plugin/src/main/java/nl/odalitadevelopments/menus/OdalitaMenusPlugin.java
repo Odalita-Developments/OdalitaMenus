@@ -74,7 +74,7 @@ public final class OdalitaMenusPlugin extends JavaPlugin {
         return this.odalitaMenus.isProviderLoaderRegistered(providerClass);
     }
 
-    public <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P> loader) {
+    public <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P, ?> loader) {
         this.odalitaMenus.registerFrameProviderLoader(providerClass, loader);
     }
 

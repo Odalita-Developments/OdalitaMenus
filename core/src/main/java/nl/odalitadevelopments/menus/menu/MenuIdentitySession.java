@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class MenuIdentitySession extends AbstractMenuSession<MenuIdentitySession, Set<Player>, MenuIdentityContents<?, ?>> {
+public final class MenuIdentitySession extends AbstractMenuSession<MenuIdentitySession, Set<Player>, MenuIdentityContents<?>> {
 
     MenuIdentitySession(OdalitaMenus instance, MenuOpenerBuilderImpl<?> builder, MenuData data, InventoryCreation inventoryData, Player player) {
         super(instance, builder, data, inventoryData, (session) -> MenuIdentityContents.create(session, data.getOrThrow(MenuData.Key.IDENTITY)));

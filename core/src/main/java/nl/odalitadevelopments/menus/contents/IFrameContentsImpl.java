@@ -47,6 +47,7 @@ interface IFrameContentsImpl extends IFrameContents {
         this.registerFrame(id, SlotPos.of(slot), frameClass);
     }
 
+    @SuppressWarnings("rawtypes, unchecked")
     @Override
     default boolean loadFrame(@NotNull String id, Object @NotNull ... arguments) {
         if (this.menuSession().isClosed()) return false;
@@ -85,9 +86,14 @@ interface IFrameContentsImpl extends IFrameContents {
             throw new IllegalArgumentException("The frameClass '" + frameClass.getName() + "' does not have a constructor with the arguments: " + Arrays.toString(arguments), exception);
         }
 
-        MenuFrameProviderLoader<MenuFrameProvider> loader = this.menuSession().instance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
+        MenuFrameProviderLoader loader = this.menuSession().instance().getMenuProcessor().getMenuFrameProcessor().getFrameProviderLoader(frame);
         MenuFrameContentsImpl frameContents = new MenuFrameContentsImpl(this.menuSession(), frameData);
-        // TODO        loader.load(frame, this.menuSession.getViewer(), frameContents);
+
+        if (this.menuSession().menuContents() instanceof MenuContents menuContents) {
+            loader.load(frame, menuContents.menuSession().viewer(), frameContents);
+        } else if (this.menuSession().menuContents() instanceof MenuIdentityContents menuIdentityContents) {
+            loader.load(frame, menuIdentityContents.identity(), frameContents);
+        }
 
         this.cache().setLoadedFrameId(id);
         return true;

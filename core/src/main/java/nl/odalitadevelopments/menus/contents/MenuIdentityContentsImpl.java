@@ -8,16 +8,16 @@ import nl.odalitadevelopments.menus.menu.MenuIdentitySession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import org.jetbrains.annotations.NotNull;
 
-final class MenuIdentityContentsImpl<T, I extends Identity<T>> implements MenuIdentityContents<T, I>, IMenuContentsImpl, IPaginationScrollableContentsImpl, IFrameContentsImpl {
+final class MenuIdentityContentsImpl<T> implements MenuIdentityContents<T>, IMenuContentsImpl, IPaginationScrollableContentsImpl, IFrameContentsImpl {
 
     private final MenuIdentitySession menuSession;
     private final MenuContentsScheduler scheduler;
     private final MenuContentsActions actions;
     private final MenuContentsEvents events;
 
-    private final I identity;
+    private final Identity<T> identity;
 
-    MenuIdentityContentsImpl(MenuIdentitySession menuSession, I identity) {
+    MenuIdentityContentsImpl(MenuIdentitySession menuSession, Identity<T> identity) {
         this.menuSession = menuSession;
 
         this.scheduler = MenuContentsScheduler.create(menuSession.cache());
@@ -53,7 +53,7 @@ final class MenuIdentityContentsImpl<T, I extends Identity<T>> implements MenuId
     }
 
     @Override
-    public @NotNull I identity() {
+    public @NotNull Identity<T> identity() {
         return this.identity;
     }
 }

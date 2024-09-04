@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MenuProviderLoader<P extends MenuProvider> {
 
+    @SuppressWarnings("rawtypes, unchecked")
     static <P extends MenuProvider> MenuProviderLoader<P> defaultLoader() {
         return (provider, player, contents) -> {
             if (provider instanceof PlayerMenuProvider playerMenuProvider) {

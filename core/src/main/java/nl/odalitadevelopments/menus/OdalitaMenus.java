@@ -68,7 +68,7 @@ public sealed interface OdalitaMenus permits OdalitaMenusImpl {
 
     <P extends MenuProvider> boolean isProviderLoaderRegistered(@NotNull Class<P> providerClass);
 
-    <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P> loader);
+    <P extends MenuFrameProvider> void registerFrameProviderLoader(@NotNull Class<P> providerClass, @NotNull MenuFrameProviderLoader<P, ?> loader);
 
     <P extends MenuFrameProvider> boolean isFrameProviderLoaderRegistered(@NotNull Class<P> providerClass);
 
