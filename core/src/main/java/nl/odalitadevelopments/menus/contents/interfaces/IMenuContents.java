@@ -1,12 +1,10 @@
 package nl.odalitadevelopments.menus.contents.interfaces;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuIteratorType;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
-import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
 import nl.odalitadevelopments.menus.menu.type.MenuType;
 import nl.odalitadevelopments.menus.patterns.DirectionPattern;
@@ -26,9 +24,6 @@ import java.util.function.Supplier;
 
 public interface IMenuContents {
 
-    @NotNull
-    MenuSession menuSession();
-
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item, boolean override);
 
     void set(@NotNull SlotPos slotPos, @NotNull MenuItem item);
@@ -43,7 +38,8 @@ public interface IMenuContents {
 
     void add(@NotNull MenuItem item);
 
-    @NotNull Optional<@NotNull SlotPos> firstEmptySlot();
+    @NotNull
+    Optional<@NotNull SlotPos> firstEmptySlot();
 
     void clear(@NotNull SlotPos slotPos);
 
@@ -171,9 +167,10 @@ public interface IMenuContents {
     void createSimpleIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
                               @NotNull List<@NotNull MenuItem> menuItems, int... blacklisted);
 
-    @NotNull <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
-                                                            @NotNull Class<T> clazz,
-                                                            @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
+    @NotNull
+    <T> MenuObjectIterator<T> createObjectIterator(@NotNull MenuIteratorType menuIteratorType, int startRow, int startColumn,
+                                                   @NotNull Class<T> clazz,
+                                                   @NotNull Function<@NotNull T, @NotNull MenuItem> menuItemCreatorFunction);
 
     <C extends PatternCache<T>, T> void createPatternIterator(@NotNull MenuPattern<C> iteratorPattern, @NotNull List<@NotNull MenuItem> menuItems);
 
@@ -191,10 +188,10 @@ public interface IMenuContents {
     <T> T cache(@NotNull String key);
 
     @NotNull
-    MenuContents setCache(@NotNull String key, @NotNull Object value);
+    IMenuContents setCache(@NotNull String key, @NotNull Object value);
 
     @NotNull
-    MenuContents pruneCache(@NotNull String key);
+    IMenuContents pruneCache(@NotNull String key);
 
     void setGlobalCacheKey(@NotNull String key);
 

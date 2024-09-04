@@ -1,8 +1,8 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
@@ -42,7 +42,7 @@ public class OpenMenuItem<P extends MenuProvider> extends MenuItem {
     }
 
     @Override
-    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         if (this.itemStack == null) {
             this.itemStack = new ItemStack(Material.AIR);
         }
@@ -51,7 +51,7 @@ public class OpenMenuItem<P extends MenuProvider> extends MenuItem {
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         return (event) -> {
             if (!(event.getWhoClicked() instanceof Player player)) return;
 

@@ -8,5 +8,6 @@ import java.util.function.Supplier;
 
 public sealed interface Pagination extends IPagination<Pagination, MenuIterator> permits PaginationImpl {
 
-    @NotNull Pagination addItem(@NotNull Supplier<@NotNull MenuItem> item);
+    @NotNull
+    Pagination addItem(@NotNull Supplier<@NotNull MenuItem> item);
 }

@@ -3,8 +3,8 @@ package nl.odalitadevelopments.menus.scrollable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 @Getter(AccessLevel.PACKAGE)
 final class ScrollableBuilderImpl implements ScrollableBuilder {
 
-    private final MenuContents contents;
+    private final AbstractMenuSession<?, ?, ?> menuSession;
     private final String id;
     private final int showYAxis;
     private final int showXAxis;
@@ -50,7 +50,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
 
     @Override
     public @NotNull ScrollablePatternBuilder pattern(int startRow, int startColumn, @NotNull Class<? extends ScrollableDirectionPattern> patternClass) {
-        PatternContainer patternContainer = this.contents.menuSession().getInstance().getPatternContainer();
+        PatternContainer patternContainer = this.menuSession.instance().getPatternContainer();
         ScrollableDirectionPatternCache patternCache = patternContainer.getPattern(patternClass);
         if (patternCache == null) {
             throw new IllegalArgumentException("No scrollable pattern found for class: '" + patternClass.getName() + "'");
@@ -78,7 +78,7 @@ final class ScrollableBuilderImpl implements ScrollableBuilder {
             scrollable = new PatternScrollableImpl(this);
         }
 
-        this.contents.menuSession().getCache().getScrollableMap().put(this.id, scrollable);
+        this.menuSession.cache().getScrollableMap().put(this.id, scrollable);
 
         scrollable.initItems();
 

@@ -2,10 +2,11 @@ package nl.odalitadevelopments.menus.pagination;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 final class PaginationBuilderImpl implements PaginationBuilder {
 
-    final MenuContents contents;
+    final AbstractMenuSession<?, ?, ?> menuSession;
 
     final String id;
     final int itemsPerPage;
@@ -41,8 +42,8 @@ final class PaginationBuilderImpl implements PaginationBuilder {
     }
 
     @Override
-    public @NotNull ItemPaginationBuilder iterator(@NotNull Function<@NotNull MenuContents, @NotNull MenuIterator> iteratorFunction) {
-        return this.iterator(iteratorFunction.apply(this.contents));
+    public @NotNull ItemPaginationBuilder iterator(@NotNull Function<@NotNull IMenuContents, @NotNull MenuIterator> iteratorFunction) {
+        return this.iterator(iteratorFunction.apply(this.menuSession.menuContents()));
     }
 
     @Override
@@ -56,8 +57,8 @@ final class PaginationBuilderImpl implements PaginationBuilder {
     }
 
     @Override
-    public @NotNull <T> ObjectPaginationBuilder<T> objectIterator(@NotNull Function<@NotNull MenuContents, @NotNull MenuObjectIterator<T>> menuContentsMenuObjectIteratorFunction) {
-        return this.objectIterator(menuContentsMenuObjectIteratorFunction.apply(this.contents));
+    public @NotNull <T> ObjectPaginationBuilder<T> objectIterator(@NotNull Function<@NotNull IMenuContents, @NotNull MenuObjectIterator<T>> menuContentsMenuObjectIteratorFunction) {
+        return this.objectIterator(menuContentsMenuObjectIteratorFunction.apply(this.menuSession.menuContents()));
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -83,7 +84,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
             PaginationImpl pagination = new PaginationImpl(this.builder, this.iterator);
             this.items.forEach(pagination::addItem);
 
-            this.builder.contents.menuSession().getCache().getPaginationMap().put(this.builder.id, pagination);
+            this.builder.menuSession.cache().getPaginationMap().put(this.builder.id, pagination);
 
             return pagination;
         }
@@ -114,7 +115,7 @@ final class PaginationBuilderImpl implements PaginationBuilder {
 
             this.objects.forEach(pagination::addItem);
 
-            this.builder.contents.menuSession().getCache().getPaginationMap().put(this.builder.id, pagination);
+            this.builder.menuSession.cache().getPaginationMap().put(this.builder.id, pagination);
 
             return pagination;
         }

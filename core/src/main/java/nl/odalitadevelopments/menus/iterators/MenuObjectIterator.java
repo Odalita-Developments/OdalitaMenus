@@ -1,9 +1,10 @@
 package nl.odalitadevelopments.menus.iterators;
 
 import com.google.common.collect.Lists;
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.pagination.ObjectPagination;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,14 +25,14 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
     private final Map<Integer, Comparator<T>> sorters = new TreeMap<>();
 
     private volatile List<T> filteredObjects;
-    private Consumer<MenuContents> emptyFilteredItemsConsumer = null;
+    private Consumer<IMenuContents> emptyFilteredItemsConsumer = null;
 
     private ObjectPagination<T> pagination = null;
 
     private volatile boolean isApplying = false;
 
-    public MenuObjectIterator(MenuContents contents, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
-        super(contents, frameData, type, startRow, startColumn);
+    public MenuObjectIterator(AbstractMenuSession<?, ?, ?> menuSession, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn, Function<T, MenuItem> menuItemCreatorFunction) {
+        super(menuSession, frameData, type, startRow, startColumn);
 
         this.allObjects = Lists.newCopyOnWriteArrayList();
         this.menuItemCreatorFunction = menuItemCreatorFunction;
@@ -42,7 +43,7 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
         return this;
     }
 
-    public @NotNull MenuObjectIterator<T> emptyFilteredItemsAction(@NotNull Consumer<MenuContents> consumer) {
+    public @NotNull MenuObjectIterator<T> emptyFilteredItemsAction(@NotNull Consumer<IMenuContents> consumer) {
         this.emptyFilteredItemsConsumer = consumer;
         return this;
     }
@@ -94,7 +95,7 @@ public final class MenuObjectIterator<T> extends AbstractMenuIterator<MenuObject
 
         super.reset();
 
-        BukkitThreadHelper.runCondition(this.pagination != null && this.pagination.isAsync(), this.contents.menuSession().getInstance().getJavaPlugin(), () -> {
+        BukkitThreadHelper.runCondition(this.pagination != null && this.pagination.isAsync(), this.menuSession.instance().getJavaPlugin(), () -> {
             this.isApplying = true;
 
             this.filteredObjects = new ArrayList<>(this.allObjects);

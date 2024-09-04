@@ -6,6 +6,9 @@ import java.util.Objects;
 
 public final class Identity<T> {
 
+    @SuppressWarnings("unchecked")
+    public static final Class<? extends Identity<?>> TYPE = (Class<? extends Identity<?>>) Identity.class;
+
     private final IdentityKey<T> key;
     private final T identity;
 

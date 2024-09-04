@@ -9,7 +9,8 @@ import java.util.function.Supplier;
 
 public sealed interface Scrollable permits AbstractScrollable {
 
-    @NotNull Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier);
+    @NotNull
+    Scrollable addItem(@NotNull Supplier<@NotNull MenuItem> menuItemSupplier);
 
     int currentVertical();
 
@@ -27,21 +28,29 @@ public sealed interface Scrollable permits AbstractScrollable {
 
     boolean isLastHorizontal();
 
-    @NotNull Scrollable openVertical(int newYAxis);
+    @NotNull
+    Scrollable openVertical(int newYAxis);
 
-    @NotNull Scrollable openHorizontal(int newXAxis);
+    @NotNull
+    Scrollable openHorizontal(int newXAxis);
 
-    @NotNull Scrollable nextVertical();
+    @NotNull
+    Scrollable nextVertical();
 
-    @NotNull Scrollable previousVertical();
+    @NotNull
+    Scrollable previousVertical();
 
-    @NotNull Scrollable nextHorizontal();
+    @NotNull
+    Scrollable nextHorizontal();
 
-    @NotNull Scrollable previousHorizontal();
+    @NotNull
+    Scrollable previousHorizontal();
 
-    @NotNull Scrollable next();
+    @NotNull
+    Scrollable next();
 
-    @NotNull Scrollable previous();
+    @NotNull
+    Scrollable previous();
 
     @ApiStatus.Internal
     void setAxes(int xAxis, int yAxis);
@@ -50,5 +59,6 @@ public sealed interface Scrollable permits AbstractScrollable {
     void setInitialized();
 
     @ApiStatus.Internal
-    @NotNull Map<Integer, Supplier<MenuItem>> getPageItems();
+    @NotNull
+    Map<Integer, Supplier<MenuItem>> getPageItems();
 }

@@ -5,8 +5,8 @@ import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChang
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,14 +33,14 @@ public final class InventoryPacketListener {
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
             if (menuSession == null) return;
 
-            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.getCache().getItemMetaChanger();
+            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.cache().getItemMetaChanger();
             if (itemMetaChanger == null) return;
 
             ItemStack itemStack = packet.item();
             if (isEmpty(itemStack)) return;
 
             int slot = packet.slot();
-            int topInventorySize = menuSession.getInventory().getSize();
+            int topInventorySize = menuSession.inventory().getSize();
             if (slot < topInventorySize) return;
 
             itemMetaChanger.apply(this.convertSlot(topInventorySize, slot), itemStack);
@@ -54,12 +54,12 @@ public final class InventoryPacketListener {
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
             if (menuSession == null) return;
 
-            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.getCache().getItemMetaChanger();
+            PlayerInventoryItemMetaChanger itemMetaChanger = menuSession.cache().getItemMetaChanger();
             if (itemMetaChanger == null) return;
 
             List<@NotNull ItemStack> items = packet.items();
 
-            int topInventorySize = menuSession.getInventory().getSize();
+            int topInventorySize = menuSession.inventory().getSize();
             for (int i = topInventorySize; i < items.size(); i++) {
                 ItemStack itemStack = items.get(i);
                 if (isEmpty(itemStack)) continue;

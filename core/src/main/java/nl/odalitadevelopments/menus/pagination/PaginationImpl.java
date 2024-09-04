@@ -51,8 +51,8 @@ final class PaginationImpl extends AbstractPagination<Pagination, MenuIterator> 
                 .add(itemSupplier);
 
         if (this.currentPage + 1 <= this.lastPage()) {
-            this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-                this.contents.set(slot, item.get());
+            this.menuSession.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+                this.menuSession.menuContents().set(slot, item.get());
             });
         }
 

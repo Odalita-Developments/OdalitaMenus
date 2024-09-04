@@ -1,8 +1,9 @@
 package nl.odalitadevelopments.menus.iterators;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,9 @@ import java.util.*;
 public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator<T>> permits MenuIterator, MenuObjectIterator {
 
     private final T instance;
-    protected final MenuContents contents;
+
+    protected final AbstractMenuSession<?, ?, ?> menuSession;
+    protected final IMenuContents contents;
     protected final MenuFrameData frameData;
 
     protected final MenuIteratorType type;
@@ -26,10 +29,11 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
     protected int index = 0;
     protected boolean override = false;
 
-    protected AbstractMenuIterator(MenuContents contents, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn) {
+    protected AbstractMenuIterator(AbstractMenuSession<?, ?, ?> menuSession, MenuFrameData frameData, MenuIteratorType type, int startRow, int startColumn) {
         this.instance = this.self();
 
-        this.contents = contents;
+        this.menuSession = menuSession;
+        this.contents = menuSession.menuContents();
         this.frameData = frameData;
         this.type = type;
         this.startRow = startRow;
@@ -86,7 +90,7 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
     }
 
     protected @NotNull Inventory getInventory() {
-        return this.contents.menuSession().getInventory();
+        return this.menuSession.inventory();
     }
 
     protected @NotNull SlotPos getSlotPos(int row, int column) {
@@ -108,8 +112,8 @@ public sealed abstract class AbstractMenuIterator<T extends AbstractMenuIterator
 
     protected @NotNull SlotPos getCorrectSlotPos(int slot) {
         return this.getSlotPos(slot).convertFromFrame(
-                this.contents.menuSession().getRows(),
-                this.contents.menuSession().getColumns(),
+                this.menuSession.rows(),
+                this.menuSession.columns(),
                 this.frameData
         );
     }

@@ -18,6 +18,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 final class MenuInitializer<P extends MenuProvider> {
@@ -33,21 +34,20 @@ final class MenuInitializer<P extends MenuProvider> {
 
         try {
             MenuSession menuSession = this.createMenuSession(menuProvider, player);
-            menuSession.getViewers().add(player);
 
-            IMenuContents contents = menuSession.getMenuContents();
+            IMenuContents contents = menuSession.menuContents();
             this.builder.getProviderLoader().load(menuProvider, player, contents);
-            menuSession.initialized();
+            menuSession.markAsInitialized();
 
             this.builder.getPaginationPages().forEach((id, page) -> {
-                IPagination<?, ?> pagination = menuSession.getCache().getPaginationMap().get(id);
+                IPagination<?, ?> pagination = menuSession.cache().getPaginationMap().get(id);
                 if (pagination == null) return;
 
                 pagination.setPage(page);
             });
 
             this.builder.getScrollableAxes().forEach((id, axes) -> {
-                Scrollable scrollable = menuSession.getCache().getScrollableMap().get(id);
+                Scrollable scrollable = menuSession.cache().getScrollableMap().get(id);
                 if (scrollable == null) return;
 
                 scrollable.setAxes(axes.getKey(), axes.getValue());
@@ -57,13 +57,13 @@ final class MenuInitializer<P extends MenuProvider> {
 
             this.openInventory(player, menuSession);
 
-            Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::opened, 1L);
+            Bukkit.getScheduler().runTaskLater(this.menuProcessor.getInstance().getJavaPlugin(), menuSession::markAsOpened, 1L);
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
     }
 
-    private MenuSession createMenuSession(P menuProvider, Player player) {
+    private AbstractMenuSession<?, ?, ?> createMenuSession(P menuProvider, Player player) {
         // If the menu should be opened by identity, check if the identity already has a session open
         if (this.builder.getIdentity() != null) {
             MenuSession openedSession = this.menuProcessor.getOpenMenusByIdentity().get(this.builder.getIdentity());
@@ -86,15 +86,19 @@ final class MenuInitializer<P extends MenuProvider> {
         InventoryCreation inventoryCreation = menuType.createInventory(player, inventoryTitle);
         String menuId = (annotation.id().isEmpty() || annotation.id().isBlank()) ? null : annotation.id();
 
+        MenuData data = new MenuData();
+        data.set(MenuData.Key.UNIQUE_ID, UUID.randomUUID());
+        data.set(MenuData.Key.ID, menuId);
+        data.set(MenuData.Key.TYPE, menuType);
+        data.set(MenuData.Key.TITLE, inventoryTitle);
+        data.set(MenuData.Key.GLOBAL_CACHE_KEY, annotation.globalCacheKey());
+        data.set(MenuData.Key.IDENTITY, this.builder.getIdentity());
+
         return new MenuSession(
                 this.menuProcessor.getInstance(),
                 this.builder,
-                menuId,
-                menuType,
-                inventoryCreation,
-                annotation.title(),
-                annotation.globalCacheKey(),
-                this.builder.getIdentity()
+                data,
+                inventoryCreation
         );
     }
 
@@ -110,7 +114,7 @@ final class MenuInitializer<P extends MenuProvider> {
         Object inventoryToOpen = nmsInventory == null ? inventoryData.bukkitInventory() : nmsInventory;
 
         try {
-            OdalitaMenusNMS.getInstance().openInventory(player, inventoryToOpen, menuSession.getTitle());
+            OdalitaMenusNMS.getInstance().openInventory(player, inventoryToOpen, menuSession.getData().getOrThrow(MenuData.Key.TITLE));
 
             // Make sure the player is added to the viewers list
             List<HumanEntity> viewers = menuSession.getInventory().getViewers();

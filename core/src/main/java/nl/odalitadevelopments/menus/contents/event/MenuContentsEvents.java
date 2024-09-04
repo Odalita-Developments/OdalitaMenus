@@ -5,7 +5,7 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAct
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
-import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -21,7 +21,7 @@ public sealed interface MenuContentsEvents permits MenuContentsEventsImpl {
 
     @Contract("_ -> new")
     @ApiStatus.Internal
-    static @NotNull MenuContentsEvents create(@NotNull MenuSessionCache cache) {
+    static @NotNull MenuContentsEvents create(@NotNull AbstractMenuSession<?, ?, ?> cache) {
         return new MenuContentsEventsImpl(cache);
     }
 

@@ -1,8 +1,8 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public final class CloseItem extends MenuItem {
     }
 
     @Override
-    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         if (this.itemStack == null) {
             this.itemStack = instance.getProvidersContainer().getDefaultItemProvider().closeItem();
         }
@@ -39,7 +39,7 @@ public final class CloseItem extends MenuItem {
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         return (event) -> event.getWhoClicked().closeInventory();
     }
 }

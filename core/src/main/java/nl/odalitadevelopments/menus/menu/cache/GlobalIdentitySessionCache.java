@@ -2,6 +2,7 @@ package nl.odalitadevelopments.menus.menu.cache;
 
 import lombok.RequiredArgsConstructor;
 import nl.odalitadevelopments.menus.OdalitaMenus;
+import nl.odalitadevelopments.menus.menu.MenuData;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.utils.collection.Table;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+// TODO merge global session cache into one class by using menu unique id instead of player uuid
 @RequiredArgsConstructor
 public final class GlobalIdentitySessionCache implements Listener {
 
@@ -24,9 +26,9 @@ public final class GlobalIdentitySessionCache implements Listener {
 
     private final Table<UUID, String, Map<String, Object>> identityMenuCache = new Table<>();
 
-    public Map<String, Object> getOrCreateCache(@NotNull MenuSession menuSession) {
-        UUID uuid = menuSession.getUniqueId();
-        String globalCacheKey = menuSession.getGlobalCacheKey();
+    public Map<String, Object> getOrCreateCache(@NotNull MenuData data) {
+        UUID uuid = data.getOrThrow(MenuData.Key.UNIQUE_ID);
+        String globalCacheKey = data.getOrThrow(MenuData.Key.GLOBAL_CACHE_KEY);
 
         Map<String, Object> cache = this.identityMenuCache.get(uuid, globalCacheKey);
         if (cache == null) {
@@ -58,6 +60,6 @@ public final class GlobalIdentitySessionCache implements Listener {
         MenuSession menuSession = this.instance.getOpenMenuSession(player);
         if (menuSession == null || !menuSession.getViewers().isEmpty()) return;
 
-        this.identityMenuCache.getRowMap().remove(menuSession.getUniqueId());
+        this.identityMenuCache.getRowMap().remove(menuSession.data().getOrThrow(MenuData.Key.UNIQUE_ID));
     }
 }

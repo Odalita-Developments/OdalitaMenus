@@ -26,11 +26,11 @@ final class MenuUpdateTask implements MenuTaskRunnable {
 
     @Override
     public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull MenuSession session) {
-        if (!session.isHasUpdatableItems()) return;
+        if (!session.hasUpdatableItems()) return;
 
         int updatableItems = 0;
 
-        MenuItem[][] contents = session.contents;
+        MenuItem[][] contents = session.contents();
         for (int row = 0; row < contents.length; row++) {
             for (int column = 0; column < contents[0].length; column++) {
                 MenuItem menuItem = contents[row][column];
@@ -43,16 +43,16 @@ final class MenuUpdateTask implements MenuTaskRunnable {
                 if (updatableItemData.getUpdatedAtTick() == -1 || tick - updatableItemData.getUpdatedAtTick() == menuItem.getUpdateTicks()) {
                     updatableItemData.setUpdatedAtTick(tick);
 
-                    ItemStack item = menuItem.provideItem(instance, session.getMenuContents());
+                    ItemStack item = menuItem.provideItem(instance, session);
                     int slot = SlotPos.of(row, column).getSlot();
 
-                    OdalitaMenusNMS.getInstance().setInventoryItem(slot, item, session.getInventory());
+                    OdalitaMenusNMS.getInstance().setInventoryItem(slot, item, session.inventory());
                 }
             }
         }
 
         if (updatableItems == 0) {
-            session.setHasUpdatableItems(false);
+            session.hasUpdatableItems(false);
         }
     }
 

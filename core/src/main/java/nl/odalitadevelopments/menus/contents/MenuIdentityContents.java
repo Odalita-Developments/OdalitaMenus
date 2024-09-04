@@ -7,6 +7,7 @@ import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.interfaces.IPaginationScrollableContents;
 import nl.odalitadevelopments.menus.contents.scheduler.MenuContentsScheduler;
 import nl.odalitadevelopments.menus.identity.Identity;
+import nl.odalitadevelopments.menus.menu.MenuIdentitySession;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -17,9 +18,11 @@ public sealed interface MenuIdentityContents<T, I extends Identity<T>>
         permits MenuIdentityContentsImpl {
 
     @ApiStatus.Internal
-    static <T, I extends Identity<T>> @NotNull MenuIdentityContents<T, I> create(@NotNull MenuSession menuSession, @NotNull I identity) {
+    static <T, I extends Identity<T>> @NotNull MenuIdentityContents<T, I> create(@NotNull MenuIdentitySession menuSession, @NotNull I identity) {
         return new MenuIdentityContentsImpl<>(menuSession, identity);
     }
+
+    @NotNull MenuIdentitySession menuSession();
 
     @NotNull
     MenuContentsScheduler scheduler();

@@ -1,6 +1,6 @@
 package nl.odalitadevelopments.menus.pagination;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.MenuObjectIterator;
 import org.jetbrains.annotations.ApiStatus;
@@ -41,7 +41,7 @@ final class ObjectPaginationImpl<T> extends AbstractPagination<ObjectPagination<
     }
 
     @Override
-    public @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Consumer<MenuContents> consumer) {
+    public @NotNull ObjectPagination<T> emptyFilteredItemsAction(@NotNull Consumer<IMenuContents> consumer) {
         this.iterator.emptyFilteredItemsAction(consumer);
         return this;
     }

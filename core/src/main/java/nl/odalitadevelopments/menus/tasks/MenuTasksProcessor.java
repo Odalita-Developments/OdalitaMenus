@@ -42,11 +42,6 @@ public final class MenuTasksProcessor implements Runnable {
             for (MenuSession menuSession : openMenus.values()) {
                 if (menuSession == null || menuSession.isClosed()) continue;
 
-                if (menuSession.getViewers().size() == 1) {
-                    Player viewer = menuSession.getViewer();
-                    if (viewer == null || !viewer.isOnline()) continue;
-                }
-
                 for (MenuTaskRunnable runnable : this.tasks) {
                     runnable.runPerSession(this.instance, this.menuProcessor, tick, menuSession);
                 }

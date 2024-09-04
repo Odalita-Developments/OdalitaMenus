@@ -9,6 +9,7 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftCli
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemsCloseAction;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.MenuData;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
@@ -44,14 +45,14 @@ public final class InventoryListener implements Listener {
 
         ItemStack currentItem = event.getCurrentItem();
 
-        SupportedMenuType menuType = menuSession.getMenuType();
+        SupportedMenuType menuType = menuSession.data().getOrThrow(MenuData.Key.TYPE);
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (event.getView().getTopInventory().equals(menuSession.getInventory()) && event.getRawSlot() >= 0) {
+        if (event.getView().getTopInventory().equals(menuSession.inventory()) && event.getRawSlot() >= 0) {
             boolean clickedTopInventory = event.getView().getTopInventory().equals(clickedInventory);
-            if (!clickedTopInventory && currentItem != null && menuSession.getCache().getPlayerInventoryClickAction() != null) {
+            if (!clickedTopInventory && currentItem != null && menuSession.cache().getPlayerInventoryClickAction() != null) {
                 event.setCancelled(true); // Cancel event by default
-                menuSession.getCache().getPlayerInventoryClickAction().accept(event);
+                menuSession.cache().getPlayerInventoryClickAction().accept(event);
 
                 // If the event is cancelled, return
                 if (event.isCancelled()) {
@@ -60,23 +61,23 @@ public final class InventoryListener implements Listener {
             }
 
             // Cancel if the player uses shift click from top inventory when shift click is not allowed
-            if (event.getClick().isShiftClick() && clickedTopInventory && !menuSession.getCache().isAllowPlaceableItemShiftClick()) {
+            if (event.getClick().isShiftClick() && clickedTopInventory && !menuSession.cache().isAllowPlaceableItemShiftClick()) {
                 event.setCancelled(true);
                 return;
             }
 
             // Handle shift click for placeable items from bottom inventory
-            List<Integer> placeableItemsSlots = menuSession.getCache().getPlaceableItems();
+            List<Integer> placeableItemsSlots = menuSession.cache().getPlaceableItems();
             if (event.getClick().isShiftClick() && !clickedTopInventory) {
                 event.setCancelled(true);
 
-                if (currentItem == null || placeableItemsSlots.isEmpty() || !menuSession.getCache().isAllowPlaceableItemShiftClick()) {
+                if (currentItem == null || placeableItemsSlots.isEmpty() || !menuSession.cache().isAllowPlaceableItemShiftClick()) {
                     return;
                 }
 
                 ItemStack currentItemClone = currentItem.clone();
                 Map<Integer, ItemStack> slotsModified = new HashMap<>();
-                NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(menuSession.getInventory(), placeableItemsSlots);
+                NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(menuSession.inventory(), placeableItemsSlots);
 
                 // Check if the item is already present in one of the placeable item slots
                 for (Map.Entry<Integer, ItemStack> entry : placeableItems.entrySet()) {
@@ -122,7 +123,7 @@ public final class InventoryListener implements Listener {
                 }
 
                 if (!slotsModified.isEmpty()) {
-                    PlaceableItemShiftClickAction action = menuSession.getCache().getPlaceableItemShiftClickAction();
+                    PlaceableItemShiftClickAction action = menuSession.cache().getPlaceableItemShiftClickAction();
                     boolean shouldPlace = true;
                     if (action != null) {
                         List<SlotPos> slotPosses = new ArrayList<>();
@@ -146,7 +147,7 @@ public final class InventoryListener implements Listener {
 
             if (!placeableItemsSlots.isEmpty() && !clickedTopInventory) return;
             if (placeableItemsSlots.contains(event.getRawSlot())) {
-                PlaceableItemClickAction action = menuSession.getCache().getPlaceableItemClickAction();
+                PlaceableItemClickAction action = menuSession.cache().getPlaceableItemClickAction();
                 if (action != null && !action.shouldPlace(
                         SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()),
                         event)) {
@@ -158,9 +159,9 @@ public final class InventoryListener implements Listener {
 
             event.setCancelled(true);
 
-            MenuItem menuItem = menuSession.getContent(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
+            MenuItem menuItem = menuSession.content(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), event.getRawSlot()));
             if (menuItem != null) {
-                menuItem.onClick(this.instance, menuSession.getMenuContents()).accept(event);
+                menuItem.onClick(this.instance, menuSession).accept(event);
             }
         }
     }
@@ -171,18 +172,18 @@ public final class InventoryListener implements Listener {
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
         if (menuSession == null) return;
 
-        if (!menuSession.getCache().isAllowPlaceableItemDrag()) {
+        if (!menuSession.cache().isAllowPlaceableItemDrag()) {
             event.setCancelled(true);
             return;
         }
 
-        SupportedMenuType menuType = menuSession.getMenuType();
-        List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
+        SupportedMenuType menuType = menuSession.data().getOrThrow(MenuData.Key.TYPE);
+        List<Integer> placeableItems = menuSession.cache().getPlaceableItems();
 
-        if (event.getView().getTopInventory().equals(menuSession.getInventory())) {
+        if (event.getView().getTopInventory().equals(menuSession.inventory())) {
             Set<Integer> inventorySlots = event.getRawSlots();
 
-            boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (menuSession.getInventory().getSize() - 1));
+            boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (menuSession.inventory().getSize() - 1));
             if (!placeableItems.isEmpty() && fitsInMenu) return;
 
             boolean matchAllSlots = new HashSet<>(placeableItems).containsAll(inventorySlots);
@@ -196,7 +197,7 @@ public final class InventoryListener implements Listener {
                 slotPosses.add(SlotPos.of(menuType.maxRows(), menuType.maxColumns(), slot));
             }
 
-            PlaceableItemDragAction action = menuSession.getCache().getPlaceableItemDragAction();
+            PlaceableItemDragAction action = menuSession.cache().getPlaceableItemDragAction();
             if (action != null && !action.shouldPlace(slotPosses, event)) {
                 event.setCancelled(true);
             }
@@ -210,8 +211,8 @@ public final class InventoryListener implements Listener {
         if (menuSession == null) return;
 
         Inventory inventory = event.getInventory();
-        if (menuSession.getInventory().equals(inventory)) {
-            Supplier<MenuCloseResult> closeActionBefore = menuSession.getCache().getCloseActionBefore();
+        if (menuSession.inventory().equals(inventory)) {
+            Supplier<MenuCloseResult> closeActionBefore = menuSession.cache().getCloseActionBefore();
             if (closeActionBefore != null) {
                 // If the close action is to keep the menu open, open the inventory again
                 if (closeActionBefore.get() == MenuCloseResult.KEEP_OPEN) {
@@ -220,13 +221,13 @@ public final class InventoryListener implements Listener {
                 }
             }
 
-            for (OdalitaEventListener eventListener : menuSession.getCache().getEventListeners()) {
+            for (OdalitaEventListener eventListener : menuSession.cache().getEventListeners()) {
                 eventListener.unregister();
             }
 
-            PlaceableItemsCloseAction action = menuSession.getCache().getPlaceableItemsCloseAction();
+            PlaceableItemsCloseAction action = menuSession.cache().getPlaceableItemsCloseAction();
             if (action != null && action.equals(PlaceableItemsCloseAction.RETURN)) {
-                List<Integer> placeableItemsSlots = menuSession.getCache().getPlaceableItems();
+                List<Integer> placeableItemsSlots = menuSession.cache().getPlaceableItems();
                 NavigableMap<Integer, ItemStack> placeableItems = this.getPlaceableItems(inventory, placeableItemsSlots);
                 for (ItemStack item : placeableItems.values()) {
                     if (item != null && !item.getType().isAir()) {
@@ -238,7 +239,7 @@ public final class InventoryListener implements Listener {
                 }
             }
 
-            Supplier<MenuCloseResult> closeActionAfter = menuSession.getCache().getCloseActionAfter();
+            Supplier<MenuCloseResult> closeActionAfter = menuSession.cache().getCloseActionAfter();
             if (closeActionAfter != null) {
                 // If the close action is to keep the menu open, reopen the menu
                 if (closeActionAfter.get() == MenuCloseResult.KEEP_OPEN) {
@@ -247,7 +248,7 @@ public final class InventoryListener implements Listener {
                 }
             }
 
-            menuSession.setClosed(true);
+            menuSession.markAsClosed();
             this.menuProcessor.getOpenMenus().remove(player);
 
             BukkitThreadHelper.runAsync(this.instance.getJavaPlugin(), player::updateInventory);

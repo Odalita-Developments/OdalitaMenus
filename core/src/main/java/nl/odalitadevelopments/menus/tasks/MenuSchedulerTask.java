@@ -10,7 +10,7 @@ final class MenuSchedulerTask implements MenuTaskRunnable {
 
     @Override
     public void runPerSession(@NotNull OdalitaMenus instance, @NotNull MenuProcessor menuProcessor, int tick, @NotNull MenuSession session) {
-        for (MenuTask task : session.getCache().getTasks().values()) {
+        for (MenuTask task : session.cache().getTasks().values()) {
             if (!task.isStarted() && task.getTicksDelay() <= 0) {
                 if (this.runAfterDelay(task, tick)) continue;
             }

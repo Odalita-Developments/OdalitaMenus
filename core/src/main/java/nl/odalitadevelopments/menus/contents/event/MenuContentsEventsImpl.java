@@ -6,7 +6,7 @@ import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemClickAct
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemDragAction;
 import nl.odalitadevelopments.menus.contents.placeableitem.PlaceableItemShiftClickAction;
 import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
-import nl.odalitadevelopments.menus.menu.cache.MenuSessionCache;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -24,34 +24,34 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 final class MenuContentsEventsImpl implements MenuContentsEvents {
 
-    private final MenuSessionCache cache;
+    private final AbstractMenuSession<?, ?, ?> menuSession;
 
     @Override
     public void onPlaceableItemClick(@NotNull PlaceableItemClickAction action) {
-        this.cache.setPlaceableItemClickAction(action);
+        this.menuSession.cache().setPlaceableItemClickAction(action);
     }
 
     @Override
     public void onPlaceableItemShiftClick(@NotNull PlaceableItemShiftClickAction action) {
-        this.cache.setPlaceableItemShiftClickAction(action);
+        this.menuSession.cache().setPlaceableItemShiftClickAction(action);
     }
 
     @Override
     public void onPlaceableItemDrag(@NotNull PlaceableItemDragAction action) {
-        this.cache.setPlaceableItemDragAction(action);
+        this.menuSession.cache().setPlaceableItemDragAction(action);
     }
 
     @Override
     public void onPlayerInventoryClick(@NotNull Consumer<@NotNull InventoryClickEvent> eventConsumer) {
-        this.cache.setPlayerInventoryClickAction(eventConsumer);
+        this.menuSession.cache().setPlayerInventoryClickAction(eventConsumer);
     }
 
     @Override
     public void onClose(boolean beforeUnregisteringMenu, @NotNull Supplier<@NotNull MenuCloseResult> action) {
         if (beforeUnregisteringMenu) {
-            this.cache.setCloseActionBefore(action);
+            this.menuSession.cache().setCloseActionBefore(action);
         } else {
-            this.cache.setCloseActionAfter(action);
+            this.menuSession.cache().setCloseActionAfter(action);
         }
     }
 
@@ -112,7 +112,7 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
             if (!eventClass.isInstance(event)) return;
 
             T typedEvent = eventClass.cast(event);
-            Inventory sessionInventory = this.cache.getMenuSession().getInventory();
+            Inventory sessionInventory = this.menuSession.inventory();
 
             if (typedEvent instanceof InventoryEvent inventoryEvent) {
                 Inventory inventory = inventoryEvent.getInventory();
@@ -132,9 +132,9 @@ final class MenuContentsEventsImpl implements MenuContentsEvents {
             }
         };
 
-        Bukkit.getPluginManager().registerEvent(eventClass, eventListener, priority, eventListener, this.cache.getMenuSession().getInstance().getJavaPlugin(), ignoreCancelled);
+        Bukkit.getPluginManager().registerEvent(eventClass, eventListener, priority, eventListener, this.menuSession.instance().getJavaPlugin(), ignoreCancelled);
 
-        this.cache.getEventListeners().add(eventListener);
+        this.menuSession.cache().getEventListeners().add(eventListener);
         return eventListener;
     }
 }

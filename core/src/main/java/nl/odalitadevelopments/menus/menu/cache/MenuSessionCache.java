@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
+import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.action.MenuCloseResult;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
@@ -17,6 +18,7 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
 import nl.odalitadevelopments.menus.iterators.MenuIterator;
 import nl.odalitadevelopments.menus.listeners.OdalitaEventListener;
+import nl.odalitadevelopments.menus.menu.MenuData;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.scrollable.Scrollable;
@@ -34,7 +36,8 @@ import java.util.function.Supplier;
 @Setter
 public final class MenuSessionCache {
 
-    private final MenuSession menuSession;
+    private final OdalitaMenus instance;
+    private final MenuData data;
 
     private final Map<String, IPagination<?, ?>> paginationMap = Maps.newConcurrentMap();
     private final Map<String, Scrollable> scrollableMap = Maps.newConcurrentMap();
@@ -66,8 +69,9 @@ public final class MenuSessionCache {
 
     private final Map<String, Object> cache = Maps.newConcurrentMap();
 
-    public MenuSessionCache(MenuSession menuSession) {
-        this.menuSession = menuSession;
+    public MenuSessionCache(OdalitaMenus instance, MenuData data) {
+        this.instance = instance;
+        this.data = data;
     }
 
     @SuppressWarnings("unchecked")
@@ -89,12 +93,14 @@ public final class MenuSessionCache {
     }
 
     public Map<String, Object> getCache() {
-        if (!this.menuSession.getGlobalCacheKey().isEmpty() && !this.menuSession.getGlobalCacheKey().isBlank()) {
-            if (this.menuSession.isIdentity()) {
-                return this.menuSession.getInstance().getGlobalIdentitySessionCache().getOrCreateCache(this.menuSession);
+        String globalCacheKey = this.data.get(MenuData.Key.GLOBAL_CACHE_KEY);
+
+        if (globalCacheKey != null && !globalCacheKey.isEmpty() && !globalCacheKey.isBlank()) {
+            if (this.data.get(MenuData.Key.IDENTITY) != null) {
+                return this.instance.getGlobalIdentitySessionCache().getOrCreateCache(this.data);
             }
 
-            return this.menuSession.getInstance().getGlobalPlayerSessionCache().getOrCreateCache(this.menuSession);
+            return this.instance.getGlobalPlayerSessionCache().getOrCreateCache(this.data);
         }
 
         return this.cache;

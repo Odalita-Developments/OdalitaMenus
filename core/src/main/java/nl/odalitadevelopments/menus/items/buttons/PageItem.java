@@ -1,9 +1,8 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.PageUpdatableItem;
-import nl.odalitadevelopments.menus.menu.MenuSession;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.pagination.IPagination;
 import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
 import nl.odalitadevelopments.menus.utils.cooldown.Cooldown;
@@ -67,7 +66,7 @@ public final class PageItem extends PageUpdatableItem {
     }
 
     @Override
-    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         if (!this.showOnFirstOrLastPage && !this.canBeUsed()) {
             return new ItemStack(Material.AIR);
         }
@@ -84,12 +83,9 @@ public final class PageItem extends PageUpdatableItem {
     }
 
     @Override
-    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    public @NotNull Consumer<InventoryClickEvent> onClick(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         return (event) -> {
-            if (!(event.getWhoClicked() instanceof Player player)) return;
-
-            MenuSession menuSession = instance.getOpenMenuSession(player);
-            if (menuSession == null) return;
+            if (!(event.getWhoClicked() instanceof Player)) return;
 
             Cooldown cooldown = instance.getProvidersContainer().getCooldownProvider().pageCooldown();
             if (cooldown != null && instance.getCooldownContainer().checkAndCreate(menuSession, "INTERNAL_PAGE_COOLDOWN", cooldown)) {

@@ -1,7 +1,7 @@
 package nl.odalitadevelopments.menus.items.buttons;
 
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.menu.MenuOpenerBuilder;
 import nl.odalitadevelopments.menus.menu.providers.MenuProvider;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +38,7 @@ public final class BackItem<P extends MenuProvider> extends OpenMenuItem<P> {
     }
 
     @Override
-    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull MenuContents contents) {
+    protected @NotNull ItemStack getItemStack(@NotNull OdalitaMenus instance, @NotNull AbstractMenuSession<?, ?, ?> menuSession) {
         if (super.itemStack == null) {
             super.itemStack = instance.getProvidersContainer().getDefaultItemProvider().backItem(super.menuProvider);
         }

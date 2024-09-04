@@ -1,9 +1,10 @@
 package nl.odalitadevelopments.menus.scrollable;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
+import nl.odalitadevelopments.menus.contents.interfaces.IMenuContents;
 import nl.odalitadevelopments.menus.contents.pos.SlotPos;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.utils.Pair;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     protected final ScrollableBuilderImpl builder;
 
     protected final String id;
-    protected final MenuContents contents;
+    protected final AbstractMenuSession<?, ?, ?> menuSession;
+    protected final IMenuContents contents;
     protected final int showYAxis, showXAxis;
     protected final int startRow, startColumn;
 
@@ -35,7 +37,8 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
         this.builder = builder;
 
         this.id = builder.getId();
-        this.contents = builder.getContents();
+        this.menuSession = builder.getMenuSession();
+        this.contents = this.menuSession.menuContents();
         this.showYAxis = builder.getShowYAxis();
         this.showXAxis = builder.getShowXAxis();
         this.startRow = builder.getStartRow();
@@ -259,7 +262,7 @@ abstract sealed class AbstractScrollable implements Scrollable permits SingleScr
     private void clearMenuGrid() {
         for (int row = this.startRow; row < this.startRow + this.showYAxis; row++) {
             for (int column = this.startColumn; column < this.startColumn + this.showXAxis; column++) {
-                this.contents.menuSession().contents[row][column] = null;
+                this.menuSession.contents()[row][column] = null;
             }
         }
     }

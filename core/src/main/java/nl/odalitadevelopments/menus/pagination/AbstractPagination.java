@@ -1,9 +1,9 @@
 package nl.odalitadevelopments.menus.pagination;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.items.DisplayItem;
 import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.iterators.AbstractMenuIterator;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I extends AbstractMenuIterator<I>> implements IPagination<T, I> {
 
-    protected final MenuContents contents;
+    protected final AbstractMenuSession<?, ?, ?> menuSession;
     protected final I iterator;
 
     protected final String id;
@@ -35,7 +35,7 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
     AbstractPagination(PaginationBuilderImpl builder, I iterator) {
         this.instance = this.self();
 
-        this.contents = builder.contents;
+        this.menuSession = builder.menuSession;
         this.id = builder.id;
         this.itemsPerPage = builder.itemsPerPage;
         this.async = builder.async;
@@ -91,7 +91,7 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
 
         this.switchingPage = true;
 
-        BukkitThreadHelper.runCondition(this.async, this.contents.menuSession().getInstance().getJavaPlugin(), () -> {
+        BukkitThreadHelper.runCondition(this.async, this.menuSession.instance().getJavaPlugin(), () -> {
             List<Supplier<MenuItem>> itemsOnPage = this.getItemsOnPage(page);
             if (itemsOnPage.isEmpty()) {
                 this.switchingPage = false;
@@ -102,8 +102,8 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
 
             this.currentPage = page;
 
-            this.contents.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
-                this.contents.set(slot, item.get());
+            this.menuSession.cache().getPageSwitchUpdateItems().forEach((slot, item) -> {
+                this.menuSession.menuContents().set(slot, item.get());
             });
 
             Map<Integer, Supplier<MenuItem>> pageItems = new TreeMap<>();
@@ -111,8 +111,8 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
             for (Supplier<MenuItem> itemSupplier : itemsOnPage) {
                 int slot = this.iterator.next();
 
-                if (!this.contents.isEmpty(slot)) {
-                    this.contents.set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
+                if (!this.menuSession.menuContents().isEmpty(slot)) {
+                    this.menuSession.menuContents().set(slot, DisplayItem.of(new ItemStack(Material.AIR)));
                 }
 
                 if (itemSupplier != null) {
@@ -121,7 +121,7 @@ abstract non-sealed class AbstractPagination<T extends IPagination<T, I>, I exte
             }
 
             for (Map.Entry<Integer, Supplier<MenuItem>> entry : pageItems.entrySet()) {
-                this.contents.set(entry.getKey(), entry.getValue().get());
+                this.menuSession.menuContents().set(entry.getKey(), entry.getValue().get());
             }
 
             this.switchingPage = false;

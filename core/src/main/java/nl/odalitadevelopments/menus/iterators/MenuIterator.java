@@ -1,14 +1,14 @@
 package nl.odalitadevelopments.menus.iterators;
 
-import nl.odalitadevelopments.menus.contents.MenuContents;
 import nl.odalitadevelopments.menus.contents.frame.MenuFrameData;
 import nl.odalitadevelopments.menus.items.MenuItem;
+import nl.odalitadevelopments.menus.menu.AbstractMenuSession;
 import org.jetbrains.annotations.NotNull;
 
 public final class MenuIterator extends AbstractMenuIterator<MenuIterator> {
 
-    public MenuIterator(MenuContents contents, MenuFrameData frameData, MenuIteratorType menuIteratorType, int startRow, int startColumn) {
-        super(contents, frameData, menuIteratorType, startRow, startColumn);
+    public MenuIterator(AbstractMenuSession<?, ?, ?> menuSession, MenuFrameData frameData, MenuIteratorType menuIteratorType, int startRow, int startColumn) {
+        super(menuSession, frameData, menuIteratorType, startRow, startColumn);
     }
 
     @Override

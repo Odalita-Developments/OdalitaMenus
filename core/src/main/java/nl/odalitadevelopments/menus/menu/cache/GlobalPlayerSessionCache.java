@@ -1,5 +1,6 @@
 package nl.odalitadevelopments.menus.menu.cache;
 
+import nl.odalitadevelopments.menus.menu.MenuData;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.utils.collection.Table;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ public final class GlobalPlayerSessionCache implements Listener {
 
     private final Table<UUID, String, Map<String, Object>> playerMenuCache = new Table<>();
 
-    public Map<String, Object> getOrCreateCache(@NotNull MenuSession menuSession) {
+    public Map<String, Object> getOrCreateCache(@NotNull MenuData data) {
         UUID uuid = menuSession.getViewer().getUniqueId();
         String globalCacheKey = menuSession.getGlobalCacheKey();
 
