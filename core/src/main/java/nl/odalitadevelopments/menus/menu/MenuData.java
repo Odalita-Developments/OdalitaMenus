@@ -45,7 +45,7 @@ public record MenuData(Map<Key<?>, Object> data) {
     }
 
     <T> void set(@NotNull Key<T> key, @Nullable T value) {
-        if (!(key instanceof MutableKey<T>)) {
+        if (!key.mutable()) {
             throw new IllegalArgumentException("Key " + key.key() + " is not mutable.");
         }
 
