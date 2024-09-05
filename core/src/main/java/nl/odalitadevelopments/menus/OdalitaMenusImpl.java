@@ -57,6 +57,10 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private static final Map<Plugin, OdalitaMenus> INSTANCES = new HashMap<>();
 
     static @NotNull OdalitaMenus createInstance(@NotNull JavaPlugin javaPlugin) {
+        if (Bukkit.getPluginManager().isPluginEnabled("OdalitaMenus")) {
+            return INSTANCES.get(Bukkit.getPluginManager().getPlugin("OdalitaMenus"));
+        }
+
         return new OdalitaMenusImpl(javaPlugin);
     }
 
