@@ -72,6 +72,11 @@
             <artifactId>v1_21_R1</artifactId>
             <version>0.5.12</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R2</artifactId>
+            <version>0.5.12</version>
+        </dependency>
 
         <!-- ProtocolLib -->
         <dependency>
@@ -133,6 +138,10 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bukkit.craftbukkit.v1_21_R1</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R2</pattern>
                             <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
                         </relocation>
                     </relocations>
