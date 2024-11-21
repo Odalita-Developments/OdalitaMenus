@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_21_3(768),
     MINECRAFT_1_21_1(767),
     MINECRAFT_1_20_6(766),
     MINECRAFT_1_20_4(765),
