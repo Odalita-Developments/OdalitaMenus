@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.odalita-developments</groupId>
         <artifactId>odalitamenus</artifactId>
-        <version>0.5.12</version>
+        <version>0.5.13</version>
     </parent>
 
     <groupId>io.github.odalita-developments.odalitamenus</groupId>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>io.github.odalita-developments.odalitamenus</groupId>
             <artifactId>core</artifactId>
-            <version>0.5.12</version>
+            <version>0.5.13</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

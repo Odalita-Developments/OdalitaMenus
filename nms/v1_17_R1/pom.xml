@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.odalita-developments.odalitamenus</groupId>
         <artifactId>nms</artifactId>
-        <version>0.5.12</version>
+        <version>0.5.13</version>
     </parent>
 
     <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
             <artifactId>common</artifactId>
-            <version>0.5.12</version>
+            <version>0.5.13</version>
             <scope>provided</scope>
         </dependency>
 

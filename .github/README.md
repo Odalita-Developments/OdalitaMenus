@@ -19,7 +19,7 @@ Maven dependency:
 <dependency>
     <groupId>io.github.odalita-developments.odalitamenus</groupId>
     <artifactId>core</artifactId>
-    <version>0.5.12</version>
+    <version>0.5.13</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.odalita-developments.odalitamenus:core:0.5.12'
+    implementation 'io.github.odalita-developments.odalitamenus:core:0.5.13'
 }
 ```
 
@@ -76,7 +76,7 @@ dependencies {
 - Option to change inventory properties 
 - Option to listen to bukkit inventory and player events **NEW**
   - Could be used to prevent players from picking up items from the ground while the menu is open for example 
-- Multi version support (1.16.5 - 1.21)
+- Multi version support (1.16.5 - 1.21.3)
 - Async support 
   - You can change items in the inventory anytime you want, on any thread you want 
 - Option to register your own providers
