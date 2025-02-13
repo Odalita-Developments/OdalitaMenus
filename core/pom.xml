@@ -77,6 +77,11 @@
             <artifactId>v1_21_R2</artifactId>
             <version>0.5.13</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R3</artifactId>
+            <version>0.5.13</version>
+        </dependency>
 
         <!-- ProtocolLib -->
         <dependency>
