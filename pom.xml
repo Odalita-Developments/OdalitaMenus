@@ -6,7 +6,7 @@
 
     <groupId>io.github.odalita-developments</groupId>
     <artifactId>odalitamenus</artifactId>
-    <version>0.5.13</version>
+    <version>0.6.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
@@ -37,7 +37,7 @@
         <developer>
             <name>Itz_KiwiSap_</name>
             <organization>OdalitaMenus</organization>
-            <url>https://github.com/ItzKiwiSap</url>
+            <url>https://github.com/kiwisap</url>
         </developer>
         <developer>
             <name>TryDev07</name>
