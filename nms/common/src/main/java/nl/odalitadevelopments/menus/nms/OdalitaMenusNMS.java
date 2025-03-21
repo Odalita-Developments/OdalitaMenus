@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,8 @@ public interface OdalitaMenusNMS {
     static @NotNull OdalitaMenusNMS getInstance() {
         return OdalitaMenusNMSInstance.getNms();
     }
+
+    Inventory getTopInventory(InventoryEvent event);
 
     Channel getPacketChannel(Player player) throws Exception;
 

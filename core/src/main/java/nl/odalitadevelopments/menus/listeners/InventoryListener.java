@@ -12,6 +12,7 @@ import nl.odalitadevelopments.menus.items.MenuItem;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
 import nl.odalitadevelopments.menus.menu.type.SupportedMenuType;
+import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.utils.BukkitThreadHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,8 +48,9 @@ public final class InventoryListener implements Listener {
         SupportedMenuType menuType = menuSession.getMenuType();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (event.getView().getTopInventory().equals(menuSession.getInventory()) && event.getRawSlot() >= 0) {
-            boolean clickedTopInventory = event.getView().getTopInventory().equals(clickedInventory);
+        Inventory topInventory = OdalitaMenusNMS.getInstance().getTopInventory(event);
+        if (topInventory.equals(menuSession.getInventory()) && event.getRawSlot() >= 0) {
+            boolean clickedTopInventory = topInventory.equals(clickedInventory);
             if (!clickedTopInventory && currentItem != null && menuSession.getCache().getPlayerInventoryClickAction() != null) {
                 event.setCancelled(true); // Cancel event by default
                 menuSession.getCache().getPlayerInventoryClickAction().accept(event);
@@ -135,7 +137,7 @@ public final class InventoryListener implements Listener {
 
                     if (shouldPlace) {
                         for (Map.Entry<Integer, ItemStack> entry : slotsModified.entrySet()) {
-                            event.getView().getTopInventory().setItem(entry.getKey(), entry.getValue());
+                            topInventory.setItem(entry.getKey(), entry.getValue());
                             event.setCurrentItem(currentItemClone);
                         }
                     }
@@ -179,7 +181,8 @@ public final class InventoryListener implements Listener {
         SupportedMenuType menuType = menuSession.getMenuType();
         List<Integer> placeableItems = menuSession.getCache().getPlaceableItems();
 
-        if (event.getView().getTopInventory().equals(menuSession.getInventory())) {
+        Inventory topInventory = OdalitaMenusNMS.getInstance().getTopInventory(event);
+        if (topInventory.equals(menuSession.getInventory())) {
             Set<Integer> inventorySlots = event.getRawSlots();
 
             boolean fitsInMenu = event.getRawSlots().stream().allMatch(integer -> integer > (menuSession.getInventory().getSize() - 1));
