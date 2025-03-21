@@ -24,6 +24,7 @@ import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,6 +55,11 @@ public final class OdalitaMenusNMS_v1_18_R2 implements OdalitaMenusNMS {
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
+    }
+
+    @Override
+    public Inventory getTopInventory(InventoryEvent event) {
+        return event.getView().getTopInventory();
     }
 
     @Override
