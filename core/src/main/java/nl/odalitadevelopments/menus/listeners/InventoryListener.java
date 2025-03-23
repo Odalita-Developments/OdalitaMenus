@@ -32,7 +32,7 @@ public final class InventoryListener implements Listener {
     private final OdalitaMenus instance;
     private final MenuProcessor menuProcessor;
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);

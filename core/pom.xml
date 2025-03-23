@@ -149,6 +149,11 @@
                             <pattern>org.bukkit.craftbukkit.v1_21_R2</pattern>
                             <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
                         </relocation>
+                        <!-- Required if testing (locally) on 1.21.4 -->
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R3</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
