@@ -6,7 +6,7 @@
 
     <groupId>io.github.odalita-developments</groupId>
     <artifactId>odalitamenus</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
