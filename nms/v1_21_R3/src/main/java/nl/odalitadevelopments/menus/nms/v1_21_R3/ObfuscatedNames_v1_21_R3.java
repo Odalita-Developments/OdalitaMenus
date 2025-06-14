@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.nms.v1_21_R2;
+package nl.odalitadevelopments.menus.nms.v1_21_R3;
 
 public final class ObfuscatedNames_v1_21_R3 {
 

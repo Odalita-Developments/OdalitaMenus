@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.nms.v1_21_R2;
+package nl.odalitadevelopments.menus.nms.v1_21_R3;
 
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
@@ -18,8 +18,8 @@ import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.packet.ClientboundSetContentsPacket_v1_21_R3;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.packet.ClientboundSetSlotPacket_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R3.packet.ClientboundSetContentsPacket_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R3.packet.ClientboundSetSlotPacket_v1_21_R3;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack;

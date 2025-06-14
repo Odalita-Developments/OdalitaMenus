@@ -1,9 +1,9 @@
-package nl.odalitadevelopments.menus.nms.v1_21_R2.packet;
+package nl.odalitadevelopments.menus.nms.v1_21_R3.packet;
 
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.Reflections;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.ObfuscatedNames_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R3.ObfuscatedNames_v1_21_R3;
 import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

@@ -28,7 +28,7 @@ import nl.odalitadevelopments.menus.nms.v1_20_R4.OdalitaMenusNMS_v1_20_R4;
 import nl.odalitadevelopments.menus.nms.v1_21_R1.OdalitaMenusNMS_v1_21_R1;
 import nl.odalitadevelopments.menus.nms.v1_20_R2.OdalitaMenusNMS_v1_20_R2;
 import nl.odalitadevelopments.menus.nms.v1_21_R2.OdalitaMenusNMS_v1_21_R2;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.OdalitaMenusNMS_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R3.OdalitaMenusNMS_v1_21_R3;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
