@@ -14,12 +14,14 @@ import java.util.List;
 
 public final class ClientboundSetContentsPacket_v1_21_R4 implements ClientboundSetContentsPacket {
 
-    private static final Reflections.FieldAccessor<List<net.minecraft.world.item.ItemStack>> ITEMS_FIELD;
-    private static final Reflections.FieldAccessor<net.minecraft.world.item.ItemStack> CARRIED_ITEM_FIELD;
+//    TODO: this does not work, ClientboundContainerSetContentPacket is now a record and fields cannot be modifier. Fix!
+//    private static final Reflections.FieldAccessor<List<net.minecraft.world.item.ItemStack>> ITEMS_FIELD;
+//    private static final Reflections.FieldAccessor<net.minecraft.world.item.ItemStack> CARRIED_ITEM_FIELD;
 
     static {
-        ITEMS_FIELD = Reflections.getField(ClientboundContainerSetContentPacket.class, List.class, ObfuscatedNames_v1_21_R4.SET_CONTENTS_PACKET_ITEMS);
-        CARRIED_ITEM_FIELD = Reflections.getField(ClientboundContainerSetContentPacket.class, net.minecraft.world.item.ItemStack.class, ObfuscatedNames_v1_21_R4.SET_CONTENTS_PACKET_CARRIED_ITEM);
+//        TODO: this does not work, ClientboundContainerSetContentPacket is now a record and fields cannot be modifier. Fix!
+//        ITEMS_FIELD = Reflections.getField(ClientboundContainerSetContentPacket.class, List.class, ObfuscatedNames_v1_21_R4.SET_CONTENTS_PACKET_ITEMS);
+//        CARRIED_ITEM_FIELD = Reflections.getField(ClientboundContainerSetContentPacket.class, net.minecraft.world.item.ItemStack.class, ObfuscatedNames_v1_21_R4.SET_CONTENTS_PACKET_CARRIED_ITEM);
     }
 
     private final ClientboundContainerSetContentPacket packet;
@@ -65,7 +67,8 @@ public final class ClientboundSetContentsPacket_v1_21_R4 implements ClientboundS
             items.add(CraftItemStack.asNMSCopy(itemStack));
         }
 
-        ITEMS_FIELD.set(this.packet, items);
-        CARRIED_ITEM_FIELD.set(this.packet, CraftItemStack.asNMSCopy(this.carriedItem));
+//        TODO: this does not work, ClientboundContainerSetContentPacket is now a record and fields cannot be modifier. Fix!
+//        ITEMS_FIELD.set(this.packet, items);
+//        CARRIED_ITEM_FIELD.set(this.packet, CraftItemStack.asNMSCopy(this.carriedItem));
     }
 }
