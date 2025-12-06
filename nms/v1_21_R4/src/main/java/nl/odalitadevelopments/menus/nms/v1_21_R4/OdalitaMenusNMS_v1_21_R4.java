@@ -1,4 +1,4 @@
-package nl.odalitadevelopments.menus.nms.v1_21_R2;
+package nl.odalitadevelopments.menus.nms.v1_21_R4;
 
 import io.netty.channel.Channel;
 import io.papermc.paper.text.PaperComponents;
@@ -18,12 +18,12 @@ import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.ReflectionUtils;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.packet.ClientboundSetContentsPacket_v1_21_R3;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.packet.ClientboundSetSlotPacket_v1_21_R3;
-import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage;
+import nl.odalitadevelopments.menus.nms.v1_21_R4.packet.ClientboundSetContentsPacket_v1_21_R4;
+import nl.odalitadevelopments.menus.nms.v1_21_R4.packet.ClientboundSetSlotPacket_v1_21_R4;
+import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R4.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_21_R4.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R4.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class OdalitaMenusNMS_v1_21_R3 implements OdalitaMenusNMS {
+public final class OdalitaMenusNMS_v1_21_R4 implements OdalitaMenusNMS {
 
     private static Class<?> PAPER_CUSTOM_HOLDER_CONTAINER;
     private static Class<?> MINECRAFT_INVENTORY;
@@ -53,8 +53,8 @@ public final class OdalitaMenusNMS_v1_21_R3 implements OdalitaMenusNMS {
             MINECRAFT_INVENTORY_TITLE_FIELD = MINECRAFT_INVENTORY.getDeclaredField("adventure$title");
 
             TITLE_FIELD = AbstractContainerMenu.class.getDeclaredField("title");
-            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_21_R3.WINDOW_ID);
-            NETWORK_MANAGER_FIELD = ServerCommonPacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_21_R3.NETWORK_MANAGER);
+            WINDOW_ID_FIELD = AbstractContainerMenu.class.getDeclaredField(ObfuscatedNames_v1_21_R4.WINDOW_ID);
+            NETWORK_MANAGER_FIELD = ServerCommonPacketListenerImpl.class.getDeclaredField(ObfuscatedNames_v1_21_R4.NETWORK_MANAGER);
         } catch (Exception exception) {
             OdalitaLogger.error(exception);
         }
@@ -294,7 +294,7 @@ public final class OdalitaMenusNMS_v1_21_R3 implements OdalitaMenusNMS {
             return null;
         }
 
-        return new ClientboundSetSlotPacket_v1_21_R3(clientboundContainerSetSlotPacket);
+        return new ClientboundSetSlotPacket_v1_21_R4(clientboundContainerSetSlotPacket);
     }
 
     @Override
@@ -303,7 +303,7 @@ public final class OdalitaMenusNMS_v1_21_R3 implements OdalitaMenusNMS {
             return null;
         }
 
-        return new ClientboundSetContentsPacket_v1_21_R3(clientboundContainerSetContentPacket);
+        return new ClientboundSetContentsPacket_v1_21_R4(clientboundContainerSetContentPacket);
     }
 
     @Override

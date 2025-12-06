@@ -1,8 +1,8 @@
-package nl.odalitadevelopments.menus.nms.v1_21_R2;
+package nl.odalitadevelopments.menus.nms.v1_21_R6;
 
-public final class ObfuscatedNames_v1_21_R3 {
+public final class ObfuscatedNames_v1_21_R6 {
 
-    private ObfuscatedNames_v1_21_R3() {
+    private ObfuscatedNames_v1_21_R6() {
     }
 
     public static final String NETWORK_MANAGER = "connection";
