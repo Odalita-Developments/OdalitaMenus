@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 public enum ProtocolVersion {
 
     MINECRAFT_1_21_10(773),
-    MINECRAFT_1_21_8(772),
     MINECRAFT_1_21_6(771),
     MINECRAFT_1_21_5(770),
     MINECRAFT_1_21_4(769),
@@ -77,7 +76,7 @@ public enum ProtocolVersion {
         for (ProtocolVersion protocolVersion : values()) {
             if (protocolVersion == NOT_SUPPORTED) continue;
 
-            String version = protocolVersion.name().substring(10).replaceAll("_", ".");
+            String version = protocolVersion.format();
             if (version.equalsIgnoreCase(versionString)) {
                 return protocolVersion;
             }
