@@ -105,16 +105,17 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
                     return;
                 }
 
+                Object newPacketObject = packetObject;
                 for (Map<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> map : packetListenersClientbound.values()) {
                     BiConsumer<Player, OdalitaMenuPacket> function = map.get(clientboundPacketType);
                     if (function != null) {
                         function.accept(player, packet);
                     }
 
-                    PacketConverter.updateClientboundPacket(clientboundPacketType, packet);
+                    newPacketObject = PacketConverter.updateClientboundPacket(clientboundPacketType, packet);
                 }
 
-                super.write(ctx, packetObject, promise);
+                super.write(ctx, newPacketObject, promise);
             }
         };
     }

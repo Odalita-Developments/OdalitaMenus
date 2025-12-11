@@ -50,7 +50,8 @@ public final class ClientboundSetSlotPacket_v1_16_R5 implements ClientboundSetSl
     }
 
     @Override
-    public void update() {
+    public Object update() {
         ITEM_FIELD.set(this.packet, CraftItemStack.asNMSCopy(this.item));
+        return this.packet;
     }
 }

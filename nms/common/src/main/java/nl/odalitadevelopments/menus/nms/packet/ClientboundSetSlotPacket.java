@@ -14,5 +14,5 @@ public interface ClientboundSetSlotPacket {
     @NotNull
     ItemStack item();
 
-    void update();
+    Object update();
 }

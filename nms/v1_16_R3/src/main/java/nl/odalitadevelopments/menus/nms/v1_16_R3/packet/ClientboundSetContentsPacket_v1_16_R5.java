@@ -57,12 +57,13 @@ public final class ClientboundSetContentsPacket_v1_16_R5 implements ClientboundS
     }
 
     @Override
-    public void update() {
+    public Object update() {
         List<net.minecraft.server.v1_16_R3.ItemStack> items = new ArrayList<>();
         for (ItemStack itemStack : this.items) {
             items.add(CraftItemStack.asNMSCopy(itemStack));
         }
 
         ITEMS_FIELD.set(this.packet, items);
+        return this.packet;
     }
 }

@@ -59,7 +59,7 @@ public final class ClientboundSetContentsPacket_v1_21_R1 implements ClientboundS
     }
 
     @Override
-    public void update() {
+    public Object update() {
         List<net.minecraft.world.item.ItemStack> items = new ArrayList<>();
         for (ItemStack itemStack : this.items) {
             items.add(CraftItemStack.asNMSCopy(itemStack));
@@ -67,5 +67,6 @@ public final class ClientboundSetContentsPacket_v1_21_R1 implements ClientboundS
 
         ITEMS_FIELD.set(this.packet, items);
         CARRIED_ITEM_FIELD.set(this.packet, CraftItemStack.asNMSCopy(this.carriedItem));
+        return this.packet;
     }
 }
