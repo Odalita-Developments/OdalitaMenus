@@ -1,12 +1,12 @@
-package nl.odalitadevelopments.menus.providers.processors.packet;
+package nl.odalitadevelopments.menus.utils.packet.providers;
 
 import io.netty.channel.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.PacketConverter;
+import nl.odalitadevelopments.menus.utils.packet.PacketListenerProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,8 +41,8 @@ public final class OdalitaPacketListenerProcessor implements PacketListenerProvi
     }
 
     @Override
-    public void close(@NotNull OdalitaMenus instance) {
-        packetListenersClientbound.remove(instance);
+    public void close() {
+        packetListenersClientbound.remove(this.instance);
 
         HandlerList.unregisterAll(this);
 

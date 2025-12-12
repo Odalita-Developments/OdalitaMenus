@@ -3,7 +3,8 @@ package nl.odalitadevelopments.menus.utils.packet;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetSlotPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

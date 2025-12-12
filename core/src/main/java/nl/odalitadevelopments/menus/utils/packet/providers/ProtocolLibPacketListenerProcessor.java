@@ -1,15 +1,15 @@
-package nl.odalitadevelopments.menus.providers.processors.packet;
+package nl.odalitadevelopments.menus.utils.packet.providers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
+import nl.odalitadevelopments.menus.utils.packet.PacketListenerProvider;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetSlotPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +41,8 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
     }
 
     @Override
-    public void close(@NotNull OdalitaMenus instance) {
-        packetListenersClientbound.remove(instance);
+    public void close() {
+        packetListenersClientbound.remove(this.instance);
 
         this.protocolManager.removePacketListener(this.setSlotListener);
         this.protocolManager.removePacketListener(this.windowItemsListener);

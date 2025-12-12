@@ -4,9 +4,9 @@ import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.contents.action.PlayerInventoryItemMetaChanger;
 import nl.odalitadevelopments.menus.menu.MenuProcessor;
 import nl.odalitadevelopments.menus.menu.MenuSession;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaSetSlotPacket;
-import nl.odalitadevelopments.menus.utils.packet.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.PacketListenerProvider;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetSlotPacket;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public final class InventoryPacketListener {
     }
 
     private void listenSetSlot() {
-        this.instance.getProvidersContainer().getPacketListenerProvider().listenClientbound(PacketListenerProvider.ClientboundPacketType.SET_SLOT, (player, odalitaMenuPacket) -> {
+        this.instance.getPacketListener().listenClientbound(PacketListenerProvider.ClientboundPacketType.SET_SLOT, (player, odalitaMenuPacket) -> {
             if (!(odalitaMenuPacket instanceof OdalitaSetSlotPacket packet)) return;
 
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);
@@ -48,7 +48,7 @@ public final class InventoryPacketListener {
     }
 
     private void listenWindowItems() {
-        this.instance.getProvidersContainer().getPacketListenerProvider().listenClientbound(PacketListenerProvider.ClientboundPacketType.SET_CONTENTS, (player, odalitaMenuPacket) -> {
+        this.instance.getPacketListener().listenClientbound(PacketListenerProvider.ClientboundPacketType.SET_CONTENTS, (player, odalitaMenuPacket) -> {
             if (!(odalitaMenuPacket instanceof OdalitaSetContentsPacket packet)) return;
 
             MenuSession menuSession = this.menuProcessor.getOpenMenuSession(player);

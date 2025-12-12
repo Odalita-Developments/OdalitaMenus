@@ -37,6 +37,7 @@ import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaPacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -93,6 +94,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private final PatternContainer patternContainer;
 
     private final ProvidersContainer providersContainer;
+    private final OdalitaPacketListener packetListener;
     private final CooldownContainer cooldownContainer;
 
     @Getter(AccessLevel.NONE)
@@ -118,6 +120,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.patternContainer = new PatternContainer();
 
         this.providersContainer = new ProvidersContainer(this);
+        this.packetListener = new OdalitaPacketListener(this);
         this.cooldownContainer = new CooldownContainer();
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
@@ -240,7 +243,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
                 player.closeInventory();
             }
 
-            this.providersContainer.close(this);
+            this.packetListener.close();
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalSessionCache);

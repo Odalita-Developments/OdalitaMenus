@@ -1,6 +1,7 @@
-package nl.odalitadevelopments.menus.utils.packet;
+package nl.odalitadevelopments.menus.utils.packet.type;
 
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
