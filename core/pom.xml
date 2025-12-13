@@ -49,21 +49,6 @@
         </dependency>
         <dependency>
             <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R1</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R2</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R3</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
             <artifactId>v1_20_R4</artifactId>
             <version>0.6.2</version>
         </dependency>
