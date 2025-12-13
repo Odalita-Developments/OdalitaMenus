@@ -23,5 +23,6 @@
         <module>v1_21_R4</module>
         <module>v1_21_R5</module>
         <module>v1_21_R6</module>
+        <module>v1_21_R7</module>
     </modules>
 </project>
