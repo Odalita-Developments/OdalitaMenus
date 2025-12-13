@@ -18,8 +18,6 @@ import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
-import nl.odalitadevelopments.menus.nms.v1_16_R3.OdalitaMenusNMS_v1_16_R5;
-import nl.odalitadevelopments.menus.nms.v1_17_R1.OdalitaMenusNMS_v1_17_R1;
 import nl.odalitadevelopments.menus.nms.v1_18_R2.OdalitaMenusNMS_v1_18_R2;
 import nl.odalitadevelopments.menus.nms.v1_19_R3.OdalitaMenusNMS_v1_19_R3;
 import nl.odalitadevelopments.menus.nms.v1_20_R4.OdalitaMenusNMS_v1_20_R4;
@@ -152,10 +150,8 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
                 case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
                 case MINECRAFT_1_19_4 -> new OdalitaMenusNMS_v1_19_R3();
                 case MINECRAFT_1_18_2 -> new OdalitaMenusNMS_v1_18_R2();
-                case MINECRAFT_1_17_1 -> new OdalitaMenusNMS_v1_17_R1();
-                case MINECRAFT_1_16_5 -> new OdalitaMenusNMS_v1_16_R5();
                 default ->
-                        throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_16_5.format() + " - " + ProtocolVersion.latest().format() + ")");
+                        throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_18_2.format() + " - " + ProtocolVersion.latest().format() + ")");
             };
 
             Method method = harmNMSInstance.getDeclaredMethod("init", OdalitaMenusNMS.class);

@@ -5,7 +5,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.*;
 import nl.odalitadevelopments.menus.OdalitaMenus;
-import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
 import nl.odalitadevelopments.menus.utils.packet.OdalitaMenuPacket;
 import nl.odalitadevelopments.menus.utils.packet.PacketListenerProvider;
 import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetContentsPacket;
@@ -61,8 +60,6 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
         ) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
-
                 Player player = event.getPlayer();
                 PacketContainer packet = event.getPacket();
 
@@ -70,8 +67,8 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     for (Map.Entry<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> entry : map.entrySet()) {
                         if (entry.getKey() == ClientboundPacketType.SET_SLOT) {
                             int windowId = packet.getIntegers().read(0);
-                            int stateId = (is1171) ? packet.getIntegers().read(1) : -1;
-                            int slot = packet.getIntegers().read((is1171) ? 2 : 1);
+                            int stateId = packet.getIntegers().read(1);
+                            int slot = packet.getIntegers().read(2);
                             ItemStack item = packet.getItemModifier().read(0);
 
                             OdalitaSetSlotPacket odalitaSetSlotPacket = new OdalitaSetSlotPacket(null, windowId, stateId, slot, item);
@@ -93,8 +90,6 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
         ) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                boolean is1171 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_17_1);
-
                 Player player = event.getPlayer();
                 PacketContainer packet = event.getPacket();
 
@@ -102,9 +97,9 @@ public final class ProtocolLibPacketListenerProcessor implements PacketListenerP
                     for (Map.Entry<ClientboundPacketType, BiConsumer<Player, OdalitaMenuPacket>> entry : map.entrySet()) {
                         if (entry.getKey() == ClientboundPacketType.SET_CONTENTS) {
                             int windowId = packet.getIntegers().read(0);
-                            int stateId = (is1171) ? packet.getIntegers().read(1) : -1;
+                            int stateId = packet.getIntegers().read(1);
                             List<ItemStack> items = packet.getItemListModifier().read(0);
-                            ItemStack carriedItem = (is1171) ? packet.getItemModifier().read(0) : null;
+                            ItemStack carriedItem = packet.getItemModifier().read(0);
 
                             OdalitaSetContentsPacket odalitaSetContentsPacket = new OdalitaSetContentsPacket(null, windowId, stateId, items, carriedItem);
                             entry.getValue().accept(player, odalitaSetContentsPacket);
