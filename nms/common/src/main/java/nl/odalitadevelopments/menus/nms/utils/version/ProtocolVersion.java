@@ -5,17 +5,16 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_21_11(774),
+    MINECRAFT_1_21_10(773),
+    MINECRAFT_1_21_6(771),
+    MINECRAFT_1_21_5(770),
     MINECRAFT_1_21_4(769),
     MINECRAFT_1_21_3(768),
     MINECRAFT_1_21_1(767),
     MINECRAFT_1_20_6(766),
-    MINECRAFT_1_20_4(765),
-    MINECRAFT_1_20_2(764),
-    MINECRAFT_1_20_1(763),
     MINECRAFT_1_19_4(762),
     MINECRAFT_1_18_2(758),
-    MINECRAFT_1_17_1(756),
-    MINECRAFT_1_16_5(754),
     NOT_SUPPORTED(0);
 
     private final int number;
@@ -73,7 +72,7 @@ public enum ProtocolVersion {
         for (ProtocolVersion protocolVersion : values()) {
             if (protocolVersion == NOT_SUPPORTED) continue;
 
-            String version = protocolVersion.name().substring(10).replaceAll("_", ".");
+            String version = protocolVersion.format();
             if (version.equalsIgnoreCase(versionString)) {
                 return protocolVersion;
             }

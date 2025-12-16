@@ -29,37 +29,12 @@
         </dependency>
         <dependency>
             <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_16_R3</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_17_R1</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
             <artifactId>v1_18_R2</artifactId>
             <version>0.6.2</version>
         </dependency>
         <dependency>
             <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
             <artifactId>v1_19_R3</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R1</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R2</artifactId>
-            <version>0.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
-            <artifactId>v1_20_R3</artifactId>
             <version>0.6.2</version>
         </dependency>
         <dependency>
@@ -82,12 +57,32 @@
             <artifactId>v1_21_R3</artifactId>
             <version>0.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R4</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R5</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R6</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.odalita-developments.odalitamenus.nms</groupId>
+            <artifactId>v1_21_R7</artifactId>
+            <version>0.6.2</version>
+        </dependency>
 
         <!-- ProtocolLib -->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>5.1.0</version>
+            <version>5.3.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -149,9 +144,24 @@
                             <pattern>org.bukkit.craftbukkit.v1_21_R2</pattern>
                             <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
                         </relocation>
-                        <!-- Required if testing (locally) on 1.21.4 -->
                         <relocation>
                             <pattern>org.bukkit.craftbukkit.v1_21_R3</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R4</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R5</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R6</pattern>
+                            <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bukkit.craftbukkit.v1_21_R7</pattern>
                             <shadedPattern>org.bukkit.craftbukkit</shadedPattern>
                         </relocation>
                     </relocations>

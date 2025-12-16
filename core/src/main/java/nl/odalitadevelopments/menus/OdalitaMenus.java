@@ -14,8 +14,10 @@ import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaPacketListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +50,9 @@ public sealed interface OdalitaMenus permits OdalitaMenusImpl {
     @NotNull PatternContainer getPatternContainer();
 
     @NotNull ProvidersContainer getProvidersContainer();
+
+    @ApiStatus.Internal
+    @NotNull OdalitaPacketListener getPacketListener();
 
     @NotNull CooldownContainer getCooldownContainer();
 

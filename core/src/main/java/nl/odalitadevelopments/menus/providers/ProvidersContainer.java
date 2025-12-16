@@ -4,10 +4,10 @@ import nl.odalitadevelopments.menus.OdalitaMenus;
 import nl.odalitadevelopments.menus.providers.processors.ColorProcessor;
 import nl.odalitadevelopments.menus.providers.processors.CooldownProcessor;
 import nl.odalitadevelopments.menus.providers.processors.DefaultItemProcessor;
-import nl.odalitadevelopments.menus.providers.processors.packet.OdalitaPacketListenerProcessor;
-import nl.odalitadevelopments.menus.providers.processors.packet.ProtocolLibPacketListenerProcessor;
-import nl.odalitadevelopments.menus.providers.providers.*;
-import org.bukkit.Bukkit;
+import nl.odalitadevelopments.menus.providers.providers.ColorProvider;
+import nl.odalitadevelopments.menus.providers.providers.CooldownProvider;
+import nl.odalitadevelopments.menus.providers.providers.DefaultItemProvider;
+import nl.odalitadevelopments.menus.providers.providers.MenuItemDataProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,6 @@ public final class ProvidersContainer {
     private CooldownProvider cooldownProvider;
     private DefaultItemProvider defaultItemProvider;
     private MenuItemDataProvider menuItemDataProvider;
-    private PacketListenerProvider packetListenerProvider;
 
     public ProvidersContainer(@NotNull OdalitaMenus instance) {
         this.instance = instance;
@@ -28,16 +27,6 @@ public final class ProvidersContainer {
         this.colorProvider = new ColorProcessor();
         this.cooldownProvider = new CooldownProcessor();
         this.defaultItemProvider = new DefaultItemProcessor();
-
-        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            this.packetListenerProvider = new ProtocolLibPacketListenerProcessor(instance);
-        } else {
-            this.packetListenerProvider = new OdalitaPacketListenerProcessor(instance);
-        }
-    }
-
-    public void close(@NotNull OdalitaMenus instance) {
-        this.packetListenerProvider.close(instance);
     }
 
     public void setColorProvider(@NotNull ColorProvider colorProvider) {
@@ -54,11 +43,6 @@ public final class ProvidersContainer {
 
     public void setMenuItemDataProvider(@NotNull MenuItemDataProvider menuItemDataProvider) {
         this.menuItemDataProvider = menuItemDataProvider;
-    }
-
-    public void setPacketListenerProvider(@NotNull PacketListenerProvider packetListenerProvider) {
-        this.packetListenerProvider.close(this.instance);
-        this.packetListenerProvider = packetListenerProvider;
     }
 
     @ApiStatus.Internal
@@ -79,10 +63,5 @@ public final class ProvidersContainer {
     @ApiStatus.Internal
     public @Nullable MenuItemDataProvider getMenuItemDataProvider() {
         return this.menuItemDataProvider;
-    }
-
-    @ApiStatus.Internal
-    public @NotNull PacketListenerProvider getPacketListenerProvider() {
-        return this.packetListenerProvider;
     }
 }

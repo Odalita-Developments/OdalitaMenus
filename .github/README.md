@@ -76,7 +76,7 @@ dependencies {
 - Option to change inventory properties 
 - Option to listen to bukkit inventory and player events **NEW**
   - Could be used to prevent players from picking up items from the ground while the menu is open for example 
-- Multi version support (1.16.5 - 1.21.4)
+- Multi version support (1.18.2 - 1.21.11)
 - Async support 
   - You can change items in the inventory anytime you want, on any thread you want 
 - Option to register your own providers
@@ -84,4 +84,3 @@ dependencies {
   - CooldownProvider
   - DefaultItemProvider
   - MenuItemDataProvider
-  - PacketListenerProvider

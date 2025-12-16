@@ -18,22 +18,22 @@ import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.utils.OdalitaLogger;
 import nl.odalitadevelopments.menus.nms.utils.PaperHelper;
 import nl.odalitadevelopments.menus.nms.utils.version.ProtocolVersion;
-import nl.odalitadevelopments.menus.nms.v1_16_R3.OdalitaMenusNMS_v1_16_R5;
-import nl.odalitadevelopments.menus.nms.v1_17_R1.OdalitaMenusNMS_v1_17_R1;
 import nl.odalitadevelopments.menus.nms.v1_18_R2.OdalitaMenusNMS_v1_18_R2;
 import nl.odalitadevelopments.menus.nms.v1_19_R3.OdalitaMenusNMS_v1_19_R3;
-import nl.odalitadevelopments.menus.nms.v1_20_R1.OdalitaMenusNMS_v1_20_R1;
-import nl.odalitadevelopments.menus.nms.v1_20_R3.OdalitaMenusNMS_v1_20_R3;
 import nl.odalitadevelopments.menus.nms.v1_20_R4.OdalitaMenusNMS_v1_20_R4;
 import nl.odalitadevelopments.menus.nms.v1_21_R1.OdalitaMenusNMS_v1_21_R1;
-import nl.odalitadevelopments.menus.nms.v1_20_R2.OdalitaMenusNMS_v1_20_R2;
 import nl.odalitadevelopments.menus.nms.v1_21_R2.OdalitaMenusNMS_v1_21_R2;
-import nl.odalitadevelopments.menus.nms.v1_21_R2.OdalitaMenusNMS_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R3.OdalitaMenusNMS_v1_21_R3;
+import nl.odalitadevelopments.menus.nms.v1_21_R4.OdalitaMenusNMS_v1_21_R4;
+import nl.odalitadevelopments.menus.nms.v1_21_R5.OdalitaMenusNMS_v1_21_R5;
+import nl.odalitadevelopments.menus.nms.v1_21_R6.OdalitaMenusNMS_v1_21_R6;
+import nl.odalitadevelopments.menus.nms.v1_21_R7.OdalitaMenusNMS_v1_21_R7;
 import nl.odalitadevelopments.menus.patterns.MenuPattern;
 import nl.odalitadevelopments.menus.patterns.PatternContainer;
 import nl.odalitadevelopments.menus.providers.ProvidersContainer;
 import nl.odalitadevelopments.menus.tasks.MenuTasksProcessor;
 import nl.odalitadevelopments.menus.utils.cooldown.CooldownContainer;
+import nl.odalitadevelopments.menus.utils.packet.OdalitaPacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -90,6 +90,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
     private final PatternContainer patternContainer;
 
     private final ProvidersContainer providersContainer;
+    private final OdalitaPacketListener packetListener;
     private final CooldownContainer cooldownContainer;
 
     @Getter(AccessLevel.NONE)
@@ -115,6 +116,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         this.patternContainer = new PatternContainer();
 
         this.providersContainer = new ProvidersContainer(this);
+        this.packetListener = new OdalitaPacketListener(this);
         this.cooldownContainer = new CooldownContainer();
 
         this.inventoryListener = new InventoryListener(this, this.menuProcessor);
@@ -140,19 +142,18 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
         try {
             Class<?> harmNMSInstance = Class.forName("nl.odalitadevelopments.menus.nms.OdalitaMenusNMSInstance");
             OdalitaMenusNMS nms = switch (serverVersion) {
+                case MINECRAFT_1_21_11 -> new OdalitaMenusNMS_v1_21_R7();
+                case MINECRAFT_1_21_10 -> new OdalitaMenusNMS_v1_21_R6();
+                case MINECRAFT_1_21_6 -> new OdalitaMenusNMS_v1_21_R5();
+                case MINECRAFT_1_21_5 -> new OdalitaMenusNMS_v1_21_R4();
                 case MINECRAFT_1_21_4 -> new OdalitaMenusNMS_v1_21_R3();
                 case MINECRAFT_1_21_3 -> new OdalitaMenusNMS_v1_21_R2();
                 case MINECRAFT_1_21_1 -> new OdalitaMenusNMS_v1_21_R1();
                 case MINECRAFT_1_20_6 -> new OdalitaMenusNMS_v1_20_R4();
-                case MINECRAFT_1_20_4 -> new OdalitaMenusNMS_v1_20_R3();
-                case MINECRAFT_1_20_2 -> new OdalitaMenusNMS_v1_20_R2();
-                case MINECRAFT_1_20_1 -> new OdalitaMenusNMS_v1_20_R1();
                 case MINECRAFT_1_19_4 -> new OdalitaMenusNMS_v1_19_R3();
                 case MINECRAFT_1_18_2 -> new OdalitaMenusNMS_v1_18_R2();
-                case MINECRAFT_1_17_1 -> new OdalitaMenusNMS_v1_17_R1();
-                case MINECRAFT_1_16_5 -> new OdalitaMenusNMS_v1_16_R5();
                 default ->
-                        throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_16_5.format() + " - " + ProtocolVersion.latest().format() + ")");
+                        throw new IllegalStateException("OdalitaMenus does not support this server version! (Versions supported: " + ProtocolVersion.MINECRAFT_1_18_2.format() + " - " + ProtocolVersion.latest().format() + ")");
             };
 
             Method method = harmNMSInstance.getDeclaredMethod("init", OdalitaMenusNMS.class);
@@ -234,7 +235,7 @@ final class OdalitaMenusImpl implements OdalitaMenus, Listener {
                 player.closeInventory();
             }
 
-            this.providersContainer.close(this);
+            this.packetListener.close();
 
             HandlerList.unregisterAll(this.inventoryListener);
             HandlerList.unregisterAll(this.globalSessionCache);

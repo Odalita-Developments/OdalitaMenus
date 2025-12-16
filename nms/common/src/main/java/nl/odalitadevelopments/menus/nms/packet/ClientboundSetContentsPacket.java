@@ -18,5 +18,5 @@ public interface ClientboundSetContentsPacket {
     @Nullable
     ItemStack carriedItem();
 
-    void update();
+    Object update();
 }

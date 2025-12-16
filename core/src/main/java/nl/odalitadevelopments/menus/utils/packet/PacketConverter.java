@@ -3,7 +3,8 @@ package nl.odalitadevelopments.menus.utils.packet;
 import nl.odalitadevelopments.menus.nms.OdalitaMenusNMS;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetContentsPacket;
 import nl.odalitadevelopments.menus.nms.packet.ClientboundSetSlotPacket;
-import nl.odalitadevelopments.menus.providers.providers.PacketListenerProvider;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetContentsPacket;
+import nl.odalitadevelopments.menus.utils.packet.type.OdalitaSetSlotPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,26 +14,17 @@ public final class PacketConverter {
     }
 
     public static @Nullable OdalitaMenuPacket convertClientboundPacket(@NotNull PacketListenerProvider.ClientboundPacketType type, @NotNull Object packetObject) {
-        if (type == PacketListenerProvider.ClientboundPacketType.SET_SLOT) {
-            return convertSetSlotPacket(packetObject);
-        }
-
-        if (type == PacketListenerProvider.ClientboundPacketType.SET_CONTENTS) {
-            return convertWindowItemsPacket(packetObject);
-        }
-
-        return null;
+        return switch (type) {
+            case SET_SLOT -> convertSetSlotPacket(packetObject);
+            case SET_CONTENTS -> convertWindowItemsPacket(packetObject);
+        };
     }
 
-    public static void updateClientboundPacket(@NotNull PacketListenerProvider.ClientboundPacketType type, @NotNull OdalitaMenuPacket packet) {
-        if (type == PacketListenerProvider.ClientboundPacketType.SET_SLOT) {
-            updateSetSlotPacket(packet);
-            return;
-        }
-
-        if (type == PacketListenerProvider.ClientboundPacketType.SET_CONTENTS) {
-            updateWindowItemsPacket(packet);
-        }
+    public static Object updateClientboundPacket(@NotNull PacketListenerProvider.ClientboundPacketType type, @NotNull OdalitaMenuPacket packet) {
+        return switch (type) {
+            case SET_SLOT -> updateSetSlotPacket(packet);
+            case SET_CONTENTS -> updateWindowItemsPacket(packet);
+        };
     }
 
     private static OdalitaSetSlotPacket convertSetSlotPacket(@NotNull Object packetObject) {
@@ -49,19 +41,15 @@ public final class PacketConverter {
         return new OdalitaSetContentsPacket(packet, packet.windowId(), packet.stateId(), packet.items(), packet.carriedItem());
     }
 
-    private static void updateSetSlotPacket(@NotNull OdalitaMenuPacket odalitaMenuPacket) {
-        if (!(odalitaMenuPacket instanceof OdalitaSetSlotPacket packet)) return;
+    private static Object updateSetSlotPacket(@NotNull OdalitaMenuPacket odalitaMenuPacket) {
+        if (!(odalitaMenuPacket instanceof OdalitaSetSlotPacket packet)) return null;
 
-        if (packet.origin() != null) {
-            packet.origin().update();
-        }
+        return packet.origin() != null ? packet.origin().update() : null;
     }
 
-    private static void updateWindowItemsPacket(@NotNull OdalitaMenuPacket odalitaMenuPacket) {
-        if (!(odalitaMenuPacket instanceof OdalitaSetContentsPacket packet)) return;
+    private static Object updateWindowItemsPacket(@NotNull OdalitaMenuPacket odalitaMenuPacket) {
+        if (!(odalitaMenuPacket instanceof OdalitaSetContentsPacket packet)) return null;
 
-        if (packet.origin() != null) {
-            packet.origin().update();
-        }
+        return packet.origin() != null ? packet.origin().update() : null;
     }
 }
