@@ -13,7 +13,7 @@
     <artifactId>v1_21_R7</artifactId>
 
     <properties>
-        <spigot-version>1.21.11-R0.1-SNAPSHOT</spigot-version>
+        <spigot-version>1.21.11-R0.2-SNAPSHOT</spigot-version>
     </properties>
 
     <dependencies>
